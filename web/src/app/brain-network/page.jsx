@@ -9,7 +9,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import CockpitHUD from '../../components/CockpitHUD';
+import CockpitHUDReal from '../../components/CockpitHUDReal';
 
 export default function BrainNetworkPage() {
   const [isLoading, setIsLoading] = useState(true);
@@ -164,5 +164,5 @@ export default function BrainNetworkPage() {
     );
   }
 
-  return <CockpitHUD />;
+  return <CockpitHUDReal />;
 }
