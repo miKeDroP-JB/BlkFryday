@@ -57,42 +57,60 @@
     └── Staking Tiers
 ```
 
-## Installation
+## Quick Start (External Drive / Windows)
+
+### Prerequisites
+- **Node.js 18+** installed: https://nodejs.org
+- Windows 10/11
+
+### First Time Setup
+1. Copy this entire folder to your external drive
+2. Double-click `START.bat` - it auto-runs setup on first launch
+3. Wait for dependencies to install (2-5 minutes)
+4. Browser opens automatically to http://localhost:3000
+
+### Running After Setup
+- **START.bat** - One-click launch (auto-detects prod/dev)
+- **boot/BOOT.bat** - Production mode
+- **boot/DEV.bat** - Development mode with hot reload
+- **boot/LAUNCH.ps1** - PowerShell version (right-click > Run with PowerShell)
+
+### Manual Installation
 
 ```bash
-# Clone the repository
-git clone https://github.com/your-repo/orb-system.git
+# Navigate to project root
+cd /d E:\BlkFryday  # Replace E: with your drive letter
 
 # Install dependencies
 npm install
+cd web && npm install
 
-# Start development
-npm run dev
-
-# Build for production
+# Build for production (optional)
 npm run build
 
-# Create USB bootable
-npm run build:usb
-
-# Create ISO image
-npm run build:iso
+# Start the server
+npm start          # Production
+npm run dev        # Development
 ```
 
-## USB Bootable
+## Running from External Drive
 
-The 0RB SYSTEM can be deployed as a USB bootable image:
+Perfect for portable setups on Intel Mac running Windows:
 
-```bash
-# Build the USB structure
-npm run build:usb
-
-# Create ISO (Linux)
-npm run build:iso
-
-# Write to USB
-sudo dd if=dist/iso/orb-system.iso of=/dev/sdX bs=4M status=progress
 ```
+EXTERNAL DRIVE
+└── BlkFryday/
+    ├── START.bat       <-- Double-click to launch!
+    ├── boot/
+    │   ├── SETUP.bat   <-- Run once for first-time setup
+    │   ├── BOOT.bat    <-- Production launcher
+    │   ├── DEV.bat     <-- Development launcher
+    │   └── LAUNCH.ps1  <-- PowerShell launcher
+    ├── web/            <-- Frontend (Next.js)
+    └── system/         <-- Backend (Brain Network)
+```
+
+**Tip:** Pin START.bat to taskbar for quick access!
 
 ## The Games
 
@@ -153,48 +171,64 @@ that was always there.
 
 ```
 BlkFryday/
-├── boot/                 # Boot sequence
+├── START.bat            # One-click launcher
+├── boot/                # Boot scripts
+│   ├── SETUP.bat        # First-time setup
+│   ├── BOOT.bat         # Production launcher
+│   ├── DEV.bat          # Development launcher
+│   ├── LAUNCH.ps1       # PowerShell launcher
 │   └── init.js          # Bootloader
-├── system/              # Core systems
-│   ├── core/            # Main entry
-│   ├── agents/          # Agent manager
-│   ├── copa/            # Copa sidekick
-│   ├── crypto/          # Crypto engine
-│   ├── games/           # Game launcher
-│   └── ui/              # Forum system
-├── web/                 # Web interface
-│   ├── public/          # Static files
-│   └── src/             # React source
-│       ├── components/  # UI components
-│       ├── context/     # State management
-│       ├── pages/       # Next.js pages
-│       └── styles/      # CSS
-├── scripts/             # Build scripts
-│   ├── build-usb.js     # USB builder
-│   └── create-iso.js    # ISO creator
-├── config/              # Configuration
-└── assets/              # Media assets
+├── system/              # Backend - Brain Network V11.5
+│   ├── brain/           # 10 Core Systems
+│   │   ├── BrainNetworkV11.js
+│   │   ├── ImmersiveAudio.js
+│   │   ├── VoiceFirst.js
+│   │   ├── ProjectForge.js
+│   │   └── ...
+│   ├── agents/          # 1007 Agent Definitions
+│   ├── copa/            # Copa Sidekick (10 Verticals)
+│   └── crypto/          # $0RB Economy
+├── web/                 # Frontend (Next.js)
+│   ├── src/
+│   │   ├── app/         # App Router
+│   │   │   └── api/v11/ # Brain Network API
+│   │   └── components/  # UI Components
+│   │       ├── CockpitV11.jsx
+│   │       ├── VoiceOrb.jsx
+│   │       ├── GrimoireUI.jsx
+│   │       └── GamificationHUD.jsx
+│   └── public/          # Static assets
+├── data/                # Runtime data (created on setup)
+└── logs/                # System logs (created on setup)
 ```
 
 ## Commands
 
+**Windows (External Drive):**
+```batch
+START.bat          :: One-click launch (recommended)
+boot\SETUP.bat     :: First-time installation
+boot\BOOT.bat      :: Production mode
+boot\DEV.bat       :: Development mode
+```
+
+**Terminal (from web/ directory):**
 ```bash
-npm start          # Run Electron app
-npm run dev        # Development mode
+npm start          # Production server
+npm run dev        # Development with hot reload
 npm run build      # Build for production
-npm run build:usb  # Build USB bootable
-npm run build:iso  # Create ISO image
-npm run web        # Start web server
-npm run boot       # Run boot sequence
+npm run lint       # Check code quality
 ```
 
 ---
 
 ```
 ═══════════════════════════════════════════════════════════════
-    0RB as the interface between the code and the conscious
-                      EVERYBODY EATS
+   BRAIN NETWORK V11.5 - GODMODE ULTIMATE
+   10 SYSTEMS | 1007 AGENTS | 50+ STRATEGIES | INFINITE POWER
+
+   "First and best of its kind in the world"
 ═══════════════════════════════════════════════════════════════
 ```
 
-Version: 1.0.0 | Codename: THE_AWAKENING
+Version: 11.5 | Codename: GODMODE_ULTIMATE
