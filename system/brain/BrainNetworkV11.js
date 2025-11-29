@@ -417,28 +417,45 @@ class BrainNetworkV11 extends EventEmitter {
 
   /**
    * Wire integrations between systems
+   * All event handlers include error boundaries to prevent cascading failures
    */
   async wireSystemIntegrations() {
     // Audio responds to game events
     if (this.immersiveAudio && this.realityGames) {
       this.realityGames.on('achievement:unlocked', (data) => {
-        this.immersiveAudio.playPattern('LEVEL_UP');
+        try {
+          this.immersiveAudio.playPattern('LEVEL_UP');
+        } catch (err) {
+          console.warn('[V11.5] Audio pattern error (non-critical):', err.message);
+        }
       });
       this.realityGames.on('level:up', (data) => {
-        this.immersiveAudio.playPattern('LEVEL_UP');
+        try {
+          this.immersiveAudio.playPattern('LEVEL_UP');
+        } catch (err) {
+          console.warn('[V11.5] Audio pattern error (non-critical):', err.message);
+        }
       });
     }
 
     // Track XP for executions
     if (this.realityGames) {
       this.on('execution:complete', (data) => {
-        this.realityGames.trackEvent('default_user', 'TASK_COMPLETE', data);
+        try {
+          this.realityGames.trackEvent('default_user', 'TASK_COMPLETE', data);
+        } catch (err) {
+          console.warn('[V11.5] XP tracking error (non-critical):', err.message);
+        }
       });
     }
 
     // Audio responds to GODMODE
     if (this.immersiveAudio) {
-      this.immersiveAudio.onNetworkEvent('GODMODE_ACTIVATE', {});
+      try {
+        this.immersiveAudio.onNetworkEvent('GODMODE_ACTIVATE', {});
+      } catch (err) {
+        console.warn('[V11.5] Audio event error (non-critical):', err.message);
+      }
     }
 
     console.log('[V11.5] System integrations wired');
@@ -760,10 +777,14 @@ class BrainNetworkV11 extends EventEmitter {
 
   /**
    * Execute with industry vertical
+   * @param {string} verticalId - Vertical ID (LEGAL, MEDICAL, SALES, etc.)
+   * @param {string|object} task - Task description or request object
+   * @param {object} options - Options including userId
    */
   async executeVertical(verticalId, task, options = {}) {
     if (!this.copaVerticals) throw new Error('CopaVerticals not initialized');
-    const result = await this.copaVerticals.requestAssistance(verticalId, task);
+    const userId = options.userId || 'default_user';
+    const result = await this.copaVerticals.requestAssistance(verticalId, task, userId);
     this.stats.verticalExecutions++;
     return result;
   }
@@ -787,11 +808,11 @@ class BrainNetworkV11 extends EventEmitter {
   }
 
   /**
-   * Get OrbEconomy wallet
+   * Get OrbEconomy wallet (creates if doesn't exist)
    */
   getWallet(userId = 'default_user') {
     if (!this.orbEconomy) throw new Error('OrbEconomy not initialized');
-    return this.orbEconomy.getOrCreateWallet(userId);
+    return this.orbEconomy.connectWallet(userId);
   }
 
   /**

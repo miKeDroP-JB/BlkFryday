@@ -662,6 +662,11 @@ class RealityGames extends EventEmitter {
       case 'BUSINESS_AUTOMATED':
         player.updateStat('businessesAutomated', 1);
         break;
+
+      default:
+        // Unknown event types are logged but don't cause errors
+        console.debug(`[REALITY GAMES] Unknown event type: ${eventType}`);
+        break;
     }
 
     // Check for new achievements
@@ -830,6 +835,10 @@ class RealityGames extends EventEmitter {
   }
 
   getLeaderboard(limit = 10) {
+    // Auto-update if empty or stale
+    if (this.leaderboard.length === 0 && this.players.size > 0) {
+      this.updateLeaderboard();
+    }
     return this.leaderboard.slice(0, limit);
   }
 

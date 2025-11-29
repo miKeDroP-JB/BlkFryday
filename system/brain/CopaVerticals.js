@@ -364,17 +364,29 @@ class CopaVerticalsEngine extends EventEmitter {
 
   /**
    * Initialize Copa for a user
+   * @param {string} verticalId - Must be a valid COPA_VERTICALS key
+   * @param {string} userId - User identifier (required)
    */
   initializeCopa(verticalId, userId) {
-    if (!this.verticals[verticalId]) {
-      throw new Error(`Unknown vertical: ${verticalId}`);
+    // Input validation
+    if (!verticalId || typeof verticalId !== 'string') {
+      throw new Error('verticalId is required and must be a string');
+    }
+    if (!userId || typeof userId !== 'string') {
+      throw new Error('userId is required and must be a string');
     }
 
-    const copa = new CopaInstance(verticalId, userId);
+    const normalizedVerticalId = verticalId.toUpperCase();
+    if (!this.verticals[normalizedVerticalId]) {
+      const validVerticals = Object.keys(this.verticals).join(', ');
+      throw new Error(`Unknown vertical: ${verticalId}. Valid verticals: ${validVerticals}`);
+    }
+
+    const copa = new CopaInstance(normalizedVerticalId, userId);
     this.instances.set(copa.id, copa);
     this.stats.totalInstances++;
 
-    console.log(`[COPA] ${this.verticals[verticalId].icon} ${verticalId} initialized for user ${userId}`);
+    console.log(`[COPA] ${this.verticals[normalizedVerticalId].icon} ${normalizedVerticalId} initialized for user ${userId}`);
     this.emit('copa:initialized', copa);
 
     return copa;
@@ -388,19 +400,40 @@ class CopaVerticalsEngine extends EventEmitter {
   }
 
   /**
-   * Request assistance
+   * Request assistance - accepts copa instance ID OR vertical ID
+   * If verticalId is passed and no instance exists, auto-creates one
    */
-  async requestAssistance(copaId, request) {
-    const copa = this.instances.get(copaId);
-    if (!copa) throw new Error(`Copa not found: ${copaId}`);
+  async requestAssistance(copaIdOrVerticalId, request, userId = 'default_user') {
+    let copa = this.instances.get(copaIdOrVerticalId);
 
-    const result = await copa.assist(request);
+    // If not found by ID, check if it's a vertical ID
+    if (!copa && this.verticals[copaIdOrVerticalId]) {
+      // Try to find existing instance for this vertical
+      copa = Array.from(this.instances.values())
+        .find(c => c.verticalId === copaIdOrVerticalId && c.userId === userId);
+
+      // If still not found, auto-create one
+      if (!copa) {
+        copa = this.initializeCopa(copaIdOrVerticalId, userId);
+      }
+    }
+
+    if (!copa) {
+      throw new Error(`Copa not found: ${copaIdOrVerticalId}. Valid verticals: ${Object.keys(this.verticals).join(', ')}`);
+    }
+
+    // Normalize request to object format
+    const normalizedRequest = typeof request === 'string'
+      ? { message: request, capability: null }
+      : request;
+
+    const result = await copa.assist(normalizedRequest);
 
     this.stats.totalTasksCompleted++;
     this.stats.totalHoursAugmented += result.processingTime / 3600000;
     this.stats.jobsSaved = Math.floor(this.stats.totalHoursAugmented * 0.1); // 10% efficiency = jobs saved
 
-    this.emit('copa:assist', { copaId, request, result });
+    this.emit('copa:assist', { copaId: copa.id, request: normalizedRequest, result });
 
     return result;
   }

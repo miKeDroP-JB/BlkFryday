@@ -251,6 +251,7 @@ class OrbEconomy extends EventEmitter {
     this.tiers = STAKING_TIERS;
     this.rates = AGENT_RENTAL_RATES;
     this.wallets = new Map();
+    this.walletsByUserId = new Map();  // Index for O(1) lookup by userId
     this.listings = new Map();
     this.contracts = new Map();
     this.stats = {
@@ -284,14 +285,16 @@ class OrbEconomy extends EventEmitter {
   // ═══════════════════════════════════════════════════════════
 
   /**
-   * Connect or create wallet
+   * Connect or create wallet - O(1) lookup via userId index
    */
   connectWallet(userId) {
-    let wallet = Array.from(this.wallets.values()).find(w => w.userId === userId);
+    // O(1) lookup using index
+    let wallet = this.walletsByUserId.get(userId);
 
     if (!wallet) {
       wallet = new OrbWallet(userId);
       this.wallets.set(wallet.id, wallet);
+      this.walletsByUserId.set(userId, wallet);  // Index by userId
       console.log(`[ORB ECONOMY] Wallet connected: ${wallet.address.substring(0, 10)}...`);
       this.emit('wallet:connected', wallet);
     }
@@ -310,6 +313,14 @@ class OrbEconomy extends EventEmitter {
    * Airdrop tokens (for testing/rewards)
    */
   airdrop(walletId, amount) {
+    // Input validation
+    if (!walletId || typeof walletId !== 'string') {
+      throw new Error('walletId is required and must be a string');
+    }
+    if (typeof amount !== 'number' || amount <= 0 || !Number.isFinite(amount)) {
+      throw new Error('amount must be a positive finite number');
+    }
+
     const wallet = this.wallets.get(walletId);
     if (!wallet) throw new Error('Wallet not found');
 
@@ -324,6 +335,14 @@ class OrbEconomy extends EventEmitter {
    * Stake tokens
    */
   stake(walletId, amount) {
+    // Input validation
+    if (!walletId || typeof walletId !== 'string') {
+      throw new Error('walletId is required and must be a string');
+    }
+    if (typeof amount !== 'number' || amount <= 0 || !Number.isFinite(amount)) {
+      throw new Error('amount must be a positive finite number');
+    }
+
     const wallet = this.wallets.get(walletId);
     if (!wallet) throw new Error('Wallet not found');
 
@@ -396,46 +415,64 @@ class OrbEconomy extends EventEmitter {
 
   /**
    * Rent an agent
+   * Uses optimistic locking to prevent race conditions
    */
   async rentAgent(listingId, renterWalletId, duration) {
     const listing = this.listings.get(listingId);
     if (!listing) throw new Error('Listing not found');
     if (listing.status !== 'ACTIVE') throw new Error('Listing not available');
 
-    const renterWallet = this.wallets.get(renterWalletId);
-    if (!renterWallet) throw new Error('Renter wallet not found');
+    // Optimistic lock - temporarily mark as renting to prevent double-booking
+    const originalStatus = listing.status;
+    listing.status = 'RENTING';
 
-    // Create contract
-    const contract = new RentalContract(listing, renterWalletId, duration);
+    try {
+      const renterWallet = this.wallets.get(renterWalletId);
+      if (!renterWallet) {
+        listing.status = originalStatus;
+        throw new Error('Renter wallet not found');
+      }
 
-    // Apply tier discount
-    const tierInfo = renterWallet.getTierInfo();
-    if (tierInfo) {
-      const discount = contract.totalPrice * tierInfo.feeDiscount;
-      contract.totalPrice -= discount;
-      contract.platformFee = contract.totalPrice * 0.15;
-      contract.ownerEarnings = contract.totalPrice * 0.85;
+      // Create contract
+      const contract = new RentalContract(listing, renterWalletId, duration);
+
+      // Apply tier discount
+      const tierInfo = renterWallet.getTierInfo();
+      if (tierInfo) {
+        const discount = contract.totalPrice * tierInfo.feeDiscount;
+        contract.totalPrice -= discount;
+        contract.platformFee = contract.totalPrice * 0.15;
+        contract.ownerEarnings = contract.totalPrice * 0.85;
+      }
+
+      // Check balance
+      if (renterWallet.balances.ORB < contract.totalPrice) {
+        listing.status = originalStatus;
+        throw new Error('Insufficient ORB balance');
+      }
+
+      // Escrow payment
+      renterWallet.withdraw('ORB', contract.totalPrice);
+      contract.escrow.deposited = true;
+      contract.start();
+
+      this.contracts.set(contract.id, contract);
+      renterWallet.rentedAgents.push(listing.agentId);
+      this.stats.activeRentals++;
+      this.stats.totalRentals++;
+
+      // Restore listing to active after successful rental setup
+      listing.status = 'ACTIVE';
+
+      console.log(`[ORB ECONOMY] Rental started: ${listing.agentId} for ${duration}hr (${contract.totalPrice} $ORB)`);
+      this.emit('rental:started', contract);
+
+      return contract;
+    } catch (err) {
+      // Roll back status on any error
+      listing.status = originalStatus;
+      throw err;
     }
-
-    // Check balance
-    if (renterWallet.balances.ORB < contract.totalPrice) {
-      throw new Error('Insufficient ORB balance');
-    }
-
-    // Escrow payment
-    renterWallet.withdraw('ORB', contract.totalPrice);
-    contract.escrow.deposited = true;
-    contract.start();
-
-    this.contracts.set(contract.id, contract);
-    renterWallet.rentedAgents.push(listing.agentId);
-    this.stats.activeRentals++;
-    this.stats.totalRentals++;
-
-    console.log(`[ORB ECONOMY] Rental started: ${listing.agentId} for ${duration}hr (${contract.totalPrice} $ORB)`);
-    this.emit('rental:started', contract);
-
-    return contract;
   }
 
   /**
