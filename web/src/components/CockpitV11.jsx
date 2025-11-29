@@ -13,10 +13,12 @@
  * ====================================================
  */
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import VoiceOrb from './VoiceOrb';
 import GrimoireUI from './GrimoireUI';
 import GamificationHUD from './GamificationHUD';
+import { useNeonRiver } from './BootSequence';
+import { getSonicLoader } from '../lib/audio/SonicLoader';
 
 // Constants
 const MAX_RESULTS = 50; // Prevent memory leak
@@ -59,6 +61,24 @@ const MODES = {
 // ==========================================
 
 export default function CockpitV11() {
+  // NeonRiver integration
+  const river = useNeonRiver();
+  const sonicRef = useRef(null);
+
+  // Initialize Sonic audio on mount
+  useEffect(() => {
+    const initSonic = async () => {
+      try {
+        sonicRef.current = getSonicLoader();
+        await sonicRef.current.init();
+        sonicRef.current.ready();
+      } catch (e) {
+        console.warn('Sonic init failed:', e);
+      }
+    };
+    initSonic();
+  }, []);
+
   // Core state
   const [networkStatus, setNetworkStatus] = useState(null);
   const [swarms, setSwarms] = useState(SWARM_DATA);
@@ -156,6 +176,9 @@ export default function CockpitV11() {
   }, []);
 
   const setMode = useCallback(async (mode) => {
+    // Audio feedback
+    sonicRef.current?.cast();
+
     // Show transition
     showTransition(`${MODES[mode]?.symbol || ''} ${mode} ACTIVATING...`, 800);
 
@@ -170,23 +193,37 @@ export default function CockpitV11() {
         setProcessingMode(mode);
         addResult({ type: 'mode', message: `Mode: ${mode}`, glyph: MODES[mode].symbol });
 
-        // Voice feedback
+        // Audio + Voice feedback
+        sonicRef.current?.confirm();
         speak(`${mode} mode activated`);
 
         // Track for gamification
         if (mode === 'GODMODE') {
           trackEvent('GODMODE_ACTIVATED');
+          sonicRef.current?.levelUp();
           speak('God mode. All limits transcended.');
         }
+
+        // Send telemetry via NeonRiver
+        river?.sendTelemetry('brain.mode_change', {
+          dimensions: { mode, source: 'ui' },
+          values: { timestamp: Date.now() }
+        });
       }
     } catch (err) {
+      sonicRef.current?.error();
       setError(err.message);
     }
-  }, []);
+  }, [river, showTransition, addResult, speak]);
 
   const processTask = useCallback(async (task) => {
     setIsProcessing(true);
     setError(null);
+
+    // Start audio
+    sonicRef.current?.cast();
+
+    const startTime = performance.now();
 
     try {
       const res = await fetch('/api/brain-network', {
@@ -200,6 +237,9 @@ export default function CockpitV11() {
       const data = await res.json();
 
       if (data.success) {
+        sonicRef.current?.confirm();
+        sonicRef.current?.xpGain();
+
         addResult({
           type: 'process',
           mode: data.data.mode,
@@ -214,13 +254,23 @@ export default function CockpitV11() {
           quality: data.data.quality,
           duration: data.data.processingTime
         });
+
+        // Send telemetry
+        river?.sendTelemetry('brain.query', {
+          dimensions: { mode: processingMode, source: 'cockpit' },
+          values: {
+            response_time_ms: performance.now() - startTime,
+            confidence_score: data.data.quality || 0.9
+          }
+        });
       }
     } catch (err) {
+      sonicRef.current?.error();
       setError(err.message);
     } finally {
       setIsProcessing(false);
     }
-  }, [processingMode]);
+  }, [processingMode, river, addResult]);
 
   // ==========================================
   //  EVENT TRACKING
@@ -324,13 +374,17 @@ export default function CockpitV11() {
   }, []);
 
   const toggleSwarm = (swarmId) => {
+    sonicRef.current?.click();
+
     setActiveSwarms(prev => {
       const next = new Set(prev);
       if (swarmId === 'ALL') {
         if (next.size === 10) {
           next.clear();
+          sonicRef.current?.hover();
         } else {
           SWARM_DATA.forEach(s => next.add(s.id));
+          sonicRef.current?.levelUp();
         }
       } else if (next.has(swarmId)) {
         next.delete(swarmId);
@@ -378,6 +432,10 @@ export default function CockpitV11() {
           <StatusDot color="#00ffff" label={`${networkStatus?.availableAgents || 1000} AGENTS`} />
           <StatusDot color={MODES[processingMode]?.color || '#00ffff'} label={processingMode} />
           <StatusDot color="#ff00ff" label={`${activeSwarms.size}/10 SWARMS`} />
+          <StatusDot
+            color={river?.stabilityScore > 0.8 ? '#00ff00' : river?.stabilityScore > 0.5 ? '#ffaa00' : '#ff4444'}
+            label={`STABILITY ${Math.round((river?.stabilityScore || 1) * 100)}%`}
+          />
         </div>
         <div style={styles.time}>{new Date().toLocaleTimeString()}</div>
       </header>

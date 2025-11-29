@@ -1,0 +1,152 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Brain Network V11.5 Telemetry Schema",
+  "description": "Schema for network quality and performance telemetry",
+
+  "definitions": {
+    "voiceQuality": {
+      "type": "object",
+      "properties": {
+        "metric": { "const": "net.voice.quality" },
+        "dimensions": {
+          "type": "object",
+          "properties": {
+            "transport": { "enum": ["webtransport", "websocket", "webrtc", "tcp"] },
+            "region": { "type": "string", "pattern": "^[a-z]+-[a-z]+-[a-z0-9-]+$" },
+            "client_id": { "type": "string" },
+            "session_id": { "type": "string" }
+          },
+          "required": ["transport", "region"]
+        },
+        "values": {
+          "type": "object",
+          "properties": {
+            "rtt_p50": { "type": "number", "minimum": 0, "maximum": 10000 },
+            "rtt_p95": { "type": "number", "minimum": 0, "maximum": 10000 },
+            "rtt_p99": { "type": "number", "minimum": 0, "maximum": 10000 },
+            "jitter_ms": { "type": "number", "minimum": 0, "maximum": 1000 },
+            "packet_loss_rate": { "type": "number", "minimum": 0, "maximum": 1 },
+            "stability_score": { "type": "number", "minimum": 0, "maximum": 1 }
+          },
+          "required": ["rtt_p50", "jitter_ms", "stability_score"]
+        },
+        "flags": {
+          "type": "object",
+          "properties": {
+            "congestion_window_limited": { "type": "boolean" },
+            "pacing_active": { "type": "boolean" },
+            "fallback_triggered": { "type": "boolean" },
+            "codec": { "enum": ["opus", "pcm", "mu-law", "a-law"] }
+          }
+        },
+        "timestamp": { "type": "integer" }
+      },
+      "required": ["metric", "dimensions", "values", "timestamp"]
+    },
+
+    "brainQuery": {
+      "type": "object",
+      "properties": {
+        "metric": { "const": "brain.query" },
+        "dimensions": {
+          "type": "object",
+          "properties": {
+            "mode": { "enum": ["SIMULTANEOUS", "TOURNAMENT", "RESONANCE", "GODMODE"] },
+            "source": { "enum": ["voice", "text", "grimoire"] },
+            "user_tier": { "enum": ["observer", "awakened", "architect", "oracle"] }
+          }
+        },
+        "values": {
+          "type": "object",
+          "properties": {
+            "agents_queried": { "type": "integer", "minimum": 1, "maximum": 1007 },
+            "response_time_ms": { "type": "number" },
+            "tokens_used": { "type": "integer" },
+            "confidence_score": { "type": "number", "minimum": 0, "maximum": 1 }
+          }
+        },
+        "timestamp": { "type": "integer" }
+      },
+      "required": ["metric", "dimensions", "values", "timestamp"]
+    },
+
+    "audioPerformance": {
+      "type": "object",
+      "properties": {
+        "metric": { "const": "audio.performance" },
+        "values": {
+          "type": "object",
+          "properties": {
+            "sounds_loaded": { "type": "integer" },
+            "hydration_time_ms": { "type": "number" },
+            "buffer_memory_kb": { "type": "number" },
+            "playback_latency_ms": { "type": "number" }
+          }
+        },
+        "timestamp": { "type": "integer" }
+      }
+    },
+
+    "wasmPerformance": {
+      "type": "object",
+      "properties": {
+        "metric": { "const": "wasm.performance" },
+        "values": {
+          "type": "object",
+          "properties": {
+            "init_time_ms": { "type": "number" },
+            "prewarm_time_ms": { "type": "number" },
+            "encode_time_avg_us": { "type": "number" },
+            "memory_used_mb": { "type": "number" },
+            "fallback_to_js": { "type": "boolean" }
+          }
+        },
+        "timestamp": { "type": "integer" }
+      }
+    }
+  },
+
+  "oneOf": [
+    { "$ref": "#/definitions/voiceQuality" },
+    { "$ref": "#/definitions/brainQuery" },
+    { "$ref": "#/definitions/audioPerformance" },
+    { "$ref": "#/definitions/wasmPerformance" }
+  ],
+
+  "examples": [
+    {
+      "metric": "net.voice.quality",
+      "dimensions": {
+        "transport": "webtransport",
+        "region": "us-east-edge-1"
+      },
+      "values": {
+        "rtt_p50": 18,
+        "rtt_p99": 45,
+        "jitter_ms": 2.1,
+        "packet_loss_rate": 0.001,
+        "stability_score": 0.98
+      },
+      "flags": {
+        "congestion_window_limited": false,
+        "pacing_active": true
+      },
+      "timestamp": 1701388800000
+    },
+    {
+      "metric": "brain.query",
+      "dimensions": {
+        "mode": "GODMODE",
+        "source": "voice",
+        "user_tier": "architect"
+      },
+      "values": {
+        "agents_queried": 1007,
+        "response_time_ms": 142,
+        "tokens_used": 2500,
+        "confidence_score": 0.95
+      },
+      "timestamp": 1701388800000
+    }
+  ]
+}
