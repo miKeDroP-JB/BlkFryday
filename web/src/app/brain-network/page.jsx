@@ -2,24 +2,34 @@
 
 /**
  * ====================================================
- *  BRAIN NETWORK V11.5 - COMMAND CENTER PAGE
+ *  ORBOS - BRAIN NETWORK V11.5 COMMAND CENTER
  * ====================================================
- *  Access the 1007-brain neural supercomputer
- *  With Neon River Performance Stack
+ *  "To what do I owe the pleasure?"
+ *  "The pleasure is all mine."
  * ====================================================
  */
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
+import ORBOSBoot from '../../components/ORBOSBoot';
 import BootSequence from '../../components/BootSequence';
 import CockpitV11 from '../../components/CockpitV11';
 
 export default function BrainNetworkPage() {
+  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [isBooted, setIsBooted] = useState(false);
+
+  const handleUnlock = useCallback(() => {
+    console.log('[ORBOS] Unlocked. Welcome.');
+    setIsUnlocked(true);
+  }, []);
+
   const handleBootComplete = useCallback(({ river, metrics }) => {
-    console.log('[BrainNetwork] Boot complete:', metrics);
+    console.log('[ORBOS] Boot complete:', metrics);
+    setIsBooted(true);
 
     // Send boot telemetry
     river?.sendTelemetry('system.boot', {
-      dimensions: { page: 'brain-network' },
+      dimensions: { page: 'orbos' },
       values: {
         init_time_ms: metrics.initTime,
         wasm_ready: metrics.wasmReady,
@@ -29,6 +39,18 @@ export default function BrainNetworkPage() {
     });
   }, []);
 
+  // Phase 1: Voice Authentication
+  if (!isUnlocked) {
+    return (
+      <ORBOSBoot onUnlock={handleUnlock}>
+        <BootSequence onComplete={handleBootComplete}>
+          <CockpitV11 />
+        </BootSequence>
+      </ORBOSBoot>
+    );
+  }
+
+  // Phase 2: System Boot (after unlock)
   return (
     <BootSequence onComplete={handleBootComplete}>
       <CockpitV11 />
