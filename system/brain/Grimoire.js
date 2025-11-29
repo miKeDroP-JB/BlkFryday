@@ -535,7 +535,22 @@ class Grimoire extends EventEmitter {
     const spell = this.spells[spellId] || this.customSpells.get(spellId);
 
     if (!spell) {
-      throw new Error(`Unknown spell: ${spellId}`);
+      throw new Error(`Unknown spell: ${spellId}. Available: ${this.getAllSpellIds().join(', ')}`);
+    }
+
+    // Validate required variables
+    const missingVars = [];
+    for (const varName of (spell.variables || [])) {
+      if (variables[varName] === undefined || variables[varName] === null || variables[varName] === '') {
+        missingVars.push(varName);
+      }
+    }
+    if (missingVars.length > 0) {
+      console.warn(`[GRIMOIRE] ⚠️ Missing variables for ${spell.name}: ${missingVars.join(', ')}`);
+      // Auto-fill with placeholder instead of failing silently
+      for (const v of missingVars) {
+        variables[v] = `[${v}]`;
+      }
     }
 
     console.log(`[GRIMOIRE] ✨ Casting: ${spell.name} (${spell.glyph})`);
@@ -544,6 +559,12 @@ class Grimoire extends EventEmitter {
     let prompt = spell.prompt;
     for (const [key, value] of Object.entries(variables)) {
       prompt = prompt.replace(new RegExp(`\\{${key}\\}`, 'g'), value);
+    }
+
+    // Check for unreplaced variables (indicates a bug or typo)
+    const unreplaced = prompt.match(/\{[a-zA-Z_]+\}/g);
+    if (unreplaced) {
+      console.warn(`[GRIMOIRE] ⚠️ Unreplaced variables in prompt: ${unreplaced.join(', ')}`);
     }
 
     const casting = {

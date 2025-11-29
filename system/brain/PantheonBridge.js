@@ -249,17 +249,27 @@ const PRESET_SQUADS = {
 // ═══════════════════════════════════════════════════════════════
 
 class DivineAgent {
-  constructor(archetype) {
+  constructor(archetype, options = {}) {
     this.id = `agent-${archetype.id}-${Date.now()}`;
     this.archetype = archetype;
     this.status = 'READY';
     this.currentTask = null;
     this.taskHistory = [];
+    this.maxHistorySize = options.maxHistorySize || 100; // Prevent memory leak
     this.stats = {
       tasksCompleted: 0,
       successRate: 1.0,
       averageResponseTime: 0
     };
+  }
+
+  /**
+   * Trim history to prevent memory leak
+   */
+  trimHistory() {
+    if (this.taskHistory.length > this.maxHistorySize) {
+      this.taskHistory = this.taskHistory.slice(-this.maxHistorySize);
+    }
   }
 
   /**
@@ -293,6 +303,9 @@ class DivineAgent {
       responseTime,
       timestamp: Date.now()
     });
+
+    // Prevent memory leak
+    this.trimHistory();
 
     this.status = 'READY';
     this.currentTask = null;
@@ -466,9 +479,23 @@ class PantheonBridge extends EventEmitter {
    * Execute a swarm with multiple agents
    */
   async executeSwarm(agentIds, task, formation = 'PARALLEL') {
+    // Input validation
+    if (!Array.isArray(agentIds) || agentIds.length === 0) {
+      throw new Error('agentIds must be a non-empty array');
+    }
+    if (!task || typeof task !== 'string') {
+      throw new Error('task must be a non-empty string');
+    }
+
+    // Validate all agents exist
+    const invalidAgents = agentIds.filter(id => !this.agents.has(id));
+    if (invalidAgents.length > 0) {
+      throw new Error(`Unknown agents: ${invalidAgents.join(', ')}. Valid: ${Array.from(this.agents.keys()).join(', ')}`);
+    }
+
     const formationConfig = this.formations[formation];
     if (!formationConfig) {
-      throw new Error(`Unknown formation: ${formation}`);
+      throw new Error(`Unknown formation: ${formation}. Valid: ${Object.keys(this.formations).join(', ')}`);
     }
 
     console.log(`[PANTHEON BRIDGE] Executing ${formationConfig.icon} ${formationConfig.name}`);

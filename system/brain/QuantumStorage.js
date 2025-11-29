@@ -62,10 +62,11 @@ const STORAGE_DIMENSIONS = {
 // ═══════════════════════════════════════════════════════════════
 
 class QuantumState {
-  constructor(key, initialValue = null) {
+  constructor(key, initialValue = null, options = {}) {
     this.key = key;
     this.states = new Map(); // Multiple parallel values
     this.timeline = []; // Temporal versions
+    this.maxTimelineSize = options.maxTimelineSize || 1000; // Prevent memory leak
     this.collapsed = false;
     this.observedValue = null;
     this.metadata = {
@@ -77,6 +78,17 @@ class QuantumState {
 
     if (initialValue !== null) {
       this.superpose('primary', initialValue);
+    }
+  }
+
+  /**
+   * Trim timeline to prevent memory leak
+   */
+  trimTimeline() {
+    if (this.timeline.length > this.maxTimelineSize) {
+      // Keep most recent entries, discard oldest
+      const excess = this.timeline.length - this.maxTimelineSize;
+      this.timeline = this.timeline.slice(excess);
     }
   }
 
@@ -100,6 +112,9 @@ class QuantumState {
       value: this.hashValue(value),
       timestamp: Date.now()
     });
+
+    // Prevent memory leak
+    this.trimTimeline();
   }
 
   /**
@@ -539,20 +554,40 @@ class QuantumStorage extends EventEmitter {
   // ═══════════════════════════════════════════════════════════
 
   /**
-   * Simple set (volatile dimension)
+   * Simple set (volatile dimension) with LRU eviction
    */
   set(key, value) {
+    // LRU eviction if at capacity
+    if (this.volatile.size >= this.config.maxVolatileSize && !this.volatile.has(key)) {
+      // Evict oldest entry (first key in Map maintains insertion order)
+      const oldestKey = this.volatile.keys().next().value;
+      this.volatile.delete(oldestKey);
+      this.emit('cache:evicted', { key: oldestKey, reason: 'LRU' });
+    }
+
+    // Delete and re-add to maintain LRU order (move to end)
+    if (this.volatile.has(key)) {
+      this.volatile.delete(key);
+    }
     this.volatile.set(key, value);
     this.stats.writes++;
     return true;
   }
 
   /**
-   * Simple get (volatile dimension)
+   * Simple get (volatile dimension) - maintains LRU order
    */
   get(key) {
     this.stats.reads++;
-    return this.volatile.get(key);
+    const value = this.volatile.get(key);
+
+    // Move to end of Map to maintain LRU order (most recently accessed = last)
+    if (value !== undefined) {
+      this.volatile.delete(key);
+      this.volatile.set(key, value);
+    }
+
+    return value;
   }
 
   /**

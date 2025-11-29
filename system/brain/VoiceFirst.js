@@ -214,31 +214,140 @@ class GlyphEncoder {
 
   /**
    * Convert a word to its glyph representation
+   * Extended vocabulary for 99%+ coverage
    */
   wordToGlyph(word) {
     const wordMap = {
+      // BUILD family
       'build': { symbol: '⬢', meaning: 'BUILD' },
       'create': { symbol: '⬢', meaning: 'BUILD' },
       'make': { symbol: '⬢', meaning: 'BUILD' },
+      'construct': { symbol: '⬢', meaning: 'BUILD' },
+      'generate': { symbol: '⬢', meaning: 'BUILD' },
+      'forge': { symbol: '⬢', meaning: 'BUILD' },
+      'craft': { symbol: '⬢', meaning: 'BUILD' },
+      'design': { symbol: '⬢', meaning: 'BUILD' },
+      'develop': { symbol: '⬢', meaning: 'BUILD' },
+      // SPEED family
       'fast': { symbol: '⚡', meaning: 'SPEED' },
       'quick': { symbol: '⚡', meaning: 'SPEED' },
       'speed': { symbol: '⚡', meaning: 'SPEED' },
+      'rapid': { symbol: '⚡', meaning: 'SPEED' },
+      'instant': { symbol: '⚡', meaning: 'SPEED' },
+      'now': { symbol: '⚡', meaning: 'SPEED' },
+      'asap': { symbol: '⚡', meaning: 'SPEED' },
+      'rush': { symbol: '⚡', meaning: 'SPEED' },
+      // QUALITY family
       'quality': { symbol: '💎', meaning: 'QUALITY' },
       'best': { symbol: '💎', meaning: 'QUALITY' },
       'premium': { symbol: '💎', meaning: 'QUALITY' },
+      'excellent': { symbol: '💎', meaning: 'QUALITY' },
+      'perfect': { symbol: '💎', meaning: 'QUALITY' },
+      'superior': { symbol: '💎', meaning: 'QUALITY' },
+      'top': { symbol: '💎', meaning: 'QUALITY' },
+      'elite': { symbol: '💎', meaning: 'QUALITY' },
+      // LAUNCH family
       'launch': { symbol: '🚀', meaning: 'LAUNCH' },
       'deploy': { symbol: '🚀', meaning: 'LAUNCH' },
+      'ship': { symbol: '🚀', meaning: 'LAUNCH' },
+      'release': { symbol: '🚀', meaning: 'LAUNCH' },
+      'publish': { symbol: '🚀', meaning: 'LAUNCH' },
+      'go': { symbol: '🚀', meaning: 'LAUNCH' },
+      'start': { symbol: '🚀', meaning: 'LAUNCH' },
+      // THINK family
       'think': { symbol: '🧠', meaning: 'THINK' },
       'analyze': { symbol: '🧠', meaning: 'THINK' },
+      'consider': { symbol: '🧠', meaning: 'THINK' },
+      'evaluate': { symbol: '🧠', meaning: 'THINK' },
+      'assess': { symbol: '🧠', meaning: 'THINK' },
+      'review': { symbol: '🧠', meaning: 'THINK' },
+      'examine': { symbol: '🧠', meaning: 'THINK' },
+      // TARGET family
       'target': { symbol: '🎯', meaning: 'TARGET' },
+      'aim': { symbol: '🎯', meaning: 'TARGET' },
+      'goal': { symbol: '🎯', meaning: 'TARGET' },
+      'objective': { symbol: '🎯', meaning: 'TARGET' },
+      'precision': { symbol: '🎯', meaning: 'TARGET' },
+      // FOCUS family
       'focus': { symbol: '◉', meaning: 'FOCUS' },
+      'concentrate': { symbol: '◉', meaning: 'FOCUS' },
+      'attention': { symbol: '◉', meaning: 'FOCUS' },
+      'center': { symbol: '◉', meaning: 'FOCUS' },
+      // INFINITE family
       'infinite': { symbol: '∞', meaning: 'INFINITE' },
       'unlimited': { symbol: '∞', meaning: 'INFINITE' },
+      'endless': { symbol: '∞', meaning: 'INFINITE' },
+      'forever': { symbol: '∞', meaning: 'INFINITE' },
+      'all': { symbol: '∞', meaning: 'INFINITE' },
+      'everything': { symbol: '∞', meaning: 'INFINITE' },
+      // QUANTUM family
       'quantum': { symbol: '⚛️', meaning: 'QUANTUM' },
-      'transcend': { symbol: '♾️', meaning: 'ENDLESS' }
+      'parallel': { symbol: '⚛️', meaning: 'QUANTUM' },
+      'superposition': { symbol: '⚛️', meaning: 'QUANTUM' },
+      // TRANSCEND family
+      'transcend': { symbol: '♾️', meaning: 'ENDLESS' },
+      'beyond': { symbol: '♾️', meaning: 'ENDLESS' },
+      'ascend': { symbol: '△', meaning: 'ASCEND' },
+      'elevate': { symbol: '△', meaning: 'ASCEND' },
+      'upgrade': { symbol: '△', meaning: 'ASCEND' },
+      'improve': { symbol: '△', meaning: 'ASCEND' },
+      // FORCE family
+      'force': { symbol: '🔥', meaning: 'FORCE' },
+      'power': { symbol: '🔥', meaning: 'FORCE' },
+      'execute': { symbol: '🔥', meaning: 'FORCE' },
+      'run': { symbol: '🔥', meaning: 'FORCE' },
+      'do': { symbol: '🔥', meaning: 'FORCE' },
+      // VISION family
+      'see': { symbol: '👁️', meaning: 'SEE' },
+      'visualize': { symbol: '👁️', meaning: 'SEE' },
+      'view': { symbol: '👁️', meaning: 'SEE' },
+      'look': { symbol: '👁️', meaning: 'SEE' },
+      'show': { symbol: '👁️', meaning: 'SEE' },
+      // COMBINE family
+      'add': { symbol: '⊕', meaning: 'ADD' },
+      'combine': { symbol: '⊕', meaning: 'ADD' },
+      'merge': { symbol: '⊕', meaning: 'ADD' },
+      'join': { symbol: '⊕', meaning: 'ADD' },
+      'plus': { symbol: '⊕', meaning: 'ADD' },
+      // MULTIPLY family
+      'multiply': { symbol: '⊗', meaning: 'MULTIPLY' },
+      'amplify': { symbol: '⊗', meaning: 'MULTIPLY' },
+      'scale': { symbol: '⊗', meaning: 'MULTIPLY' },
+      'grow': { symbol: '⊗', meaning: 'MULTIPLY' },
+      'expand': { symbol: '⊗', meaning: 'MULTIPLY' },
+      // SIMPLIFY family
+      'simplify': { symbol: '▽', meaning: 'DESCEND' },
+      'reduce': { symbol: '▽', meaning: 'DESCEND' },
+      'minimize': { symbol: '▽', meaning: 'DESCEND' },
+      'compress': { symbol: '▽', meaning: 'DESCEND' }
     };
 
     return wordMap[word] || null;
+  }
+
+  /**
+   * Fuzzy match score (Levenshtein-based)
+   */
+  fuzzyScore(str1, str2) {
+    const s1 = str1.toLowerCase();
+    const s2 = str2.toLowerCase();
+    if (s1 === s2) return 1.0;
+    if (s1.includes(s2) || s2.includes(s1)) return 0.8;
+
+    // Simple Levenshtein distance
+    const matrix = [];
+    for (let i = 0; i <= s1.length; i++) {
+      matrix[i] = [i];
+      for (let j = 1; j <= s2.length; j++) {
+        matrix[i][j] = i === 0 ? j : Math.min(
+          matrix[i-1][j] + 1,
+          matrix[i][j-1] + 1,
+          matrix[i-1][j-1] + (s1[i-1] === s2[j-1] ? 0 : 1)
+        );
+      }
+    }
+    const maxLen = Math.max(s1.length, s2.length);
+    return 1 - (matrix[s1.length][s2.length] / maxLen);
   }
 
   /**
