@@ -149,10 +149,10 @@ export async function POST(request) {
 }
 
 /**
- * GET - Get voice system status
+ * GET - Get voice system status (cached for 30s)
  */
 export async function GET(request) {
-  return NextResponse.json({
+  const response = NextResponse.json({
     success: true,
     data: {
       ...voiceState,
@@ -161,6 +161,11 @@ export async function GET(request) {
       supportedCommands: Object.keys(VOICE_PATTERNS)
     }
   });
+
+  // Cache for 30 seconds to reduce redundant requests
+  response.headers.set('Cache-Control', 'public, s-maxage=30, stale-while-revalidate=60');
+
+  return response;
 }
 
 /**

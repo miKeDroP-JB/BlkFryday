@@ -50,6 +50,9 @@ export default function VoiceOrb({
   const analyserRef = useRef(null);
   const animationRef = useRef(null);
   const startTimeRef = useRef(null);
+  const debounceRef = useRef(null);
+  const retryCountRef = useRef(0);
+  const maxRetries = 3;
 
   // Initialize Web Speech API
   useEffect(() => {
@@ -74,6 +77,10 @@ export default function VoiceOrb({
       }
       if (audioContextRef.current) {
         audioContextRef.current.close();
+        audioContextRef.current = null;
+      }
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
       }
     };
   }, []);
@@ -121,10 +128,23 @@ export default function VoiceOrb({
     }
   };
 
-  // Process voice command
+  // Process voice command with debouncing
   const processVoiceCommand = async (text) => {
     if (!text.trim()) return;
 
+    // Debounce: cancel previous pending request
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+
+    // Wait 300ms before sending to avoid rapid-fire requests
+    debounceRef.current = setTimeout(async () => {
+      await executeVoiceCommand(text);
+    }, 300);
+  };
+
+  // Execute the actual voice command
+  const executeVoiceCommand = async (text) => {
     setIsProcessing(true);
     startTimeRef.current = Date.now();
 
@@ -159,21 +179,42 @@ export default function VoiceOrb({
     }
   };
 
-  // Speech error handler
+  // Speech error handler with retry logic
   const handleSpeechError = (event) => {
     console.warn('[VoiceOrb] Speech error:', event.error);
-    if (event.error !== 'no-speech') {
-      setError(event.error);
+
+    if (event.error === 'no-speech') {
+      // No speech detected - not an error, just restart
+      retryCountRef.current = 0;
+      return;
     }
+
+    if (event.error === 'network') {
+      // Network error - retry with backoff
+      if (retryCountRef.current < maxRetries) {
+        retryCountRef.current++;
+        const delay = Math.pow(2, retryCountRef.current) * 500; // 1s, 2s, 4s
+        setTimeout(() => {
+          if (isListening) {
+            try { recognitionRef.current?.start(); } catch (e) { /* ignore */ }
+          }
+        }, delay);
+        return;
+      }
+    }
+
+    setError(event.error);
   };
 
-  // Speech end handler
+  // Speech end handler with controlled restart
   const handleSpeechEnd = () => {
-    if (isListening) {
-      // Restart if still should be listening
-      try {
-        recognitionRef.current?.start();
-      } catch (e) { /* ignore */ }
+    if (isListening && retryCountRef.current < maxRetries) {
+      // Small delay before restart to prevent rapid cycling
+      setTimeout(() => {
+        try {
+          recognitionRef.current?.start();
+        } catch (e) { /* ignore */ }
+      }, 100);
     }
   };
 

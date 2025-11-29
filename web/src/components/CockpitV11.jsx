@@ -13,10 +13,22 @@
  * ====================================================
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import VoiceOrb from './VoiceOrb';
 import GrimoireUI from './GrimoireUI';
 import GamificationHUD from './GamificationHUD';
+
+// Constants
+const MAX_RESULTS = 50; // Prevent memory leak
+const KEYBOARD_SHORTCUTS = {
+  'g': 'grimoire',
+  'v': 'voice',
+  'h': 'hivemind',
+  '1': 'SIMULTANEOUS',
+  '2': 'TOURNAMENT',
+  '3': 'RESONANCE',
+  '4': 'GODMODE'
+};
 
 // ==========================================
 //  CONFIGURATION
@@ -60,8 +72,72 @@ export default function CockpitV11() {
   const [showGrimoire, setShowGrimoire] = useState(false);
   const [showQuickActions, setShowQuickActions] = useState(true);
 
+  // Loading/transition states
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [transitionText, setTransitionText] = useState('');
+
   // User ID for gamification
   const [userId] = useState('player_' + Math.random().toString(36).substr(2, 9));
+
+  // ==========================================
+  //  KEYBOARD SHORTCUTS
+  // ==========================================
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Ignore if typing in input
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+      const key = e.key.toLowerCase();
+
+      if (KEYBOARD_SHORTCUTS[key]) {
+        e.preventDefault();
+        const action = KEYBOARD_SHORTCUTS[key];
+
+        if (action === 'grimoire') {
+          setShowGrimoire(prev => !prev);
+        } else if (action === 'voice') {
+          // Toggle voice - handled by VoiceOrb
+        } else if (action === 'hivemind') {
+          toggleSwarm('ALL');
+        } else if (MODES[action]) {
+          setMode(action);
+        }
+      }
+
+      // Escape closes modals
+      if (e.key === 'Escape') {
+        setShowGrimoire(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // ==========================================
+  //  TEXT-TO-SPEECH FEEDBACK
+  // ==========================================
+
+  const speak = useCallback((text) => {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 1.1;
+      utterance.pitch = 1.0;
+      utterance.volume = 0.8;
+      window.speechSynthesis.speak(utterance);
+    }
+  }, []);
+
+  // ==========================================
+  //  TRANSITION HELPER
+  // ==========================================
+
+  const showTransition = useCallback((text, duration = 1000) => {
+    setTransitionText(text);
+    setIsTransitioning(true);
+    setTimeout(() => setIsTransitioning(false), duration);
+  }, []);
 
   // ==========================================
   //  API CALLS
@@ -80,6 +156,9 @@ export default function CockpitV11() {
   }, []);
 
   const setMode = useCallback(async (mode) => {
+    // Show transition
+    showTransition(`${MODES[mode]?.symbol || ''} ${mode} ACTIVATING...`, 800);
+
     try {
       const res = await fetch('/api/brain-network', {
         method: 'POST',
@@ -91,9 +170,13 @@ export default function CockpitV11() {
         setProcessingMode(mode);
         addResult({ type: 'mode', message: `Mode: ${mode}`, glyph: MODES[mode].symbol });
 
+        // Voice feedback
+        speak(`${mode} mode activated`);
+
         // Track for gamification
         if (mode === 'GODMODE') {
           trackEvent('GODMODE_ACTIVATED');
+          speak('God mode. All limits transcended.');
         }
       }
     } catch (err) {
@@ -232,13 +315,13 @@ export default function CockpitV11() {
   //  HELPERS
   // ==========================================
 
-  const addResult = (result) => {
+  const addResult = useCallback((result) => {
     setResults(prev => [{
       id: Date.now(),
       timestamp: new Date().toLocaleTimeString(),
       ...result
-    }, ...prev].slice(0, 20));
-  };
+    }, ...prev].slice(0, MAX_RESULTS)); // Prevent memory leak
+  }, []);
 
   const toggleSwarm = (swarmId) => {
     setActiveSwarms(prev => {
@@ -440,6 +523,20 @@ export default function CockpitV11() {
         </div>
       )}
 
+      {/* Transition Overlay */}
+      {isTransitioning && (
+        <div style={styles.transitionOverlay}>
+          <div style={styles.transitionText}>{transitionText}</div>
+        </div>
+      )}
+
+      {/* Keyboard Shortcuts Hint */}
+      <div style={styles.keyboardHint}>
+        <span>G</span> Grimoire
+        <span>H</span> Hivemind
+        <span>1-4</span> Modes
+      </div>
+
       <style jsx>{`
         @keyframes pulse {
           0%, 100% { opacity: 1; }
@@ -448,6 +545,12 @@ export default function CockpitV11() {
         @keyframes orbPulse {
           0%, 100% { box-shadow: 0 0 60px rgba(0,255,255,0.5); }
           50% { box-shadow: 0 0 100px rgba(0,255,255,0.8); }
+        }
+        @keyframes fadeInOut {
+          0% { opacity: 0; }
+          20% { opacity: 1; }
+          80% { opacity: 1; }
+          100% { opacity: 0; }
         }
       `}</style>
     </div>
@@ -646,5 +749,30 @@ const styles = {
     background: 'rgba(0,0,0,0.8)',
     display: 'flex', alignItems: 'center', justifyContent: 'center',
     zIndex: 1000
+  },
+  transitionOverlay: {
+    position: 'fixed', inset: 0,
+    background: 'rgba(0,0,0,0.9)',
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    zIndex: 2000,
+    animation: 'fadeInOut 0.8s ease-in-out'
+  },
+  transitionText: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    letterSpacing: 8,
+    color: '#00ffff',
+    textShadow: '0 0 40px rgba(0,255,255,0.8)',
+    animation: 'pulse 0.5s infinite'
+  },
+  keyboardHint: {
+    position: 'fixed',
+    bottom: 8,
+    right: 20,
+    display: 'flex',
+    gap: 12,
+    fontSize: 10,
+    color: 'rgba(0,255,255,0.4)',
+    zIndex: 10
   }
 };

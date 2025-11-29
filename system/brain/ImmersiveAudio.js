@@ -404,6 +404,7 @@ class ImmersiveAudio extends EventEmitter {
     this.currentMode = 'IDLE';
     this.eventQueue = [];
     this.audioHistory = [];
+    this.maxHistorySize = 100; // Prevent memory leak
 
     // Stats
     this.stats = {
@@ -484,6 +485,11 @@ class ImmersiveAudio extends EventEmitter {
 
     this.stats.soundsPlayed += pattern.sequence.length;
     this.audioHistory.push(playback);
+
+    // Trim history to prevent memory leak
+    if (this.audioHistory.length > this.maxHistorySize) {
+      this.audioHistory = this.audioHistory.slice(-this.maxHistorySize);
+    }
 
     this.emit('pattern:play', playback);
 
