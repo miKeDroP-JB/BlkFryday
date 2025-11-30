@@ -1,10 +1,13 @@
 {
   "name": "orb-system",
-  "version": "1.0.0",
-  "description": "THE 0RB SYSTEM - It's not a game. It's THE game.",
-  "main": "system/core/main.js",
+  "version": "11.5.0",
+  "description": "ORBOS V11.5 - THE RACE HORSE - All Systems Unified",
+  "main": "system/core/MasterBrain.js",
   "scripts": {
-    "start": "electron .",
+    "start": "node boot/MasterBoot.js",
+    "master": "node boot/MasterBoot.js",
+    "boot": "node boot/MasterBoot.js",
+    "boot:old": "node boot/init.js",
     "dev": "electron . --dev",
     "build": "electron-builder",
     "build:usb": "node scripts/build-usb.js",
@@ -12,9 +15,9 @@
     "web": "cd web && next dev",
     "web:build": "cd web && next build",
     "web:start": "cd web && next start",
-    "boot": "node boot/init.js",
     "test": "jest",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "sync": "./scripts/sync-latest.sh"
   },
   "dependencies": {
     "electron": "^28.0.0",
