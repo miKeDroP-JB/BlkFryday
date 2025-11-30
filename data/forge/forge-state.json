@@ -1,28 +1,28 @@
 {
-  "timestamp": 1764507687892,
+  "timestamp": 1764508479991,
   "stats": {
     "filesProcessed": 81,
-    "patternsExtracted": 577,
-    "atomicUnits": 10261,
-    "trainingIterations": 2000
+    "patternsExtracted": 584,
+    "atomicUnits": 10263,
+    "trainingIterations": 9
   },
   "memoryStats": {
     "positions": 369,
-    "totalItems": 223812,
-    "entanglements": 72528,
-    "globalPatterns": 223
+    "totalItems": 8376,
+    "entanglements": 816,
+    "globalPatterns": 2
   },
   "loopResults": {
-    "iterations": 2000,
-    "finalAGIScore": 52.559353683239266,
-    "totalImprovement": 2000,
+    "iterations": 9,
+    "finalAGIScore": 43.59555796225133,
+    "totalImprovement": 10,
     "averageEfficiency": null,
     "memoryStats": {
       "positions": 369,
-      "totalItems": 223812,
-      "entanglements": 72528,
-      "globalPatterns": 223
+      "totalItems": 8376,
+      "entanglements": 816,
+      "globalPatterns": 2
     },
-    "converged": false
+    "converged": true
   }
 }

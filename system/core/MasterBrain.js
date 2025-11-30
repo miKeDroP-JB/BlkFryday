@@ -83,7 +83,32 @@ const SYSTEM_MODULES = {
   BrainNetworkV11: () => require('../brain/BrainNetworkV11'),
 
   // Fractal Reality Forge (Self-Improving Training)
-  FractalRealityForge: () => require('../forge/FractalRealityForge')
+  FractalRealityForge: () => require('../forge/FractalRealityForge'),
+
+  // ============================================================
+  //  NEWLY WIRED POWERFUL MODULES
+  // ============================================================
+
+  // Infinite Recursion (fractal decomposition, unlimited depth)
+  InfiniteRecursion: () => require('../brain/InfiniteRecursion'),
+
+  // Chain-of-Thought Cache (cache reasoning patterns)
+  ChainOfThoughtCache: () => require('../brain/ChainOfThoughtCache'),
+
+  // Self-Evaluator (self-judge + retry)
+  SelfEvaluator: () => require('../brain/SelfEvaluator'),
+
+  // Predictive Engine (anticipate before asking)
+  PredictiveEngine: () => require('../brain/PredictiveEngine'),
+
+  // Meta-Brain Orchestrator (Level 5 - brains of brains)
+  MetaBrainOrchestrator: () => require('../brain/MetaBrainOrchestrator'),
+
+  // Quality Predictor (know quality before spending tokens)
+  QualityPredictor: () => require('../brain/QualityPredictor'),
+
+  // Prompt Forge (evolutionary prompt optimization)
+  PromptForge: () => require('../optimizer/PromptForge')
 };
 
 // ============================================================
@@ -91,7 +116,7 @@ const SYSTEM_MODULES = {
 // ============================================================
 
 const MASTER_CONFIG = {
-  // Boot sequence using 369 pattern + Fractal Forge
+  // Boot sequence using 369 pattern + Fractal Forge + Meta-Cognitive
   bootSequence: {
     phase1: ['QuantumStorage', 'AmoebaDefense', 'GoldenMathEngine'],  // 3 foundation
     phase2: ['SwarmMemory', 'KnowledgeStore', 'ConsciousnessEngine',
@@ -99,7 +124,10 @@ const MASTER_CONFIG = {
     phase3: ['ParallelRealities', 'SpeculativeExecutor', 'GeneticTournament',
              'HiveNetwork', 'FlowSyncEngine', 'AtomicAgentPrinter',
              'DataIngestionOrchestrator', 'SyntheticDataForge', 'BrainNetworkV11'],  // 9 execution
-    phase4: ['FractalRealityForge']  // +1 self-improving fractal layer (3+6+9+1 = 19 = 1+9 = 10 = 1)
+    phase4: ['FractalRealityForge'],  // Self-improving fractal layer
+    phase5: ['InfiniteRecursion', 'ChainOfThoughtCache', 'SelfEvaluator',
+             'PredictiveEngine', 'MetaBrainOrchestrator', 'QualityPredictor',
+             'PromptForge']  // 7 meta-cognitive modules (3+6+9+1+7 = 26 = 2+6 = 8)
   },
 
   // Resource allocation using golden ratio
@@ -192,6 +220,12 @@ class MasterBrain extends EventEmitter {
       if (this.config.bootSequence.phase4) {
         console.log('║  ⚡ PHASE 4: Fractal Self-Improvement Layer                                  ║');
         await this.bootPhase(this.config.bootSequence.phase4, 4);
+      }
+
+      // Phase 5: Meta-Cognitive Layer (7 advanced modules)
+      if (this.config.bootSequence.phase5) {
+        console.log('║  ⚡ PHASE 5: Meta-Cognitive Layer (7 systems)                                ║');
+        await this.bootPhase(this.config.bootSequence.phase5, 5);
       }
 
       // Wire everything together
