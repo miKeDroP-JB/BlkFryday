@@ -18,9 +18,13 @@
     "test": "jest",
     "lint": "eslint .",
     "sync": "./scripts/sync-latest.sh",
-    "train": "node scripts/train-forge.js",
-    "train:forge": "node scripts/train-forge.js",
-    "benchmark": "node benchmark/run.js"
+    "train": "node --max-old-space-size=4096 scripts/train-forge.js",
+    "train:forge": "node --max-old-space-size=4096 scripts/train-forge.js",
+    "train:extended": "node --max-old-space-size=8192 scripts/train-forge.js --cycles 2000",
+    "reset": "node scripts/reset-memory.js --force",
+    "reset:preview": "node scripts/reset-memory.js --dry-run",
+    "train:fresh": "npm run reset && npm run train",
+    "benchmark": "node --max-old-space-size=4096 benchmark/run.js"
   },
   "dependencies": {
     "electron": "^28.0.0",

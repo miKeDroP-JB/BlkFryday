@@ -267,6 +267,67 @@ class HoloMemoryLayer {
     return crypto.createHash('sha256').update(String(key)).digest('hex');
   }
 
+  // Prune low-value patterns to free memory
+  prune(options = {}) {
+    const {
+      maxItems = 100000,        // Max items to keep
+      minReinforced = 0,        // Min reinforcement score to keep
+      keepRatio = 0.618         // Golden ratio - keep top 61.8%
+    } = options;
+
+    const stats = this.getStats();
+    if (stats.totalItems <= maxItems) {
+      return { pruned: 0, remaining: stats.totalItems };
+    }
+
+    const targetItems = Math.floor(maxItems * keepRatio);
+    let pruned = 0;
+
+    // Collect all items with scores
+    const allItems = [];
+    for (const [pos, items] of this.memory) {
+      for (const item of items) {
+        const score = (item.metadata?.reinforced || 0) +
+                     (item.metadata?.accessCount || 0) * 0.1;
+        allItems.push({ pos, item, score });
+      }
+    }
+
+    // Sort by score (keep highest)
+    allItems.sort((a, b) => b.score - a.score);
+
+    // Keep top items
+    const keepSet = new Set(allItems.slice(0, targetItems).map(x => x.item.key));
+
+    // Remove low-value items
+    for (const [pos, items] of this.memory) {
+      const filtered = items.filter(item => keepSet.has(item.key));
+      pruned += items.length - filtered.length;
+      if (filtered.length > 0) {
+        this.memory.set(pos, filtered);
+      } else {
+        this.memory.delete(pos);
+      }
+    }
+
+    // Clean up entanglements for pruned items
+    for (const key of this.entanglement.keys()) {
+      if (!keepSet.has(key)) {
+        this.entanglement.delete(key);
+      }
+    }
+
+    return { pruned, remaining: targetItems };
+  }
+
+  // Clear all memory (full reset)
+  clear() {
+    this.memory.clear();
+    this.entanglement.clear();
+    this.globalPatterns = [];
+    return { cleared: true };
+  }
+
   // Get memory stats
   getStats() {
     let totalItems = 0;
