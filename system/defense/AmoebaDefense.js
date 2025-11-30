@@ -862,6 +862,61 @@ class AmoebaDefense extends EventEmitter {
       cell.status = 'active-hunting';
     }
   }
+
+  // ============================================================
+  //  PROTECT - Register systems under defense umbrella
+  // ============================================================
+
+  protect(systemName, system) {
+    // Create a protective cell for this system
+    const cellId = `guardian_${systemName}_${Date.now()}`;
+
+    this.cells.set(cellId, {
+      id: cellId,
+      type: 'guardian',
+      specialization: 'protector',
+      position: { x: Math.random() * 100, y: Math.random() * 100 },
+      energy: 1.0,
+      health: 1.0,
+      status: 'guarding',
+      protects: systemName,
+      created: Date.now()
+    });
+
+    // Add to membrane sections
+    this.membrane.sections.set(systemName, {
+      integrity: 1.0,
+      lastCheck: Date.now(),
+      guardianCell: cellId
+    });
+
+    this.emit('system-protected', { systemName, cellId });
+    return cellId;
+  }
+
+  // ============================================================
+  //  GET PROTECTED SYSTEMS
+  // ============================================================
+
+  getProtectedSystems() {
+    return Array.from(this.membrane.sections.keys());
+  }
+
+  // ============================================================
+  //  CHECK SYSTEM HEALTH
+  // ============================================================
+
+  checkSystemHealth(systemName) {
+    const section = this.membrane.sections.get(systemName);
+    if (!section) return null;
+
+    return {
+      systemName,
+      integrity: section.integrity,
+      lastCheck: section.lastCheck,
+      status: section.integrity > 0.7 ? 'healthy' : section.integrity > 0.3 ? 'degraded' : 'critical'
+    };
+  }
 }
 
 // ============================================================

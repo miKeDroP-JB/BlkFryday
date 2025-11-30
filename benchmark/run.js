@@ -246,10 +246,12 @@ async function generateComparisonReport(results) {
         const score1 = result1.stats.score.mean;
         const score2 = result2.stats.score.mean;
         const winner = score1 > score2 ? adapter1 : score2 > score1 ? adapter2 : 'tie';
-        const effectSize = Statistics.cohensD(
-          result1.samples.map(s => s.score).filter(s => s != null),
-          result2.samples.map(s => s.score).filter(s => s != null)
-        );
+
+        // Use std for effect size calculation since samples aren't in report
+        const std1 = result1.stats.score.std || 0.1;
+        const std2 = result2.stats.score.std || 0.1;
+        const pooledStd = Math.sqrt((std1 * std1 + std2 * std2) / 2) || 0.1;
+        const effectSize = pooledStd > 0 ? (score1 - score2) / pooledStd : 0;
 
         console.log(`  ${testId.padEnd(35)} ${winner.padEnd(10)} (d=${effectSize.toFixed(2)})`);
 

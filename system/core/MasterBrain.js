@@ -416,9 +416,15 @@ class MasterBrain extends EventEmitter {
     const defense = this.systems.AmoebaDefense;
     if (!defense || defense.placeholder) return;
 
+    // Check if protect method exists
+    if (typeof defense.protect !== 'function') {
+      console.log('[MasterBrain] AmoebaDefense.protect not available, skipping defense wiring');
+      return;
+    }
+
     // Protect all systems
     for (const [name, system] of Object.entries(this.systems)) {
-      if (system && !system.placeholder) {
+      if (system && !system.placeholder && name !== 'AmoebaDefense') {
         defense.protect(name, system);
       }
     }
