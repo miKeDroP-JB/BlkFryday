@@ -124,7 +124,20 @@ const SYSTEM_MODULES = {
   CognitiveFolding: () => require('../brain/CognitiveFolding'),
 
   // Intent Vector (pre-biasing based on user patterns)
-  IntentVector: () => require('../brain/IntentVector')
+  IntentVector: () => require('../brain/IntentVector'),
+
+  // ============================================================
+  //  SPEED & STABILITY LAYER
+  // ============================================================
+
+  // Airlock Protocol (safe file staging)
+  Airlock: () => require('../safety/Airlock'),
+
+  // Drafter-Verifier (speculative decoding for speed)
+  DrafterVerifier: () => require('../brain/DrafterVerifier'),
+
+  // Context Cache (map of territory, not full content)
+  ContextCache: () => require('../memory/ContextCache')
 };
 
 // ============================================================
@@ -144,8 +157,10 @@ const MASTER_CONFIG = {
     phase5: ['InfiniteRecursion', 'ChainOfThoughtCache', 'SelfEvaluator',
              'PredictiveEngine', 'MetaBrainOrchestrator', 'QualityPredictor',
              'PromptForge'],  // 7 meta-cognitive modules
-    phase6: ['StormBus', 'NoiseSampler', 'CognitiveFolding', 'IntentVector']
-             // 4 storm architecture modules (3+6+9+1+7+4 = 30 = 3+0 = 3 = creation)
+    phase6: ['StormBus', 'NoiseSampler', 'CognitiveFolding', 'IntentVector'],
+             // 4 storm architecture modules
+    phase7: ['Airlock', 'DrafterVerifier', 'ContextCache']
+             // 3 speed & stability modules (3+6+9+1+7+4+3 = 33 = 6 = harmony)
   },
 
   // Resource allocation using golden ratio
@@ -250,6 +265,12 @@ class MasterBrain extends EventEmitter {
       if (this.config.bootSequence.phase6) {
         console.log('║  ⚡ PHASE 6: Storm Architecture (4 systems)                                  ║');
         await this.bootPhase(this.config.bootSequence.phase6, 6);
+      }
+
+      // Phase 7: Speed & Stability (3 modules) - Completes 33-system harmony
+      if (this.config.bootSequence.phase7) {
+        console.log('║  ⚡ PHASE 7: Speed & Stability (3 systems)                                   ║');
+        await this.bootPhase(this.config.bootSequence.phase7, 7);
       }
 
       // Wire everything together
