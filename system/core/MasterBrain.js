@@ -137,7 +137,23 @@ const SYSTEM_MODULES = {
   DrafterVerifier: () => require('../brain/DrafterVerifier'),
 
   // Context Cache (map of territory, not full content)
-  ContextCache: () => require('../memory/ContextCache')
+  ContextCache: () => require('../memory/ContextCache'),
+
+  // ============================================================
+  //  OPTIMIZATION & COST LAYER (Phase 8)
+  // ============================================================
+
+  // Glyph Compressor (97% token reduction)
+  GlyphCompressor: () => require('../optimizer/GlyphCompressor'),
+
+  // Smart Model Router (90% cost savings through model tiering)
+  SmartModelRouter: () => require('../routing/SmartModelRouter'),
+
+  // Tournament Debate (100-agent hierarchical debate for 96%+ quality)
+  TournamentDebate: () => require('../brain/TournamentDebate'),
+
+  // The Pantheon (7 Avatar Agents with 180+ micro-skills each)
+  Pantheon: () => require('../agents/Pantheon')
 };
 
 // ============================================================
@@ -159,8 +175,10 @@ const MASTER_CONFIG = {
              'PromptForge'],  // 7 meta-cognitive modules
     phase6: ['StormBus', 'NoiseSampler', 'CognitiveFolding', 'IntentVector'],
              // 4 storm architecture modules
-    phase7: ['Airlock', 'DrafterVerifier', 'ContextCache']
-             // 3 speed & stability modules (3+6+9+1+7+4+3 = 33 = 6 = harmony)
+    phase7: ['Airlock', 'DrafterVerifier', 'ContextCache'],
+             // 3 speed & stability modules
+    phase8: ['GlyphCompressor', 'SmartModelRouter', 'TournamentDebate', 'Pantheon']
+             // 4 optimization & cost modules (3+6+9+1+7+4+3+4 = 37 = 10 = 1 = unity)
   },
 
   // Resource allocation using golden ratio
@@ -267,10 +285,16 @@ class MasterBrain extends EventEmitter {
         await this.bootPhase(this.config.bootSequence.phase6, 6);
       }
 
-      // Phase 7: Speed & Stability (3 modules) - Completes 33-system harmony
+      // Phase 7: Speed & Stability (3 modules)
       if (this.config.bootSequence.phase7) {
         console.log('║  ⚡ PHASE 7: Speed & Stability (3 systems)                                   ║');
         await this.bootPhase(this.config.bootSequence.phase7, 7);
+      }
+
+      // Phase 8: Optimization & Cost Layer (4 modules) - Achieves unity (37=10=1)
+      if (this.config.bootSequence.phase8) {
+        console.log('║  ⚡ PHASE 8: Optimization & Cost (4 systems)                                 ║');
+        await this.bootPhase(this.config.bootSequence.phase8, 8);
       }
 
       // Wire everything together
