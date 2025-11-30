@@ -80,7 +80,10 @@ const SYSTEM_MODULES = {
   AtomicAgentPrinter: () => require('../atomic/AtomicAgentPrinter'),
 
   // Brain
-  BrainNetworkV11: () => require('../brain/BrainNetworkV11')
+  BrainNetworkV11: () => require('../brain/BrainNetworkV11'),
+
+  // Fractal Reality Forge (Self-Improving Training)
+  FractalRealityForge: () => require('../forge/FractalRealityForge')
 };
 
 // ============================================================
@@ -88,14 +91,15 @@ const SYSTEM_MODULES = {
 // ============================================================
 
 const MASTER_CONFIG = {
-  // Boot sequence using 369 pattern
+  // Boot sequence using 369 pattern + Fractal Forge
   bootSequence: {
     phase1: ['QuantumStorage', 'AmoebaDefense', 'GoldenMathEngine'],  // 3 foundation
     phase2: ['SwarmMemory', 'KnowledgeStore', 'ConsciousnessEngine',
              'EmergentBehavior', 'TokenBudget', 'RecursiveImprover'],  // 6 intelligence
     phase3: ['ParallelRealities', 'SpeculativeExecutor', 'GeneticTournament',
              'HiveNetwork', 'FlowSyncEngine', 'AtomicAgentPrinter',
-             'DataIngestionOrchestrator', 'SyntheticDataForge', 'BrainNetworkV11']  // 9 execution
+             'DataIngestionOrchestrator', 'SyntheticDataForge', 'BrainNetworkV11'],  // 9 execution
+    phase4: ['FractalRealityForge']  // +1 self-improving fractal layer (3+6+9+1 = 19 = 1+9 = 10 = 1)
   },
 
   // Resource allocation using golden ratio
@@ -183,6 +187,12 @@ class MasterBrain extends EventEmitter {
       // Phase 3: Execution (9 systems)
       console.log('║  ⚡ PHASE 3: Execution Layer (9 systems)                                    ║');
       await this.bootPhase(this.config.bootSequence.phase3, 3);
+
+      // Phase 4: Fractal Forge (self-improving layer)
+      if (this.config.bootSequence.phase4) {
+        console.log('║  ⚡ PHASE 4: Fractal Self-Improvement Layer                                  ║');
+        await this.bootPhase(this.config.bootSequence.phase4, 4);
+      }
 
       // Wire everything together
       console.log('║                                                                              ║');

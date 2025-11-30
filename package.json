@@ -17,7 +17,10 @@
     "web:start": "cd web && next start",
     "test": "jest",
     "lint": "eslint .",
-    "sync": "./scripts/sync-latest.sh"
+    "sync": "./scripts/sync-latest.sh",
+    "train": "node scripts/train-forge.js",
+    "train:forge": "node scripts/train-forge.js",
+    "benchmark": "node benchmark/run.js"
   },
   "dependencies": {
     "electron": "^28.0.0",
