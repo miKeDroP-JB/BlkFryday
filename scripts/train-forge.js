@@ -5,17 +5,27 @@
 // ============================================================
 
 const path = require('path');
+const fs = require('fs');
 const { getFractalForge } = require('../system/forge/FractalRealityForge');
+const { getAllTrainingData, getDataStats } = require('../data/knowledge/agi-training-data');
 
 // ============================================================
 //  CONFIGURATION
 // ============================================================
 
+// Parse command line args
+const args = process.argv.slice(2);
+const cyclesArg = args.find(a => a.startsWith('--cycles='));
+const requestedCycles = cyclesArg ? parseInt(cyclesArg.split('=')[1]) : 36;
+const resumeFlag = args.includes('--resume');
+
 const CONFIG = {
-  dimensions: 369,           // Tesla's number for holo-memory
-  maxIterations: 369,        // Full training cycles
-  convergenceThreshold: 0.0001,
-  quickBurstIterations: 36   // Quick training burst
+  dimensions: 369,                    // Tesla's number for holo-memory
+  maxIterations: 369,                 // Full training cycles
+  convergenceThreshold: 0.0000001,    // Much tighter - prevents false convergence
+  quickBurstIterations: requestedCycles,
+  minIterationsBeforeConvergence: 36, // Don't even check convergence until 36 iterations
+  refinementStrength: 0.05            // 5% improvement per refinement (was 0.0006%)
 };
 
 // ============================================================
@@ -45,6 +55,21 @@ async function main() {
   const forge = getFractalForge(CONFIG);
 
   // ============================================================
+  //  PHASE 0: CHECK FOR RESUME
+  // ============================================================
+
+  if (resumeFlag) {
+    console.log('\n🔄 PHASE 0: Resuming from previous training...\n');
+    const loaded = forge.loadState();
+    if (loaded.state) {
+      console.log(`  ✅ Resumed from iteration ${forge.loopEngine.iteration}`);
+      console.log(`  ✅ Loaded ${loaded.patterns} refined patterns`);
+    } else {
+      console.log('  ⚠️  No previous state found, starting fresh');
+    }
+  }
+
+  // ============================================================
   //  PHASE 1: SEED FROM CODEBASE
   // ============================================================
 
@@ -68,8 +93,35 @@ async function main() {
 
   const syntheticData = generateSyntheticData();
   await forge.seedSynthetic(syntheticData);
-
   console.log(`  ✅ Added ${syntheticData.length} synthetic patterns`);
+
+  // ============================================================
+  //  PHASE 2.5: INJECT HIGH-VALUE AGI TRAINING DATA
+  // ============================================================
+
+  console.log('\n📚 PHASE 2.5: Injecting AGI training data...\n');
+
+  const agiData = getAllTrainingData();
+  const agiStats = getDataStats();
+
+  // Inject into forge's holo-memory
+  for (const pattern of agiData) {
+    forge.holoMemory.store(
+      pattern.id || pattern.name || `agi_${Math.random().toString(36).slice(2, 8)}`,
+      pattern,
+      { type: 'agi_knowledge', source: 'curated', priority: 'high' }
+    );
+  }
+
+  console.log(`  ✅ Injected ${agiData.length} expert-curated patterns:`);
+  console.log(`     • Reasoning chains:    ${agiStats.reasoning_chains}`);
+  console.log(`     • Knowledge graph:     ${agiStats.knowledge_graph}`);
+  console.log(`     • Cross-domain:        ${agiStats.cross_domain}`);
+  console.log(`     • Meta-learning:       ${agiStats.meta_learning}`);
+  console.log(`     • Abstract concepts:   ${agiStats.abstract_concepts}`);
+  console.log(`     • Problem solutions:   ${agiStats.problem_solutions}`);
+  console.log(`     • Cognitive primitives: ${agiStats.cognitive_primitives}`);
+  console.log(`     • Mathematical:        ${agiStats.mathematical}`);
 
   // ============================================================
   //  PHASE 3: START TRAINING LOOPS
@@ -93,8 +145,8 @@ async function main() {
   });
 
   // Run quick burst first
-  console.log('  🚀 Running quick burst (36 iterations)...\n');
-  const burstResults = await forge.quickBurst(36);
+  console.log(`  🚀 Running training burst (${CONFIG.quickBurstIterations} iterations)...\n`);
+  const burstResults = await forge.quickBurst(CONFIG.quickBurstIterations);
 
   console.log(`
   ╔═══════════════════════════════════════════════════════════════════════╗

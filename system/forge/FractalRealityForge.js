@@ -447,20 +447,30 @@ class RecursiveLoopEngine extends EventEmitter {
 
   // Refine a pattern (the core learning operation)
   refinePattern(pattern) {
-    // Apply golden ratio optimization
+    // Apply golden ratio optimization with configurable strength
     const refined = { ...pattern };
+    const strength = this.config?.refinementStrength || 0.05; // 5% default (was 0.006%)
 
     if (refined.weight) {
-      // Compound improvement using phi
-      refined.weight = refined.weight * (1 + 1/PHI/100);
+      // Compound improvement using phi-based scaling
+      refined.weight = refined.weight * (1 + strength * PHI);
+    } else {
+      refined.weight = 1 + strength;
     }
 
     if (refined.score) {
-      refined.score = Math.min(1, refined.score * (1 + 0.01));
+      // Score improvement with diminishing returns near 1.0
+      const headroom = 1 - refined.score;
+      refined.score = Math.min(1, refined.score + headroom * strength);
+    } else {
+      refined.score = 0.5 + strength;
     }
 
+    // Track reinforcement for pruning decisions
+    refined.reinforced = (refined.reinforced || 0) + 1;
     refined.refinedAt = this.iteration;
     refined.refinementCount = (refined.refinementCount || 0) + 1;
+    refined.cumulativeStrength = (refined.cumulativeStrength || 0) + strength;
 
     return refined;
   }
@@ -513,39 +523,87 @@ class RecursiveLoopEngine extends EventEmitter {
 
   // Evaluate cycle performance
   evaluateCycle(microResults, macroPatterns) {
-    const prevScore = this.metrics.agiScore[this.metrics.agiScore.length - 1] || 0;
+    const prevScore = this.metrics.agiScore[this.metrics.agiScore.length - 1] || 39.6;
 
-    // Calculate improvement
+    // Calculate improvement from actual refinements
     const refinedCount = microResults.filter(r => r.refined).length;
     const improvement = refinedCount / Math.max(1, microResults.length);
 
-    // Calculate efficiency
-    const efficiency = macroPatterns.length > 0 ?
-      (improvement * macroPatterns.length) / this.iteration :
-      improvement;
+    // Calculate cumulative strength of refinements
+    const totalStrength = microResults
+      .filter(r => r.refined)
+      .reduce((sum, r) => sum + (r.refined.cumulativeStrength || 0), 0);
 
-    // Calculate AGI adjacency score
+    // Calculate efficiency (improvements per iteration, weighted by strength)
+    const efficiency = macroPatterns.length > 0 ?
+      (improvement * macroPatterns.length * (1 + totalStrength)) / Math.max(1, this.iteration) :
+      improvement * (1 + totalStrength / 10);
+
+    // Calculate AGI adjacency score with multiple factors
     const baseScore = 39.6; // Our benchmark baseline
-    const iterationBonus = Math.log(this.iteration + 1) / Math.log(MACRO_CYCLES);
-    const patternBonus = macroPatterns.length * 0.1;
-    const agiScore = Math.min(100, baseScore + iterationBonus * 10 + patternBonus);
+    const memoryStats = this.holoMemory.getStats();
+
+    // Factor 1: Iteration progress (logarithmic growth)
+    const iterationBonus = Math.log(this.iteration + 1) / Math.log(MACRO_CYCLES) * 5;
+
+    // Factor 2: Pattern count (more patterns = more knowledge)
+    const patternBonus = Math.log(memoryStats.totalItems + 1) / Math.log(1000) * 3;
+
+    // Factor 3: Entanglement density (connections = understanding)
+    const entanglementBonus = Math.log(memoryStats.entanglements + 1) / Math.log(1000) * 2;
+
+    // Factor 4: Refinement strength accumulation
+    const strengthBonus = Math.min(5, totalStrength * 0.1);
+
+    // Factor 5: Macro pattern emergence
+    const macroBonus = macroPatterns.length * 0.2;
+
+    // Factor 6: Compounding from previous score
+    const compoundBonus = (prevScore - 39.6) * 0.01; // 1% of previous gains
+
+    const agiScore = Math.min(100,
+      baseScore +
+      iterationBonus +
+      patternBonus +
+      entanglementBonus +
+      strengthBonus +
+      macroBonus +
+      compoundBonus
+    );
 
     return {
       improvement,
       efficiency,
       agiScore,
-      delta: agiScore - prevScore
+      delta: agiScore - prevScore,
+      factors: {
+        iteration: iterationBonus,
+        patterns: patternBonus,
+        entanglement: entanglementBonus,
+        strength: strengthBonus,
+        macro: macroBonus,
+        compound: compoundBonus
+      }
     };
   }
 
   // Check if training has converged
   checkConvergence() {
-    if (this.metrics.improvements.length < 10) return false;
+    // Require minimum iterations before checking convergence
+    const minIterations = this.config?.minIterationsBeforeConvergence || 36;
+    if (this.iteration < minIterations) return false;
+    if (this.metrics.improvements.length < 20) return false;
 
-    const recent = this.metrics.improvements.slice(-10);
+    const recent = this.metrics.improvements.slice(-20);
     const variance = this.calculateVariance(recent);
 
-    return variance < this.convergenceThreshold;
+    // Also check that AGI score isn't still climbing significantly
+    const recentScores = this.metrics.agiScore.slice(-10);
+    const scoreGrowth = recentScores.length > 1 ?
+      (recentScores[recentScores.length - 1] - recentScores[0]) : 1;
+
+    // Only converge if variance is tiny AND score growth has plateaued
+    return variance < this.convergenceThreshold && scoreGrowth < 0.1;
   }
 
   calculateVariance(values) {
@@ -806,7 +864,14 @@ class FractalRealityForge extends EventEmitter {
       timestamp: Date.now(),
       stats: this.stats,
       memoryStats: this.holoMemory.getStats(),
-      loopResults: this.loopEngine.getResults()
+      loopResults: this.loopEngine.getResults(),
+      // Save training metrics for resume
+      metrics: {
+        improvements: this.loopEngine.metrics.improvements,
+        efficiency: this.loopEngine.metrics.efficiency,
+        agiScore: this.loopEngine.metrics.agiScore
+      },
+      iteration: this.loopEngine.iteration
     };
 
     fs.writeFileSync(
@@ -814,7 +879,93 @@ class FractalRealityForge extends EventEmitter {
       JSON.stringify(state, null, 2)
     );
 
+    // Also save top patterns for persistence
+    this.saveTopPatterns();
+
     return state;
+  }
+
+  // Save top refined patterns for future training
+  saveTopPatterns() {
+    const patterns = this.loopEngine.patterns || [];
+
+    // Sort by refinement count and score
+    const topPatterns = patterns
+      .filter(p => p.refinementCount > 0)
+      .sort((a, b) => (b.score || 0) - (a.score || 0))
+      .slice(0, 1000);  // Keep top 1000
+
+    if (topPatterns.length > 0) {
+      fs.writeFileSync(
+        path.join(this.dataDir, 'refined-patterns.json'),
+        JSON.stringify({
+          timestamp: Date.now(),
+          count: topPatterns.length,
+          patterns: topPatterns
+        }, null, 2)
+      );
+    }
+
+    return topPatterns.length;
+  }
+
+  // Load previous state for incremental training
+  loadState() {
+    const statePath = path.join(this.dataDir, 'forge-state.json');
+    const patternsPath = path.join(this.dataDir, 'refined-patterns.json');
+
+    let loaded = { state: false, patterns: 0 };
+
+    // Load previous state
+    if (fs.existsSync(statePath)) {
+      try {
+        const state = JSON.parse(fs.readFileSync(statePath, 'utf8'));
+
+        // Restore metrics for incremental training
+        if (state.metrics) {
+          this.loopEngine.metrics = state.metrics;
+          this.loopEngine.iteration = state.iteration || 0;
+        }
+
+        // Restore stats
+        if (state.stats) {
+          this.stats = { ...this.stats, ...state.stats };
+        }
+
+        loaded.state = true;
+        console.log(`[FractalForge] Loaded state from iteration ${state.iteration || 0}`);
+      } catch (e) {
+        console.log(`[FractalForge] Could not load state: ${e.message}`);
+      }
+    }
+
+    // Load refined patterns
+    if (fs.existsSync(patternsPath)) {
+      try {
+        const data = JSON.parse(fs.readFileSync(patternsPath, 'utf8'));
+
+        if (data.patterns && Array.isArray(data.patterns)) {
+          // Re-inject into training
+          this.loopEngine.addPatterns(data.patterns);
+
+          // Also store in holo-memory
+          for (const pattern of data.patterns) {
+            this.holoMemory.store(
+              pattern.name || `restored_${Math.random().toString(36).slice(2, 8)}`,
+              pattern,
+              { type: 'restored', source: 'previous_training' }
+            );
+          }
+
+          loaded.patterns = data.patterns.length;
+          console.log(`[FractalForge] Loaded ${data.patterns.length} refined patterns`);
+        }
+      } catch (e) {
+        console.log(`[FractalForge] Could not load patterns: ${e.message}`);
+      }
+    }
+
+    return loaded;
   }
 }
 

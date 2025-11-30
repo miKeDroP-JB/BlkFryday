@@ -20,10 +20,13 @@
     "sync": "./scripts/sync-latest.sh",
     "train": "node --max-old-space-size=4096 scripts/train-forge.js",
     "train:forge": "node --max-old-space-size=4096 scripts/train-forge.js",
-    "train:extended": "node --max-old-space-size=8192 scripts/train-forge.js --cycles 2000",
+    "train:extended": "node --max-old-space-size=8192 scripts/train-forge.js --cycles=2000",
+    "train:resume": "node --max-old-space-size=4096 scripts/train-forge.js --resume",
+    "train:deep": "node --max-old-space-size=8192 scripts/train-forge.js --cycles=369 --resume",
     "reset": "node scripts/reset-memory.js --force",
     "reset:preview": "node scripts/reset-memory.js --dry-run",
     "train:fresh": "npm run reset && npm run train",
+    "train:auto": "npm run train && npm run train:resume",
     "benchmark": "node --max-old-space-size=4096 benchmark/run.js"
   },
   "dependencies": {
