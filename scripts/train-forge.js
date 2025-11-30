@@ -9,6 +9,12 @@ const fs = require('fs');
 const { getFractalForge } = require('../system/forge/FractalRealityForge');
 const { getAllTrainingData, getDataStats } = require('../data/knowledge/agi-training-data');
 
+// Storm Architecture modules
+const { NoiseSampler } = require('../system/forge/NoiseSampler');
+const { CognitiveFolding } = require('../system/brain/CognitiveFolding');
+const { IntentVectorEngine } = require('../system/brain/IntentVector');
+const { getStormBus, STORM_EVENTS } = require('../system/core/StormBus');
+
 // ============================================================
 //  CONFIGURATION
 // ============================================================
@@ -53,6 +59,22 @@ async function main() {
 
   // Initialize forge
   const forge = getFractalForge(CONFIG);
+
+  // Initialize Storm Architecture
+  const stormBus = getStormBus();
+  const noiseSampler = new NoiseSampler({ intensity: 0.05, noiseType: 'phi' });
+  const cognitiveFolding = new CognitiveFolding();
+  const intentEngine = new IntentVectorEngine();
+
+  // Connect noise sampler to holo-memory
+  noiseSampler.connectHoloMemory(forge.holoMemory);
+
+  // Wire storm bus to forge
+  stormBus.wireComponent('forge', forge);
+  stormBus.wireComponent('noiseSampler', noiseSampler);
+  stormBus.wireComponent('cognitiveFolding', cognitiveFolding);
+
+  console.log('  ⚡ Storm Architecture initialized');
 
   // ============================================================
   //  PHASE 0: CHECK FOR RESUME

@@ -108,7 +108,23 @@ const SYSTEM_MODULES = {
   QualityPredictor: () => require('../brain/QualityPredictor'),
 
   // Prompt Forge (evolutionary prompt optimization)
-  PromptForge: () => require('../optimizer/PromptForge')
+  PromptForge: () => require('../optimizer/PromptForge'),
+
+  // ============================================================
+  //  STORM ARCHITECTURE (Event-Based Parallelism)
+  // ============================================================
+
+  // Storm Bus (neural thunderhead for parallel event processing)
+  StormBus: () => require('./StormBus'),
+
+  // Noise Sampler (self-variance training with controlled entropy)
+  NoiseSampler: () => require('../forge/NoiseSampler'),
+
+  // Cognitive Folding (speculative + grounded parallel processing)
+  CognitiveFolding: () => require('../brain/CognitiveFolding'),
+
+  // Intent Vector (pre-biasing based on user patterns)
+  IntentVector: () => require('../brain/IntentVector')
 };
 
 // ============================================================
@@ -127,7 +143,9 @@ const MASTER_CONFIG = {
     phase4: ['FractalRealityForge'],  // Self-improving fractal layer
     phase5: ['InfiniteRecursion', 'ChainOfThoughtCache', 'SelfEvaluator',
              'PredictiveEngine', 'MetaBrainOrchestrator', 'QualityPredictor',
-             'PromptForge']  // 7 meta-cognitive modules (3+6+9+1+7 = 26 = 2+6 = 8)
+             'PromptForge'],  // 7 meta-cognitive modules
+    phase6: ['StormBus', 'NoiseSampler', 'CognitiveFolding', 'IntentVector']
+             // 4 storm architecture modules (3+6+9+1+7+4 = 30 = 3+0 = 3 = creation)
   },
 
   // Resource allocation using golden ratio
@@ -226,6 +244,12 @@ class MasterBrain extends EventEmitter {
       if (this.config.bootSequence.phase5) {
         console.log('║  ⚡ PHASE 5: Meta-Cognitive Layer (7 systems)                                ║');
         await this.bootPhase(this.config.bootSequence.phase5, 5);
+      }
+
+      // Phase 6: Storm Architecture (4 parallel processing modules)
+      if (this.config.bootSequence.phase6) {
+        console.log('║  ⚡ PHASE 6: Storm Architecture (4 systems)                                  ║');
+        await this.bootPhase(this.config.bootSequence.phase6, 6);
       }
 
       // Wire everything together
