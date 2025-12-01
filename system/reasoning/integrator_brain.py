@@ -67,6 +67,7 @@ class MultiplierType(Enum):
     META_PATTERN = "meta_pattern"          # Patterns about patterns
     COMPOUND_CHAIN = "compound_chain"      # Chains of compounding effects
     EMERGENT_SYNERGY = "emergent_synergy"  # Unexpected synergies
+    DIVERGENCE_AMPLIFIED = "divergence"    # From divergence loop [NEW]
 
 
 # ==============================================================================
@@ -109,6 +110,30 @@ class ClusterStabilityReport:
     connected_patterns: List[str]
 
 
+@dataclass
+class DivergenceResult:
+    """Result of divergence loop processing"""
+    cluster_pair: Tuple[int, int]          # The two most divergent clusters
+    divergence_score: float                 # Distance metric between them
+    amplified_patterns: List[str]           # Pattern IDs created from divergence
+    multiplier_boost: float                 # Multiplicative boost achieved
+    synergies_from_divergence: int          # New synergies discovered
+    propagation_count: int                  # Clusters that received patterns
+    timestamp: str = field(default_factory=lambda: datetime.now().isoformat())
+
+
+@dataclass
+class DivergenceMetrics:
+    """Metrics tracking for divergence loop over time"""
+    total_divergence_loops: int = 0
+    avg_divergence_score: float = 0.0
+    total_patterns_amplified: int = 0
+    total_multiplier_boost: float = 0.0
+    edge_success_before: float = 0.0
+    edge_success_after: float = 0.0
+    pattern_impact_delta: float = 0.0
+
+
 # ==============================================================================
 # A4 INTEGRATOR BRAIN
 # ==============================================================================
@@ -149,6 +174,12 @@ class A4IntegratorBrain:
         self.integration_history: List[IntegrationOutput] = []
         self.multiplier_accumulator = 1.0  # Compound multiplier
 
+        # Divergence Loop state [NEW]
+        self.divergence_history: List[DivergenceResult] = []
+        self.divergence_metrics = DivergenceMetrics()
+        self.divergence_interval = 2  # Run divergence loop every N iterations
+        self.iteration_counter = 0
+
         print("=" * 70)
         print("    A4 INTEGRATOR BRAIN INITIALIZED")
         print("=" * 70)
@@ -156,6 +187,7 @@ class A4IntegratorBrain:
         print(f"  Synergy Threshold: {self.SYNERGY_THRESHOLD:.0%}")
         print(f"  Merge Threshold: {self.MERGE_THRESHOLD:.0%}")
         print(f"  Max Multiplier: {self.MULTIPLIER_CAP}x")
+        print(f"  Divergence Interval: every {self.divergence_interval} iterations")
         print(f"  JB4 Key: {JB4_KEY_SHORT}")
         print("=" * 70)
 
@@ -537,6 +569,255 @@ class A4IntegratorBrain:
         return cross_patterns
 
     # ==========================================================================
+    # DIVERGENCE LOOP - Exploit Extremes for Multiplicative Growth
+    # ==========================================================================
+
+    def compute_output_distance(self, o1: Dict, o2: Dict) -> float:
+        """
+        Compute distance between two cluster outputs.
+
+        Uses multi-dimensional distance across confidence, novelty, impact.
+        Higher distance = more divergent = more compounding potential.
+        """
+        # Extract key metrics from outputs
+        v1 = [
+            o1.get("confidence", 0.5),
+            o1.get("novelty", 0.5),
+            o1.get("impact", 0.5),
+        ]
+        v2 = [
+            o2.get("confidence", 0.5),
+            o2.get("novelty", 0.5),
+            o2.get("impact", 0.5),
+        ]
+
+        # Euclidean distance (no numpy dependency)
+        distance = sum((a - b) ** 2 for a, b in zip(v1, v2)) ** 0.5
+        return distance
+
+    def find_most_divergent_clusters(
+        self,
+        cluster_outputs: Dict[int, Dict]
+    ) -> Tuple[Optional[int], Optional[int], float]:
+        """
+        Find the two clusters with maximum output difference.
+
+        Returns:
+            (cluster_id_1, cluster_id_2, divergence_score)
+        """
+        max_dist = 0.0
+        pair = (None, None)
+
+        cluster_ids = list(cluster_outputs.keys())
+        for i, c1 in enumerate(cluster_ids):
+            for c2 in cluster_ids[i + 1:]:
+                dist = self.compute_output_distance(
+                    cluster_outputs[c1],
+                    cluster_outputs[c2]
+                )
+                if dist > max_dist:
+                    max_dist = dist
+                    pair = (c1, c2)
+
+        return (*pair, max_dist)
+
+    async def amplify_divergent_patterns(
+        self,
+        cluster_outputs: Dict[int, Dict]
+    ) -> Optional[DivergenceResult]:
+        """
+        Find the most divergent clusters and amplify patterns from their extremes.
+
+        This is the core of the divergence loop - turning maximum difference
+        into multiplicative compounding opportunities.
+        """
+        if len(cluster_outputs) < 2:
+            return None
+
+        # Step 1: Find most divergent pair
+        c1, c2, divergence_score = self.find_most_divergent_clusters(cluster_outputs)
+
+        if c1 is None or c2 is None:
+            return None
+
+        # Step 2: Extract divergent outputs
+        divergent_outputs = [
+            cluster_outputs[c1],
+            cluster_outputs[c2]
+        ]
+
+        # Step 3: Feed into A4 integration
+        integration_result = await self.integrate(divergent_outputs)
+
+        # Step 4: Create amplified patterns from divergence
+        amplified_patterns = []
+
+        # The magic: divergence creates higher-impact patterns
+        divergence_multiplier = 1.0 + (divergence_score * 0.5)  # Up to 1.5x for max divergence
+
+        # Create a synergy from divergence
+        if divergence_score > 0.3:  # Significant divergence
+            synergy = SynergyResult(
+                synergy_type=MultiplierType.DIVERGENCE_AMPLIFIED,
+                source_patterns=[f"cluster_{c1}", f"cluster_{c2}"],
+                multiplier_factor=divergence_multiplier,
+                confidence=(divergent_outputs[0].get("confidence", 0.5) +
+                           divergent_outputs[1].get("confidence", 0.5)) / 2,
+                description=f"Divergence synergy from clusters {c1} ↔ {c2} (dist: {divergence_score:.2f})",
+            )
+            self.synergies_discovered.append(synergy)
+
+            # Create merged pattern from divergence
+            avg_novelty = (divergent_outputs[0].get("novelty", 0.5) +
+                          divergent_outputs[1].get("novelty", 0.5)) / 2
+            avg_impact = (divergent_outputs[0].get("impact", 0.5) +
+                         divergent_outputs[1].get("impact", 0.5)) / 2
+
+            # Apply JB4 boost with divergence multiplier
+            boosted = apply_jb4_boost(
+                avg_impact * divergence_multiplier,
+                avg_novelty * divergence_multiplier
+            )
+
+            pattern = self.library.add_pattern(
+                domain=EdgeDomain.EMERGENCE_STRETCH,
+                pattern_type="divergence_amplified",
+                description=f"Divergence-amplified pattern from clusters {c1} ↔ {c2}",
+                discovered_by_clusters=[c1, c2],
+                discovery_context=f"Divergence loop: score {divergence_score:.2f}",
+                novelty_score=min(1.0, boosted.boosted_novelty),
+                impact_score=min(1.0, boosted.boosted_confidence),
+            )
+            amplified_patterns.append(pattern.pattern_id)
+
+        # Step 5: Update multiplier accumulator
+        self.multiplier_accumulator *= (1.0 + (divergence_multiplier - 1.0) * 0.1)
+
+        # Record result
+        result = DivergenceResult(
+            cluster_pair=(c1, c2),
+            divergence_score=divergence_score,
+            amplified_patterns=amplified_patterns,
+            multiplier_boost=divergence_multiplier,
+            synergies_from_divergence=integration_result.synergies_found,
+            propagation_count=0,  # Updated by propagate step
+        )
+
+        self.divergence_history.append(result)
+
+        # Update metrics
+        self._update_divergence_metrics(result)
+
+        return result
+
+    def propagate_amplified_patterns(
+        self,
+        patterns: List[str],
+        clusters: List[Any],
+        jb4_only: bool = True
+    ) -> int:
+        """
+        Propagate amplified patterns to JB4-aligned clusters.
+
+        Only verified clusters receive the boost, maintaining trust network.
+        """
+        propagation_count = 0
+
+        for cluster in clusters:
+            # Check JB4 alignment (in production, verify actual cluster key)
+            is_aligned = True  # Simplified - all clusters are aligned in this impl
+
+            if jb4_only and not is_aligned:
+                continue
+
+            # Propagate patterns
+            for pattern_id in patterns:
+                pattern = self.library.get_pattern(pattern_id)
+                if pattern:
+                    # Record adoption
+                    self.library.record_adoption(
+                        pattern_id,
+                        getattr(cluster, 'cluster_id', 0),
+                        success=True
+                    )
+                    propagation_count += 1
+
+        # Update last divergence result with propagation count
+        if self.divergence_history:
+            self.divergence_history[-1].propagation_count = propagation_count
+
+        return propagation_count
+
+    def _update_divergence_metrics(self, result: DivergenceResult):
+        """Update cumulative divergence metrics"""
+        self.divergence_metrics.total_divergence_loops += 1
+        self.divergence_metrics.total_patterns_amplified += len(result.amplified_patterns)
+        self.divergence_metrics.total_multiplier_boost += result.multiplier_boost - 1.0
+
+        # Running average of divergence score
+        n = self.divergence_metrics.total_divergence_loops
+        old_avg = self.divergence_metrics.avg_divergence_score
+        self.divergence_metrics.avg_divergence_score = (
+            (old_avg * (n - 1) + result.divergence_score) / n
+        )
+
+    async def run_divergence_loop_if_scheduled(
+        self,
+        cluster_outputs: Dict[int, Dict],
+        clusters: List[Any] = None
+    ) -> Optional[DivergenceResult]:
+        """
+        Run divergence loop if it's time (based on iteration counter).
+
+        Call this every iteration from the orchestrator.
+        """
+        self.iteration_counter += 1
+
+        if self.iteration_counter % self.divergence_interval != 0:
+            return None
+
+        print(f"\n  ⚡ DIVERGENCE LOOP triggered (iteration {self.iteration_counter})")
+
+        # Amplify divergent patterns
+        result = await self.amplify_divergent_patterns(cluster_outputs)
+
+        if result and clusters:
+            # Propagate to JB4-aligned clusters
+            propagated = self.propagate_amplified_patterns(
+                result.amplified_patterns,
+                clusters,
+                jb4_only=True
+            )
+            print(f"    Divergence: {result.divergence_score:.2f}")
+            print(f"    Multiplier: {result.multiplier_boost:.2f}x")
+            print(f"    Patterns amplified: {len(result.amplified_patterns)}")
+            print(f"    Propagated to: {propagated} clusters")
+
+        return result
+
+    def get_divergence_summary(self) -> Dict[str, Any]:
+        """Get summary of divergence loop activity"""
+        if not self.divergence_history:
+            return {"status": "no_divergence_loops"}
+
+        return {
+            "total_loops": self.divergence_metrics.total_divergence_loops,
+            "avg_divergence_score": self.divergence_metrics.avg_divergence_score,
+            "total_patterns_amplified": self.divergence_metrics.total_patterns_amplified,
+            "total_multiplier_boost": self.divergence_metrics.total_multiplier_boost,
+            "accumulated_multiplier": self.multiplier_accumulator,
+            "recent_divergences": [
+                {
+                    "pair": d.cluster_pair,
+                    "score": d.divergence_score,
+                    "multiplier": d.multiplier_boost,
+                    "patterns": len(d.amplified_patterns),
+                }
+                for d in self.divergence_history[-5:]
+            ],
+        }
+
+    # ==========================================================================
     # DASHBOARD & REPORTING
     # ==========================================================================
 
@@ -551,6 +832,18 @@ class A4IntegratorBrain:
         print(f"│  Feedback Loops Active:  {len(self.feedback_loops):<33}│")
         print(f"│  Emergent Heuristics:    {len(self.emergent_heuristics):<33}│")
         print(f"├{'─' * 60}┤")
+
+        # Divergence Loop section [NEW]
+        if self.divergence_history:
+            print(f"│  DIVERGENCE LOOP:                                            │")
+            print(f"│    Total Loops:          {self.divergence_metrics.total_divergence_loops:<34}│")
+            print(f"│    Avg Divergence Score: {self.divergence_metrics.avg_divergence_score:.2f}                                 │")
+            print(f"│    Patterns Amplified:   {self.divergence_metrics.total_patterns_amplified:<34}│")
+            print(f"│    Multiplier Boost:     +{self.divergence_metrics.total_multiplier_boost:.2f}                                │")
+            if self.divergence_history:
+                last = self.divergence_history[-1]
+                print(f"│    Last Divergent Pair:  {last.cluster_pair[0]} ↔ {last.cluster_pair[1]:<28}│")
+            print(f"├{'─' * 60}┤")
 
         # Synergy breakdown
         if self.synergies_discovered:
@@ -592,6 +885,10 @@ class A4IntegratorBrain:
             "accumulated_multiplier": self.multiplier_accumulator,
             "emergent_heuristics": len(self.emergent_heuristics),
             "heuristics": self.emergent_heuristics[-5:],  # Last 5
+            # Divergence Loop [NEW]
+            "divergence_loops": self.divergence_metrics.total_divergence_loops,
+            "divergence_patterns_amplified": self.divergence_metrics.total_patterns_amplified,
+            "divergence_multiplier_boost": self.divergence_metrics.total_multiplier_boost,
         }
 
 

@@ -204,6 +204,9 @@ from .integrator_brain import (
     A4IntegratorBrain,
     QuadBrainCluster,
     QuadBrainSwarm,
+    # Divergence Loop
+    DivergenceResult,
+    DivergenceMetrics,
 )
 
 __version__ = "1.0.0"
@@ -360,6 +363,9 @@ __all__ = [
     "A4IntegratorBrain",
     "QuadBrainCluster",
     "QuadBrainSwarm",
+    # Divergence Loop
+    "DivergenceResult",
+    "DivergenceMetrics",
 ]
 
 
@@ -417,6 +423,8 @@ def get_system_info():
             "Pattern merging for emergent compound patterns",
             "Meta-feedback loops for self-reinforcing growth",
             "Quad-brain architecture (A1→A2→A4→A3)",
+            "Divergence loop for exploiting cluster extremes",
+            "Divergence-amplified pattern generation",
         ]
     }
 
