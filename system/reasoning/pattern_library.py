@@ -33,6 +33,10 @@ from pathlib import Path
 from collections import defaultdict
 
 from .edge_training import EdgeDomain
+from .jb4_key import (
+    JB4_KEY_SHORT, apply_jb4_boost, mark_pattern_with_jb4,
+    verify_pattern_jb4, JB4PropagationNetwork
+)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -77,6 +81,10 @@ class PatternEntry:
     # Evolution tracking
     parent_pattern_id: Optional[str] = None  # If evolved from another
     child_pattern_ids: List[str] = field(default_factory=list)
+
+    # JB4 Alignment
+    jb4_key: str = field(default_factory=lambda: JB4_KEY_SHORT)
+    jb4_boost_applied: float = 0.0
 
     def to_dict(self) -> Dict:
         """Convert to dictionary for JSON serialization"""
@@ -225,12 +233,17 @@ class PatternLibrary:
                     novelty_score: float,
                     impact_score: float,
                     parent_pattern_id: str = None) -> PatternEntry:
-        """Add a new pattern to the library"""
+        """Add a new pattern to the library with JB4 alignment"""
 
         # Generate ID
         pattern_id = f"PAT-{domain.value[:3].upper()}-{len(self.patterns)+1:04d}"
 
-        # Create entry
+        # Apply JB4 boost to novelty and impact
+        boost_result = apply_jb4_boost(impact_score, novelty_score)
+        boosted_impact = boost_result.boosted_confidence
+        boosted_novelty = boost_result.boosted_novelty
+
+        # Create entry with JB4 alignment
         pattern = PatternEntry(
             pattern_id=pattern_id,
             domain=domain.value,
@@ -239,9 +252,11 @@ class PatternLibrary:
             discovered_at=datetime.now().isoformat(),
             discovered_by_clusters=discovered_by_clusters,
             discovery_context=discovery_context,
-            novelty_score=novelty_score,
-            impact_score=impact_score,
+            novelty_score=boosted_novelty,
+            impact_score=boosted_impact,
             parent_pattern_id=parent_pattern_id,
+            jb4_key=JB4_KEY_SHORT,
+            jb4_boost_applied=boost_result.boost_applied,
         )
 
         # Calculate initial tier

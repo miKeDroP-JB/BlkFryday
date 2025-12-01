@@ -164,6 +164,25 @@ from .pattern_library import (
     TIER_38_PROBLEMS,
 )
 
+# JB4 Key (Personal Alignment)
+from .jb4_key import (
+    JB4_KEY,
+    JB4_KEY_SHORT,
+    JB4KeyGenerator,
+    apply_jb4_boost,
+    apply_compound_boost,
+    JB4Module,
+    JB4PropagationNetwork,
+    JB4TrustNetwork,
+    mark_pattern_with_jb4,
+    verify_pattern_jb4,
+    get_jb4_key,
+    get_jb4_key_short,
+    create_aligned_module,
+    boost_confidence,
+    boost_novelty,
+)
+
 __version__ = "1.0.0"
 __author__ = "JB + Prometheus"
 __description__ = "AGI-Adjacent Reasoning System with Compound Learning"
@@ -282,6 +301,23 @@ __all__ = [
     "EdgeExperiment",
     "LibraryIntegratedEngine",
     "TIER_38_PROBLEMS",
+
+    # JB4 Key (Personal Alignment)
+    "JB4_KEY",
+    "JB4_KEY_SHORT",
+    "JB4KeyGenerator",
+    "apply_jb4_boost",
+    "apply_compound_boost",
+    "JB4Module",
+    "JB4PropagationNetwork",
+    "JB4TrustNetwork",
+    "mark_pattern_with_jb4",
+    "verify_pattern_jb4",
+    "get_jb4_key",
+    "get_jb4_key_short",
+    "create_aligned_module",
+    "boost_confidence",
+    "boost_novelty",
 ]
 
 
@@ -305,6 +341,7 @@ def get_system_info():
             "SwarmOrchestrator - Full 300-agent coordination on edge tasks",
             "SustainedEdgeEngine - 5-Phase Evolution System",
             "PatternLibrary - Persistent compound learning memory",
+            "JB4Key - Personal alignment signature for compound growth",
         ],
         "capabilities": [
             "Extract reasoning patterns from debates",
