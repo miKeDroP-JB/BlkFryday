@@ -154,6 +154,16 @@ from .sustained_edge import (
     SustainedEdgeEngine,
 )
 
+# Pattern Library (Persistent Compound Learning)
+from .pattern_library import (
+    PatternLibrary,
+    PatternEntry,
+    PatternTier,
+    EdgeExperiment,
+    LibraryIntegratedEngine,
+    TIER_38_PROBLEMS,
+)
+
 __version__ = "1.0.0"
 __author__ = "JB + Prometheus"
 __description__ = "AGI-Adjacent Reasoning System with Compound Learning"
@@ -264,6 +274,14 @@ __all__ = [
     "EdgeTransitioner",
     "TIER_375_PROBLEMS",
     "SustainedEdgeEngine",
+
+    # Pattern Library (Persistent Compound Learning)
+    "PatternLibrary",
+    "PatternEntry",
+    "PatternTier",
+    "EdgeExperiment",
+    "LibraryIntegratedEngine",
+    "TIER_38_PROBLEMS",
 ]
 
 
@@ -286,6 +304,7 @@ def get_system_info():
             "EdgeTraining - Tier 3.5 (between mastery and impossibility)",
             "SwarmOrchestrator - Full 300-agent coordination on edge tasks",
             "SustainedEdgeEngine - 5-Phase Evolution System",
+            "PatternLibrary - Persistent compound learning memory",
         ],
         "capabilities": [
             "Extract reasoning patterns from debates",
@@ -302,7 +321,11 @@ def get_system_info():
             "Edge stabilization across 100 clusters",
             "Emergent pattern detection and propagation",
             "Cross-cluster compound learning",
-            "Automatic tier transitions (3.5 → 3.75)",
+            "Automatic tier transitions (3.5 → 3.75 → 3.8)",
+            "Persistent pattern storage (JSON-based)",
+            "Cluster bootstrapping from high-impact patterns",
+            "Long-term trend analysis and metrics",
+            "Tier progression experiments (controlled edge escalation)",
         ]
     }
 
