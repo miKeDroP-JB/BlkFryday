@@ -209,6 +209,20 @@ from .integrator_brain import (
     DivergenceMetrics,
 )
 
+# Quantum Fractal Engine (Hardware-Accelerated Pattern Compounding)
+from .quantum_fractal import (
+    FractalLevel,
+    GlyphType,
+    QuantumState,
+    EntanglementLink,
+    AtomicGlyph,
+    ClusterPattern,
+    MetaPattern,
+    QuantumInterferenceEngine,
+    EntanglementManager,
+    QuantumFractalEngine,
+)
+
 __version__ = "1.0.0"
 __author__ = "JB + Prometheus"
 __description__ = "AGI-Adjacent Reasoning System with Compound Learning"
@@ -366,6 +380,18 @@ __all__ = [
     # Divergence Loop
     "DivergenceResult",
     "DivergenceMetrics",
+
+    # Quantum Fractal Engine
+    "FractalLevel",
+    "GlyphType",
+    "QuantumState",
+    "EntanglementLink",
+    "AtomicGlyph",
+    "ClusterPattern",
+    "MetaPattern",
+    "QuantumInterferenceEngine",
+    "EntanglementManager",
+    "QuantumFractalEngine",
 ]
 
 
@@ -394,6 +420,9 @@ def get_system_info():
             "Tier4LiteExperiment - Controlled experiments at impossibility boundary",
             "A4IntegratorBrain - Fourth brain for multiplicative compounding",
             "QuadBrainSwarm - 300-agent swarm with A1→A2→A4→A3 architecture",
+            "QuantumFractalEngine - Hardware-accelerated fractal pattern compounding",
+            "QuantumInterferenceEngine - Superposition collapse for pattern discovery",
+            "EntanglementManager - Quantum-inspired cross-cluster correlations",
         ],
         "capabilities": [
             "Extract reasoning patterns from debates",
@@ -425,6 +454,11 @@ def get_system_info():
             "Quad-brain architecture (A1→A2→A4→A3)",
             "Divergence loop for exploiting cluster extremes",
             "Divergence-amplified pattern generation",
+            "Fractal pattern hierarchy (Atomic → Cluster → Meta)",
+            "Quantum-inspired superposition for multi-state exploration",
+            "Entanglement correlations between divergent clusters",
+            "Interference engine for pattern amplification/cancellation",
+            "Superposition collapse to high-impact emergent patterns",
         ]
     }
 
