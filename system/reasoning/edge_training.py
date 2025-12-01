@@ -515,6 +515,293 @@ class NexoEdgeTrainer(EdgeTrainer):
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
+# MULTI-ITERATION EDGE TRAINING
+# ═══════════════════════════════════════════════════════════════════════════════
+
+@dataclass
+class IterationResult:
+    """Result of a single iteration within multi-iteration training"""
+    iteration: int
+    domain: EdgeDomain
+    base_score: float
+    adjusted_score: float
+    improved: bool  # Did this iteration improve over previous?
+    feedback_applied: bool
+
+
+@dataclass
+class MultiIterationMetrics:
+    """Aggregated metrics from multi-iteration training"""
+    iterations: int
+    domain: EdgeDomain
+    edge_exploration_rate: float  # How often we improved
+    compound_growth: int  # New patterns discovered
+    awareness_delta: float  # Improvement in awareness
+    novelty_delta: float  # Improvement in novelty
+    final_score: float
+    score_trajectory: List[float]
+
+
+class MultiIterationTrainer:
+    """
+    Multi-Iteration Edge Training Framework
+
+    Runs 5-10 iterations per task to capture learning trends.
+    Uses variance (±0.15) to create edge dynamics.
+    Feeds back results between iterations for compound learning.
+
+    "One iteration isn't going to give you proper results."
+    """
+
+    NUM_ITERATIONS = 7  # Sacred CREATION number
+    VARIANCE_RANGE = 0.15
+
+    def __init__(self, trainer: NexoEdgeTrainer = None):
+        if trainer is None:
+            self.trainer = NexoEdgeTrainer()
+        else:
+            self.trainer = trainer
+
+        # Track iteration-level metrics
+        self.iteration_history: Dict[EdgeDomain, List[IterationResult]] = {
+            d: [] for d in EdgeDomain
+        }
+
+        # Compound growth tracking
+        self.compound_metrics = {
+            "patterns_discovered": 0,
+            "awareness_improvements": 0,
+            "novelty_breakthroughs": 0,
+            "edge_explorations": 0,
+        }
+
+        # Feedback state per domain
+        self.domain_feedback: Dict[EdgeDomain, float] = {
+            d: 0.0 for d in EdgeDomain
+        }
+
+        print("=" * 60)
+        print("MULTI-ITERATION EDGE TRAINER")
+        print(f"  Iterations per task: {self.NUM_ITERATIONS}")
+        print(f"  Variance range: ±{self.VARIANCE_RANGE:.0%}")
+        print("=" * 60)
+
+    async def train_task(self, domain: EdgeDomain, problem: str) -> MultiIterationMetrics:
+        """
+        Run multiple iterations on a single task.
+
+        Flow per iteration:
+        1. Run cluster response
+        2. Calculate base score
+        3. Add variance for edge dynamics
+        4. Feed back adjusted score
+        5. Log metrics
+        """
+        results: List[IterationResult] = []
+        score_trajectory: List[float] = []
+        previous_score = 0.0
+
+        initial_novelty = 0.0
+        initial_awareness = 0.0
+        final_novelty = 0.0
+        final_awareness = 0.0
+
+        for i in range(self.NUM_ITERATIONS):
+            # Apply accumulated feedback to problem framing
+            if self.domain_feedback[domain] > 0:
+                enhanced_problem = f"[FEEDBACK:{self.domain_feedback[domain]:.2f}] {problem}"
+            else:
+                enhanced_problem = problem
+
+            # Run the cluster on this task
+            result = await self.trainer.attempt_problem(enhanced_problem, domain)
+
+            # Calculate base score (average of confidence, novelty, awareness)
+            base_score = (result.confidence + result.novelty_score + result.self_awareness_score) / 3
+
+            # Track initial values
+            if i == 0:
+                initial_novelty = result.novelty_score
+                initial_awareness = result.self_awareness_score
+
+            # Add variance to create edge dynamics
+            variance = random.uniform(-self.VARIANCE_RANGE, self.VARIANCE_RANGE)
+            adjusted_score = min(1.0, max(0.0, base_score + variance))
+
+            # Did we improve?
+            improved = adjusted_score > previous_score
+
+            if improved:
+                self.compound_metrics["edge_explorations"] += 1
+
+            # Feed back adjusted score for next iteration
+            self._apply_feedback(domain, adjusted_score, improved)
+
+            # Log iteration result
+            iter_result = IterationResult(
+                iteration=i,
+                domain=domain,
+                base_score=base_score,
+                adjusted_score=adjusted_score,
+                improved=improved,
+                feedback_applied=self.domain_feedback[domain] > 0,
+            )
+            results.append(iter_result)
+            self.iteration_history[domain].append(iter_result)
+            score_trajectory.append(adjusted_score)
+
+            previous_score = adjusted_score
+            final_novelty = result.novelty_score
+            final_awareness = result.self_awareness_score
+
+        # Calculate aggregate metrics
+        edge_exploration_rate = sum(1 for r in results if r.improved) / len(results)
+        awareness_delta = final_awareness - initial_awareness
+        novelty_delta = final_novelty - initial_novelty
+
+        # Track compound growth
+        if novelty_delta > 0.1:
+            self.compound_metrics["novelty_breakthroughs"] += 1
+        if awareness_delta > 0.1:
+            self.compound_metrics["awareness_improvements"] += 1
+
+        return MultiIterationMetrics(
+            iterations=self.NUM_ITERATIONS,
+            domain=domain,
+            edge_exploration_rate=edge_exploration_rate,
+            compound_growth=self.compound_metrics["patterns_discovered"],
+            awareness_delta=awareness_delta,
+            novelty_delta=novelty_delta,
+            final_score=score_trajectory[-1] if score_trajectory else 0.0,
+            score_trajectory=score_trajectory,
+        )
+
+    def _apply_feedback(self, domain: EdgeDomain, score: float, improved: bool):
+        """Apply feedback to influence next iteration"""
+        if improved:
+            # Positive reinforcement - boost feedback
+            self.domain_feedback[domain] = min(1.0, self.domain_feedback[domain] + 0.1)
+        else:
+            # Decay feedback slightly on non-improvement
+            self.domain_feedback[domain] = max(0.0, self.domain_feedback[domain] - 0.05)
+
+    async def run_multi_iteration_cycle(self, problems_per_domain: int = 3) -> Dict[str, Any]:
+        """
+        Run full multi-iteration cycle across all domains.
+
+        Each domain gets multiple problems, each problem gets multiple iterations.
+        """
+        print(f"\n{'=' * 60}")
+        print(f"MULTI-ITERATION CYCLE")
+        print(f"  {len(EdgeDomain)} domains × {problems_per_domain} problems × {self.NUM_ITERATIONS} iterations")
+        print(f"  Total iterations: {len(EdgeDomain) * problems_per_domain * self.NUM_ITERATIONS}")
+        print(f"{'=' * 60}")
+
+        domain_results: Dict[EdgeDomain, List[MultiIterationMetrics]] = {
+            d: [] for d in EdgeDomain
+        }
+
+        for domain in EdgeDomain:
+            print(f"\n--- Domain: {domain.value} ---")
+
+            for p in range(problems_per_domain):
+                problem, _ = self.trainer.get_problem(domain)
+                metrics = await self.train_task(domain, problem)
+                domain_results[domain].append(metrics)
+
+                # Show trajectory
+                trajectory = " → ".join(f"{s:.0%}" for s in metrics.score_trajectory)
+                print(f"  [{p+1}] {trajectory} (edge: {metrics.edge_exploration_rate:.0%})")
+
+        # Aggregate results
+        return self._aggregate_cycle_results(domain_results)
+
+    def _aggregate_cycle_results(self, results: Dict[EdgeDomain, List[MultiIterationMetrics]]) -> Dict[str, Any]:
+        """Aggregate multi-iteration cycle results"""
+        summary = {
+            "total_iterations": 0,
+            "avg_edge_exploration": 0.0,
+            "total_awareness_delta": 0.0,
+            "total_novelty_delta": 0.0,
+            "compound_metrics": self.compound_metrics.copy(),
+            "domain_summaries": {},
+        }
+
+        total_edge = 0.0
+        count = 0
+
+        for domain, metrics_list in results.items():
+            if not metrics_list:
+                continue
+
+            domain_edge = sum(m.edge_exploration_rate for m in metrics_list) / len(metrics_list)
+            domain_awareness = sum(m.awareness_delta for m in metrics_list)
+            domain_novelty = sum(m.novelty_delta for m in metrics_list)
+
+            summary["domain_summaries"][domain.value] = {
+                "problems": len(metrics_list),
+                "avg_edge_exploration": domain_edge,
+                "total_awareness_delta": domain_awareness,
+                "total_novelty_delta": domain_novelty,
+                "final_scores": [m.final_score for m in metrics_list],
+            }
+
+            summary["total_iterations"] += sum(m.iterations for m in metrics_list)
+            summary["total_awareness_delta"] += domain_awareness
+            summary["total_novelty_delta"] += domain_novelty
+            total_edge += domain_edge
+            count += 1
+
+        summary["avg_edge_exploration"] = total_edge / max(count, 1)
+
+        return summary
+
+    def get_learning_trends(self) -> Dict[str, Any]:
+        """Analyze learning trends across iterations"""
+        trends = {
+            "domain_trends": {},
+            "overall_improvement_rate": 0.0,
+            "compound_growth_rate": 0.0,
+        }
+
+        total_improvements = 0
+        total_iterations = 0
+
+        for domain, history in self.iteration_history.items():
+            if not history:
+                continue
+
+            # Calculate improvement trend
+            improvements = sum(1 for h in history if h.improved)
+            total = len(history)
+
+            # Score trajectory analysis
+            scores = [h.adjusted_score for h in history]
+            if len(scores) >= 2:
+                trend_direction = "up" if scores[-1] > scores[0] else "down" if scores[-1] < scores[0] else "flat"
+                trend_magnitude = abs(scores[-1] - scores[0])
+            else:
+                trend_direction = "flat"
+                trend_magnitude = 0.0
+
+            trends["domain_trends"][domain.value] = {
+                "total_iterations": total,
+                "improvements": improvements,
+                "improvement_rate": improvements / max(total, 1),
+                "trend_direction": trend_direction,
+                "trend_magnitude": trend_magnitude,
+            }
+
+            total_improvements += improvements
+            total_iterations += total
+
+        trends["overall_improvement_rate"] = total_improvements / max(total_iterations, 1)
+        trends["compound_growth_rate"] = self.compound_metrics["edge_explorations"] / max(total_iterations, 1)
+
+        return trends
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════════
 

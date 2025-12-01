@@ -126,6 +126,9 @@ from .edge_training import (
     NexoEdgeTrainer,
     EdgeDomain,
     EdgeTrainingResult,
+    MultiIterationTrainer,
+    MultiIterationMetrics,
+    IterationResult,
 )
 
 __version__ = "1.0.0"
@@ -219,6 +222,9 @@ __all__ = [
     "NexoEdgeTrainer",
     "EdgeDomain",
     "EdgeTrainingResult",
+    "MultiIterationTrainer",
+    "MultiIterationMetrics",
+    "IterationResult",
 ]
 
 
