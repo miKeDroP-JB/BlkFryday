@@ -11,6 +11,7 @@
 ║    - OrbCore: Integration layer connecting all systems                         ║
 ║    - EnhancedTournament: Tournament brain with reasoning extraction            ║
 ║    - AGICompoundLoop: Recursive self-improvement engine                        ║
+║    - ConsciousnessTraining: 3 I's foundation (Instinct, Intellect, Intuition)  ║
 ║                                                                                 ║
 ║  Created: December 1, 2025                                                     ║
 ║  Architect: JB (The Pattern Reader)                                            ║
@@ -81,6 +82,20 @@ from .launch_reasoning_engine import (
     CONFIG,
 )
 
+# Consciousness Training (3 I's)
+from .consciousness_training import (
+    SacredNumbers,
+    ConsciousnessType,
+    InstinctBrain,
+    IntellectBrain,
+    IntuitionBrain,
+    UnifiedConsciousness,
+    ParallelQuestioningNetwork,
+    ConsciousnessTournament,
+    ThoughtPacket,
+    TrainingAgent,
+)
+
 __version__ = "1.0.0"
 __author__ = "JB + Prometheus"
 __description__ = "AGI-Adjacent Reasoning System with Compound Learning"
@@ -136,6 +151,18 @@ __all__ = [
     "full_run",
     "custom_run",
     "CONFIG",
+
+    # Consciousness Training
+    "SacredNumbers",
+    "ConsciousnessType",
+    "InstinctBrain",
+    "IntellectBrain",
+    "IntuitionBrain",
+    "UnifiedConsciousness",
+    "ParallelQuestioningNetwork",
+    "ConsciousnessTournament",
+    "ThoughtPacket",
+    "TrainingAgent",
 ]
 
 
@@ -152,6 +179,7 @@ def get_system_info():
             "OrbCore - Integration layer",
             "EnhancedTournament - Reasoning-aware debates",
             "AGICompoundLoop - Recursive self-improvement",
+            "ConsciousnessTraining - 3 I's (Instinct, Intellect, Intuition)",
         ],
         "capabilities": [
             "Extract reasoning patterns from debates",
