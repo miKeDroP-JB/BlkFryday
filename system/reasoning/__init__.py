@@ -136,6 +136,24 @@ from .edge_training import (
     TIER_35_HARD_PROBLEMS,
 )
 
+# Sustained Edge Growth (5-Phase Evolution)
+from .sustained_edge import (
+    # Phase 1: Edge Stabilization
+    EdgeStabilizer,
+    ClusterHealth,
+    # Phase 3: Emergent Pattern Analysis
+    EmergentPatternAnalyzer,
+    EmergentPattern,
+    # Phase 4: Cross-Cluster Feedback
+    CrossClusterFeedback,
+    PatternPropagation,
+    # Phase 5: Edge-to-Higher Transition
+    EdgeTransitioner,
+    TIER_375_PROBLEMS,
+    # Unified Engine
+    SustainedEdgeEngine,
+)
+
 __version__ = "1.0.0"
 __author__ = "JB + Prometheus"
 __description__ = "AGI-Adjacent Reasoning System with Compound Learning"
@@ -235,6 +253,17 @@ __all__ = [
     "SwarmMetrics",
     "TIER_35_PROBLEMS",
     "TIER_35_HARD_PROBLEMS",
+
+    # Sustained Edge Growth (5-Phase Evolution)
+    "EdgeStabilizer",
+    "ClusterHealth",
+    "EmergentPatternAnalyzer",
+    "EmergentPattern",
+    "CrossClusterFeedback",
+    "PatternPropagation",
+    "EdgeTransitioner",
+    "TIER_375_PROBLEMS",
+    "SustainedEdgeEngine",
 ]
 
 
@@ -256,6 +285,7 @@ def get_system_info():
             "NexoCore - 300-agent swarm with triangle clusters (△○)",
             "EdgeTraining - Tier 3.5 (between mastery and impossibility)",
             "SwarmOrchestrator - Full 300-agent coordination on edge tasks",
+            "SustainedEdgeEngine - 5-Phase Evolution System",
         ],
         "capabilities": [
             "Extract reasoning patterns from debates",
@@ -269,6 +299,10 @@ def get_system_info():
             "Parallel questioning across agent clusters",
             "Full swarm orchestration with real-time metrics",
             "Dynamic feedback loops across iterations",
+            "Edge stabilization across 100 clusters",
+            "Emergent pattern detection and propagation",
+            "Cross-cluster compound learning",
+            "Automatic tier transitions (3.5 → 3.75)",
         ]
     }
 
