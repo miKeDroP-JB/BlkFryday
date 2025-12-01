@@ -120,6 +120,14 @@ from .nexo_core import (
     ParallelQuestionProtocol,
 )
 
+# Edge Training (Tier 3.5)
+from .edge_training import (
+    EdgeTrainer,
+    NexoEdgeTrainer,
+    EdgeDomain,
+    EdgeTrainingResult,
+)
+
 __version__ = "1.0.0"
 __author__ = "JB + Prometheus"
 __description__ = "AGI-Adjacent Reasoning System with Compound Learning"
@@ -205,6 +213,12 @@ __all__ = [
     "AgentState",
     "ClusterTier",
     "ParallelQuestionProtocol",
+
+    # Edge Training (Tier 3.5)
+    "EdgeTrainer",
+    "NexoEdgeTrainer",
+    "EdgeDomain",
+    "EdgeTrainingResult",
 ]
 
 
@@ -224,6 +238,7 @@ def get_system_info():
             "ConsciousnessTraining - 3 I's (Instinct, Intellect, Intuition)",
             "SteelTraining - Training at the edge of capability",
             "NexoCore - 300-agent swarm with triangle clusters (△○)",
+            "EdgeTraining - Tier 3.5 (between mastery and impossibility)",
         ],
         "capabilities": [
             "Extract reasoning patterns from debates",
