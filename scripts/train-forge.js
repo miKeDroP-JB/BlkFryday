@@ -23,7 +23,12 @@ const { getStormBus, STORM_EVENTS } = require('../system/core/StormBus');
 const args = process.argv.slice(2);
 const cyclesArg = args.find(a => a.startsWith('--cycles='));
 const requestedCycles = cyclesArg ? parseInt(cyclesArg.split('=')[1]) : 36;
-const resumeFlag = args.includes('--resume');
+const freshFlag = args.includes('--fresh');  // Only start fresh if explicitly requested
+const statePath = path.join(__dirname, '../data/forge/forge-state.json');
+
+// Auto-detect if we should resume (default behavior now)
+const hasExistingState = fs.existsSync(statePath) && fs.statSync(statePath).size > 100;
+const resumeFlag = hasExistingState && !freshFlag;
 
 const CONFIG = {
   dimensions: 369,                    // Tesla's number for holo-memory
@@ -77,73 +82,93 @@ async function main() {
   console.log('  ⚡ Storm Architecture initialized');
 
   // ============================================================
-  //  PHASE 0: CHECK FOR RESUME
+  //  PHASE 0: AUTO-RESUME (Default behavior)
   // ============================================================
+
+  let skipSeeding = false;
 
   if (resumeFlag) {
     console.log('\n🔄 PHASE 0: Resuming from previous training...\n');
     const loaded = forge.loadState();
     if (loaded.state) {
+      const memStats = forge.holoMemory.getStats();
       console.log(`  ✅ Resumed from iteration ${forge.loopEngine.iteration}`);
-      console.log(`  ✅ Loaded ${loaded.patterns} refined patterns`);
+      console.log(`  ✅ AGI Score: ${forge.loopEngine.metrics.agiScore.slice(-1)[0]?.toFixed(2) || 'N/A'}`);
+      console.log(`  ✅ Memory Positions: ${memStats.positions}`);
+      console.log(`  ✅ Memory Items: ${memStats.totalItems}`);
+      console.log(`  ✅ Entanglements: ${memStats.entanglements}`);
+
+      // Skip seeding if we have substantial memory already
+      if (forge.holoMemory && forge.holoMemory.memory && forge.holoMemory.memory.size > 100) {
+        skipSeeding = true;
+        console.log(`  ✅ Skipping re-seed (${forge.holoMemory.memory.size} positions in memory)`);
+      }
     } else {
       console.log('  ⚠️  No previous state found, starting fresh');
     }
+  } else if (freshFlag) {
+    console.log('\n🆕 PHASE 0: Starting fresh (--fresh flag detected)...\n');
+  } else {
+    console.log('\n🆕 PHASE 0: No previous state found, starting fresh...\n');
   }
 
   // ============================================================
-  //  PHASE 1: SEED FROM CODEBASE
+  //  PHASE 1: SEED FROM CODEBASE (Skip if resuming with data)
   // ============================================================
 
-  console.log('\n📡 PHASE 1: Seeding from codebase...\n');
+  if (!skipSeeding) {
+    console.log('\n📡 PHASE 1: Seeding from codebase...\n');
 
-  const codebaseDir = path.join(__dirname, '../system');
-  const seedResult = await forge.seedFromCodebase(codebaseDir);
+    const codebaseDir = path.join(__dirname, '../system');
+    const seedResult = await forge.seedFromCodebase(codebaseDir);
 
-  console.log(`
+    console.log(`
   ✅ Seeding Complete:
      • Files processed: ${seedResult.files}
      • Patterns extracted: ${seedResult.patterns}
      • Atomic units: ${seedResult.atoms}
   `);
 
-  // ============================================================
-  //  PHASE 2: ADD SYNTHETIC EDGE CASES
-  // ============================================================
+    // ============================================================
+    //  PHASE 2: ADD SYNTHETIC EDGE CASES
+    // ============================================================
 
-  console.log('\n🧬 PHASE 2: Adding synthetic data...\n');
+    console.log('\n🧬 PHASE 2: Adding synthetic data...\n');
 
-  const syntheticData = generateSyntheticData();
-  await forge.seedSynthetic(syntheticData);
-  console.log(`  ✅ Added ${syntheticData.length} synthetic patterns`);
+    const syntheticData = generateSyntheticData();
+    await forge.seedSynthetic(syntheticData);
+    console.log(`  ✅ Added ${syntheticData.length} synthetic patterns`);
 
-  // ============================================================
-  //  PHASE 2.5: INJECT HIGH-VALUE AGI TRAINING DATA
-  // ============================================================
+    // ============================================================
+    //  PHASE 2.5: INJECT HIGH-VALUE AGI TRAINING DATA
+    // ============================================================
 
-  console.log('\n📚 PHASE 2.5: Injecting AGI training data...\n');
+    console.log('\n📚 PHASE 2.5: Injecting AGI training data...\n');
 
-  const agiData = getAllTrainingData();
-  const agiStats = getDataStats();
+    const agiData = getAllTrainingData();
+    const agiStats = getDataStats();
 
-  // Inject into forge's holo-memory
-  for (const pattern of agiData) {
-    forge.holoMemory.store(
-      pattern.id || pattern.name || `agi_${Math.random().toString(36).slice(2, 8)}`,
-      pattern,
-      { type: 'agi_knowledge', source: 'curated', priority: 'high' }
-    );
+    // Inject into forge's holo-memory
+    for (const pattern of agiData) {
+      forge.holoMemory.store(
+        pattern.id || pattern.name || `agi_${Math.random().toString(36).slice(2, 8)}`,
+        pattern,
+        { type: 'agi_knowledge', source: 'curated', priority: 'high' }
+      );
+    }
+
+    console.log(`  ✅ Injected ${agiData.length} expert-curated patterns:`);
+    console.log(`     • Reasoning chains:    ${agiStats.reasoning_chains}`);
+    console.log(`     • Knowledge graph:     ${agiStats.knowledge_graph}`);
+    console.log(`     • Cross-domain:        ${agiStats.cross_domain}`);
+    console.log(`     • Meta-learning:       ${agiStats.meta_learning}`);
+    console.log(`     • Abstract concepts:   ${agiStats.abstract_concepts}`);
+    console.log(`     • Problem solutions:   ${agiStats.problem_solutions}`);
+    console.log(`     • Cognitive primitives: ${agiStats.cognitive_primitives}`);
+    console.log(`     • Mathematical:        ${agiStats.mathematical}`);
+  } else {
+    console.log('\n⏭️  PHASE 1-2.5: Skipped (using cached memory)\n');
   }
-
-  console.log(`  ✅ Injected ${agiData.length} expert-curated patterns:`);
-  console.log(`     • Reasoning chains:    ${agiStats.reasoning_chains}`);
-  console.log(`     • Knowledge graph:     ${agiStats.knowledge_graph}`);
-  console.log(`     • Cross-domain:        ${agiStats.cross_domain}`);
-  console.log(`     • Meta-learning:       ${agiStats.meta_learning}`);
-  console.log(`     • Abstract concepts:   ${agiStats.abstract_concepts}`);
-  console.log(`     • Problem solutions:   ${agiStats.problem_solutions}`);
-  console.log(`     • Cognitive primitives: ${agiStats.cognitive_primitives}`);
-  console.log(`     • Mathematical:        ${agiStats.mathematical}`);
 
   // ============================================================
   //  PHASE 3: START TRAINING LOOPS

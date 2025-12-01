@@ -1,16 +1,16 @@
 {
-  "timestamp": 1764560846776,
+  "timestamp": 1764568506464,
   "stats": {
-    "filesProcessed": 92,
-    "patternsExtracted": 688,
-    "atomicUnits": 11759,
+    "filesProcessed": 276,
+    "patternsExtracted": 2064,
+    "atomicUnits": 35302,
     "trainingIterations": 128
   },
   "memoryStats": {
-    "positions": 369,
-    "totalItems": 23172,
-    "entanglements": 5227,
-    "globalPatterns": 15
+    "positions": 367,
+    "totalItems": 147840,
+    "entanglements": 586,
+    "globalPatterns": 0
   },
   "loopResults": {
     "iterations": 128,
@@ -18,10 +18,10 @@
     "totalImprovement": 129,
     "averageEfficiency": 0.1396342004592999,
     "memoryStats": {
-      "positions": 369,
-      "totalItems": 23172,
-      "entanglements": 5227,
-      "globalPatterns": 15
+      "positions": 367,
+      "totalItems": 147840,
+      "entanglements": 586,
+      "globalPatterns": 0
     },
     "converged": true
   },

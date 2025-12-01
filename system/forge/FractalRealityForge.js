@@ -342,6 +342,59 @@ class HoloMemoryLayer {
       globalPatterns: this.globalPatterns.length
     };
   }
+
+  // Serialize memory state for persistence
+  serialize() {
+    const memoryArray = [];
+    for (const [pos, items] of this.memory) {
+      memoryArray.push({ pos, items });
+    }
+
+    const entanglementArray = [];
+    for (const [key, set] of this.entanglement) {
+      entanglementArray.push({ key, links: Array.from(set) });
+    }
+
+    return {
+      dimensions: this.dimensions,
+      memory: memoryArray,
+      entanglement: entanglementArray,
+      globalPatterns: this.globalPatterns
+    };
+  }
+
+  // Deserialize and restore memory state
+  deserialize(data) {
+    if (!data) return false;
+
+    try {
+      this.dimensions = data.dimensions || this.dimensions;
+
+      // Restore memory
+      this.memory.clear();
+      if (data.memory) {
+        for (const { pos, items } of data.memory) {
+          this.memory.set(pos, items);
+        }
+      }
+
+      // Restore entanglement
+      this.entanglement.clear();
+      if (data.entanglement) {
+        for (const { key, links } of data.entanglement) {
+          this.entanglement.set(key, new Set(links));
+        }
+      }
+
+      // Restore global patterns
+      this.globalPatterns = data.globalPatterns || [];
+
+      return true;
+    } catch (e) {
+      console.error('[HoloMemory] Deserialize error:', e.message);
+      return false;
+    }
+  }
 }
 
 // ============================================================
@@ -879,6 +932,18 @@ class FractalRealityForge extends EventEmitter {
       JSON.stringify(state, null, 2)
     );
 
+    // Save holoMemory state separately (can be large)
+    try {
+      const memoryState = this.holoMemory.serialize();
+      fs.writeFileSync(
+        path.join(this.dataDir, 'holo-memory.json'),
+        JSON.stringify(memoryState)
+      );
+      console.log(`[FractalForge] Saved ${memoryState.memory.length} memory positions`);
+    } catch (e) {
+      console.log(`[FractalForge] Could not save memory state: ${e.message}`);
+    }
+
     // Also save top patterns for persistence
     this.saveTopPatterns();
 
@@ -913,8 +978,9 @@ class FractalRealityForge extends EventEmitter {
   loadState() {
     const statePath = path.join(this.dataDir, 'forge-state.json');
     const patternsPath = path.join(this.dataDir, 'refined-patterns.json');
+    const memoryPath = path.join(this.dataDir, 'holo-memory.json');
 
-    let loaded = { state: false, patterns: 0 };
+    let loaded = { state: false, patterns: 0, memoryItems: 0 };
 
     // Load previous state
     if (fs.existsSync(statePath)) {
@@ -939,8 +1005,26 @@ class FractalRealityForge extends EventEmitter {
       }
     }
 
-    // Load refined patterns
-    if (fs.existsSync(patternsPath)) {
+    // Load holoMemory state (priority - has all the learning)
+    if (fs.existsSync(memoryPath)) {
+      try {
+        const memoryData = JSON.parse(fs.readFileSync(memoryPath, 'utf8'));
+        if (this.holoMemory.deserialize(memoryData)) {
+          const stats = this.holoMemory.getStats();
+          loaded.memoryItems = stats.totalItems;
+          // Mark as seeded if we have substantial restored memory
+          if (stats.totalItems > 100) {
+            this.seeded = true;
+          }
+          console.log(`[FractalForge] Restored ${stats.positions} memory positions, ${stats.totalItems} items, ${stats.entanglements} entanglements`);
+        }
+      } catch (e) {
+        console.log(`[FractalForge] Could not load memory state: ${e.message}`);
+      }
+    }
+
+    // Load refined patterns (backup if memory didn't load)
+    if (fs.existsSync(patternsPath) && loaded.memoryItems === 0) {
       try {
         const data = JSON.parse(fs.readFileSync(patternsPath, 'utf8'));
 
