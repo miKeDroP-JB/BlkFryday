@@ -223,6 +223,18 @@ from .quantum_fractal import (
     QuantumFractalEngine,
 )
 
+# Jump Profiler (Surgical Precision Compound Growth)
+from .jump_profiler import (
+    ProfileType,
+    JumpType,
+    IterationMetrics,
+    JumpPoint,
+    ProfileResult,
+    BenchTestRunner,
+    LiveIterationRunner,
+    JumpProfiler,
+)
+
 __version__ = "1.0.0"
 __author__ = "JB + Prometheus"
 __description__ = "AGI-Adjacent Reasoning System with Compound Learning"
@@ -392,6 +404,16 @@ __all__ = [
     "QuantumInterferenceEngine",
     "EntanglementManager",
     "QuantumFractalEngine",
+
+    # Jump Profiler (Surgical Precision Compound Growth)
+    "ProfileType",
+    "JumpType",
+    "IterationMetrics",
+    "JumpPoint",
+    "ProfileResult",
+    "BenchTestRunner",
+    "LiveIterationRunner",
+    "JumpProfiler",
 ]
 
 
@@ -423,6 +445,9 @@ def get_system_info():
             "QuantumFractalEngine - Hardware-accelerated fractal pattern compounding",
             "QuantumInterferenceEngine - Superposition collapse for pattern discovery",
             "EntanglementManager - Quantum-inspired cross-cluster correlations",
+            "JumpProfiler - Surgical precision compound growth vector identification",
+            "BenchTestRunner - Controlled profiling for jump point mapping",
+            "LiveIterationRunner - Full swarm live iteration with emergent detection",
         ],
         "capabilities": [
             "Extract reasoning patterns from debates",
@@ -459,6 +484,11 @@ def get_system_info():
             "Entanglement correlations between divergent clusters",
             "Interference engine for pattern amplification/cancellation",
             "Superposition collapse to high-impact emergent patterns",
+            "Jump point identification for maximal growth vectors",
+            "Bench test profiling (single-cluster, divergent-pair, multi-domain)",
+            "Live iteration tracking with delta detection",
+            "Hybrid profiling: bench tests map jumps, live iterations amplify",
+            "Surgical precision iteration based on detected jump points",
         ]
     }
 
