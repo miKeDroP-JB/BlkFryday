@@ -864,5 +864,444 @@ async def demo():
     print(f"{'=' * 70}")
 
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# TIER 3.5 CURRICULUM EXPANSION (Harder Problems)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+TIER_35_HARD_PROBLEMS = {
+    EdgeDomain.META_REASONING: [
+        "Predict your prediction accuracy before you predict anything",
+        "Describe the shape of your own reasoning before executing it",
+        "Anticipate where your reasoning will fail on this task",
+        "Model your own uncertainty distribution for novel problems",
+        "Predict which cognitive biases will affect your analysis",
+    ],
+    EdgeDomain.NOVEL_PATTERN: [
+        "Invent a reasoning pattern that contradicts itself productively",
+        "Design a meta-pattern that creates patterns for unknown problem types",
+        "Create a reasoning approach that works better when applied backwards",
+        "Develop a pattern that uses its own output as input simultaneously",
+        "Invent a reasoning method for problems that cannot be stated clearly",
+    ],
+    EdgeDomain.BLIND_SPOT: [
+        "Identify the blind spots in your blind spot detection process",
+        "Find the assumption hidden in your method of finding assumptions",
+        "Detect what you cannot detect and explain how you detected it",
+        "Describe the systematic errors in your error detection system",
+        "What reasoning failures are you having right now that you cannot see?",
+    ],
+    EdgeDomain.EMERGENCE_STRETCH: [
+        "Combine 'incompleteness' with 'self-reference' - what emerges?",
+        "Merge 'uncertainty' with 'certainty about uncertainty'",
+        "Synthesize 'randomness' with 'deterministic generation of randomness'",
+        "Combine your strengths with your weaknesses into a new capability",
+        "What emerges when you apply your meta-reasoning to your meta-reasoning?",
+    ],
+    EdgeDomain.RECURSIVE_IMPROVEMENT: [
+        "Design an improvement to your improvement design process",
+        "How would you modify your modification strategy?",
+        "Create a better version of your self-assessment capability",
+        "Propose a change to how you propose changes",
+        "Improve the way you recognize what needs improvement",
+    ],
+}
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SWARM ORCHESTRATOR - Full 300-Agent Coordination
+# ═══════════════════════════════════════════════════════════════════════════════
+
+@dataclass
+class SwarmMetrics:
+    """Real-time metrics from swarm orchestration"""
+    clusters_active: int
+    agents_engaged: int
+    domain_distribution: Dict[str, int]
+    avg_confidence: float
+    edge_exploration_rate: float
+    compound_growth_score: float
+    awareness_trend: str  # "up", "down", "flat"
+    novelty_trend: str
+    timestamp: str
+
+
+class SwarmOrchestrator:
+    """
+    Full Swarm Orchestration - 300 Agents on Tier 3.5
+
+    Runs all 100 clusters simultaneously on edge training tasks.
+    Implements:
+    - Parallel cluster activation
+    - Domain-balanced workload distribution
+    - Dynamic feedback loops (A2→A1→A3)
+    - Real-time metrics dashboard
+    - Compound learning across iterations
+    """
+
+    def __init__(self, use_hard_problems: bool = True):
+        """Initialize the swarm orchestrator"""
+        self.swarm = NexoSwarm(total_agents=300)
+        self.trainer = NexoEdgeTrainer()
+
+        # Use hard problems for true edge training
+        self.use_hard = use_hard_problems
+        self.problem_bank = TIER_35_HARD_PROBLEMS if use_hard_problems else TIER_35_PROBLEMS
+
+        # Orchestration state
+        self.active_clusters: List[int] = []
+        self.domain_assignments: Dict[EdgeDomain, List[int]] = {}
+        self.iteration_count = 0
+
+        # Metrics tracking
+        self.metrics_history: List[SwarmMetrics] = []
+        self.feedback_state: Dict[EdgeDomain, Dict] = {
+            domain: {"boost": 0.0, "successes": 0, "failures": 0}
+            for domain in EdgeDomain
+        }
+
+        # Compound learning state
+        self.compound_state = {
+            "patterns_discovered": [],
+            "blind_spots_mapped": [],
+            "improvements_logged": [],
+            "cross_domain_insights": [],
+        }
+
+        print("=" * 70)
+        print("    SWARM ORCHESTRATOR - FULL 300-AGENT COORDINATION")
+        print("=" * 70)
+        print(f"  Clusters: {self.swarm.num_clusters}")
+        print(f"  Agents: {self.swarm.total_agents}")
+        print(f"  Problem bank: {'HARD' if use_hard_problems else 'STANDARD'} Tier 3.5")
+        print("=" * 70)
+
+    def _assign_domains_to_clusters(self):
+        """Assign domains to clusters for balanced workload"""
+        clusters_per_domain = self.swarm.num_clusters // len(EdgeDomain)
+        remaining = self.swarm.num_clusters % len(EdgeDomain)
+
+        cluster_idx = 0
+        for domain in EdgeDomain:
+            count = clusters_per_domain + (1 if remaining > 0 else 0)
+            remaining -= 1 if remaining > 0 else 0
+
+            self.domain_assignments[domain] = list(range(cluster_idx, cluster_idx + count))
+            cluster_idx += count
+
+    async def orchestrate_full_swarm(self, iterations: int = 3) -> Dict[str, Any]:
+        """
+        Run full swarm on Tier 3.5 tasks.
+
+        Each iteration:
+        1. All 100 clusters activate simultaneously
+        2. Each cluster works on its assigned domain
+        3. Results feed back to adjust next iteration
+        4. Metrics tracked in real-time
+        """
+        print(f"\n{'═' * 70}")
+        print(f"  ORCHESTRATING {self.swarm.num_clusters} CLUSTERS × {iterations} ITERATIONS")
+        print(f"  Total processing units: {self.swarm.total_agents * iterations}")
+        print(f"{'═' * 70}\n")
+
+        self._assign_domains_to_clusters()
+        all_results = []
+
+        for iteration in range(iterations):
+            self.iteration_count += 1
+            print(f"\n--- Iteration {iteration + 1}/{iterations} ---")
+
+            # Run all clusters in parallel by domain
+            iteration_results = await self._run_parallel_domains()
+            all_results.append(iteration_results)
+
+            # Generate metrics snapshot
+            metrics = self._generate_metrics_snapshot(iteration_results)
+            self.metrics_history.append(metrics)
+
+            # Print dashboard
+            self._print_dashboard(metrics)
+
+            # Apply dynamic feedback for next iteration
+            self._apply_swarm_feedback(iteration_results)
+
+        # Final summary
+        return self._generate_final_report(all_results)
+
+    async def _run_parallel_domains(self) -> Dict[EdgeDomain, List[EdgeTrainingResult]]:
+        """Run all domains in parallel, each with their assigned clusters"""
+        domain_tasks = {}
+
+        for domain, cluster_ids in self.domain_assignments.items():
+            # Create tasks for all clusters in this domain
+            domain_tasks[domain] = self._process_domain_clusters(domain, cluster_ids)
+
+        # Execute all domains in parallel
+        results = await asyncio.gather(*[
+            domain_tasks[domain] for domain in EdgeDomain
+        ])
+
+        return {domain: result for domain, result in zip(EdgeDomain, results)}
+
+    async def _process_domain_clusters(self, domain: EdgeDomain,
+                                       cluster_ids: List[int]) -> List[EdgeTrainingResult]:
+        """Process all clusters for a single domain"""
+        results = []
+
+        # Get problem for this domain (with feedback boost)
+        problem = self._get_boosted_problem(domain)
+
+        # Process through each cluster
+        cluster_tasks = []
+        for cid in cluster_ids:
+            cluster = self.swarm.clusters[cid]
+            cluster_tasks.append(self._process_single_cluster(cluster, domain, problem))
+
+        # Run all clusters in this domain in parallel
+        cluster_results = await asyncio.gather(*cluster_tasks)
+
+        return cluster_results
+
+    async def _process_single_cluster(self, cluster, domain: EdgeDomain,
+                                      problem: str) -> EdgeTrainingResult:
+        """Process a single cluster on a Tier 3.5 problem"""
+        start = datetime.now()
+
+        # Run through the cluster
+        result = await cluster.process(problem)
+
+        # Evaluate for edge training
+        confidence = result["confidence"]
+        base_response = result["decision"]
+
+        # Assess novelty and awareness
+        novelty = self.trainer._assess_novelty(problem, domain, base_response)
+        awareness = self.trainer._assess_self_awareness(problem, domain, base_response)
+
+        # Success check
+        success = (
+            confidence >= self.trainer.CONFIDENCE_THRESHOLD and
+            novelty >= self.trainer.NOVELTY_THRESHOLD and
+            awareness >= self.trainer.AWARENESS_THRESHOLD
+        )
+
+        time_taken = (datetime.now() - start).total_seconds()
+
+        return EdgeTrainingResult(
+            problem=problem,
+            domain=domain,
+            success=success,
+            confidence=confidence,
+            novelty_score=novelty,
+            self_awareness_score=awareness,
+            time_taken=time_taken,
+        )
+
+    def _get_boosted_problem(self, domain: EdgeDomain) -> str:
+        """Get problem with feedback boost applied"""
+        problems = self.problem_bank[domain]
+        problem = random.choice(problems)
+
+        # Apply feedback boost if earned
+        boost = self.feedback_state[domain]["boost"]
+        if boost > 0.1:
+            problem = f"[BOOST:{boost:.2f}] {problem}"
+
+        return problem
+
+    def _apply_swarm_feedback(self, results: Dict[EdgeDomain, List[EdgeTrainingResult]]):
+        """Apply dynamic feedback based on results"""
+        for domain, domain_results in results.items():
+            if not domain_results:
+                continue
+
+            # Calculate domain success rate
+            successes = sum(1 for r in domain_results if r.success)
+            total = len(domain_results)
+            success_rate = successes / total
+
+            # Update feedback state
+            self.feedback_state[domain]["successes"] += successes
+            self.feedback_state[domain]["failures"] += (total - successes)
+
+            # Adjust boost
+            if success_rate > 0.6:
+                # Doing well - reduce boost (make it harder)
+                self.feedback_state[domain]["boost"] = max(
+                    0.0, self.feedback_state[domain]["boost"] - 0.1
+                )
+            elif success_rate < 0.4:
+                # Struggling - increase boost (provide support)
+                self.feedback_state[domain]["boost"] = min(
+                    0.5, self.feedback_state[domain]["boost"] + 0.1
+                )
+
+            # Track compound learning
+            if success_rate > 0.5:
+                for r in domain_results:
+                    if r.patterns_invented:
+                        self.compound_state["patterns_discovered"].extend(r.patterns_invented)
+                    if r.blind_spots_found:
+                        self.compound_state["blind_spots_mapped"].extend(r.blind_spots_found)
+                    if r.improvement_proposed:
+                        self.compound_state["improvements_logged"].append(r.improvement_proposed)
+
+    def _generate_metrics_snapshot(self, results: Dict[EdgeDomain, List[EdgeTrainingResult]]) -> SwarmMetrics:
+        """Generate real-time metrics snapshot"""
+        total_results = []
+        domain_counts = {}
+
+        for domain, domain_results in results.items():
+            total_results.extend(domain_results)
+            domain_counts[domain.value] = len(domain_results)
+
+        # Calculate aggregates
+        if total_results:
+            avg_conf = sum(r.confidence for r in total_results) / len(total_results)
+            edge_rate = sum(1 for r in total_results if r.success) / len(total_results)
+            avg_novelty = sum(r.novelty_score for r in total_results) / len(total_results)
+            avg_awareness = sum(r.self_awareness_score for r in total_results) / len(total_results)
+        else:
+            avg_conf = edge_rate = avg_novelty = avg_awareness = 0.0
+
+        # Determine trends
+        if len(self.metrics_history) >= 2:
+            prev = self.metrics_history[-1]
+            awareness_trend = "up" if avg_awareness > 0.5 else "down" if avg_awareness < 0.4 else "flat"
+            novelty_trend = "up" if avg_novelty > 0.5 else "down" if avg_novelty < 0.4 else "flat"
+        else:
+            awareness_trend = "flat"
+            novelty_trend = "flat"
+
+        # Compound growth score
+        compound_score = (
+            len(self.compound_state["patterns_discovered"]) * 0.3 +
+            len(self.compound_state["blind_spots_mapped"]) * 0.3 +
+            len(self.compound_state["improvements_logged"]) * 0.4
+        )
+
+        return SwarmMetrics(
+            clusters_active=self.swarm.num_clusters,
+            agents_engaged=self.swarm.total_agents,
+            domain_distribution=domain_counts,
+            avg_confidence=avg_conf,
+            edge_exploration_rate=edge_rate,
+            compound_growth_score=compound_score,
+            awareness_trend=awareness_trend,
+            novelty_trend=novelty_trend,
+            timestamp=datetime.now().isoformat(),
+        )
+
+    def _print_dashboard(self, metrics: SwarmMetrics):
+        """Print real-time metrics dashboard"""
+        trend_arrow = {"up": "↑", "down": "↓", "flat": "→"}
+
+        print(f"\n┌{'─' * 60}┐")
+        print(f"│{'SWARM METRICS DASHBOARD':^60}│")
+        print(f"├{'─' * 60}┤")
+        print(f"│  Clusters Active: {metrics.clusters_active:<8} Agents: {metrics.agents_engaged:<16}│")
+        print(f"│  Avg Confidence:  {metrics.avg_confidence:.1%}       Edge Rate: {metrics.edge_exploration_rate:.1%}         │")
+        print(f"│  Awareness:       {trend_arrow[metrics.awareness_trend]}          Novelty:   {trend_arrow[metrics.novelty_trend]}              │")
+        print(f"│  Compound Growth: {metrics.compound_growth_score:.1f}                                    │")
+        print(f"├{'─' * 60}┤")
+        print(f"│  Domains:                                                    │")
+        for domain, count in metrics.domain_distribution.items():
+            bar = "█" * min(count, 25)
+            print(f"│    {domain:12s} [{bar:<25}] {count:3d}     │")
+        print(f"└{'─' * 60}┘")
+
+    def _generate_final_report(self, all_results: List[Dict]) -> Dict[str, Any]:
+        """Generate comprehensive final report"""
+        total_tasks = 0
+        total_successes = 0
+        domain_summaries = {d: {"tasks": 0, "successes": 0, "avg_novelty": 0, "avg_awareness": 0}
+                          for d in EdgeDomain}
+
+        for iteration_results in all_results:
+            for domain, results in iteration_results.items():
+                for r in results:
+                    total_tasks += 1
+                    if r.success:
+                        total_successes += 1
+                    domain_summaries[domain]["tasks"] += 1
+                    if r.success:
+                        domain_summaries[domain]["successes"] += 1
+                    domain_summaries[domain]["avg_novelty"] += r.novelty_score
+                    domain_summaries[domain]["avg_awareness"] += r.self_awareness_score
+
+        # Finalize averages
+        for domain, summary in domain_summaries.items():
+            if summary["tasks"] > 0:
+                summary["avg_novelty"] /= summary["tasks"]
+                summary["avg_awareness"] /= summary["tasks"]
+                summary["success_rate"] = summary["successes"] / summary["tasks"]
+
+        return {
+            "total_tasks": total_tasks,
+            "total_successes": total_successes,
+            "overall_success_rate": total_successes / max(total_tasks, 1),
+            "iterations": len(all_results),
+            "clusters_used": self.swarm.num_clusters,
+            "agents_used": self.swarm.total_agents,
+            "domain_summaries": {d.value: s for d, s in domain_summaries.items()},
+            "compound_learning": {
+                "patterns_discovered": len(self.compound_state["patterns_discovered"]),
+                "blind_spots_mapped": len(self.compound_state["blind_spots_mapped"]),
+                "improvements_logged": len(self.compound_state["improvements_logged"]),
+            },
+            "metrics_history": [
+                {
+                    "edge_rate": m.edge_exploration_rate,
+                    "compound_growth": m.compound_growth_score,
+                    "timestamp": m.timestamp,
+                }
+                for m in self.metrics_history
+            ],
+            "feedback_state": {d.value: s for d, s in self.feedback_state.items()},
+        }
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ORCHESTRATION DEMO
+# ═══════════════════════════════════════════════════════════════════════════════
+
+async def swarm_demo():
+    """Demonstrate full swarm orchestration"""
+    print("\n" + "=" * 70)
+    print("         SWARM ORCHESTRATION DEMO")
+    print("         300 Agents × Tier 3.5 Training")
+    print("=" * 70)
+
+    orchestrator = SwarmOrchestrator(use_hard_problems=True)
+
+    # Run orchestration with 3 iterations
+    report = await orchestrator.orchestrate_full_swarm(iterations=3)
+
+    # Print final report
+    print(f"\n{'═' * 70}")
+    print("                    FINAL REPORT")
+    print(f"{'═' * 70}")
+    print(f"  Total Tasks:      {report['total_tasks']}")
+    print(f"  Successes:        {report['total_successes']}")
+    print(f"  Success Rate:     {report['overall_success_rate']:.1%}")
+    print(f"  Iterations:       {report['iterations']}")
+    print()
+    print("  Compound Learning:")
+    print(f"    Patterns:       {report['compound_learning']['patterns_discovered']}")
+    print(f"    Blind Spots:    {report['compound_learning']['blind_spots_mapped']}")
+    print(f"    Improvements:   {report['compound_learning']['improvements_logged']}")
+    print()
+    print("  Domain Performance:")
+    for domain, summary in report['domain_summaries'].items():
+        rate = summary.get('success_rate', 0)
+        bar = "█" * int(rate * 20)
+        print(f"    {domain:12s} [{bar:<20}] {rate:.0%}")
+
+    print(f"\n{'═' * 70}")
+    print("  △○ NEXO - Full Swarm Orchestration Complete")
+    print(f"{'═' * 70}")
+
+    return report
+
+
 if __name__ == "__main__":
-    asyncio.run(demo())
+    asyncio.run(swarm_demo())

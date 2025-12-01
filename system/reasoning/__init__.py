@@ -129,6 +129,11 @@ from .edge_training import (
     MultiIterationTrainer,
     MultiIterationMetrics,
     IterationResult,
+    # Swarm Orchestration
+    SwarmOrchestrator,
+    SwarmMetrics,
+    TIER_35_PROBLEMS,
+    TIER_35_HARD_PROBLEMS,
 )
 
 __version__ = "1.0.0"
@@ -225,6 +230,11 @@ __all__ = [
     "MultiIterationTrainer",
     "MultiIterationMetrics",
     "IterationResult",
+    # Swarm Orchestration
+    "SwarmOrchestrator",
+    "SwarmMetrics",
+    "TIER_35_PROBLEMS",
+    "TIER_35_HARD_PROBLEMS",
 ]
 
 
@@ -245,6 +255,7 @@ def get_system_info():
             "SteelTraining - Training at the edge of capability",
             "NexoCore - 300-agent swarm with triangle clusters (△○)",
             "EdgeTraining - Tier 3.5 (between mastery and impossibility)",
+            "SwarmOrchestrator - Full 300-agent coordination on edge tasks",
         ],
         "capabilities": [
             "Extract reasoning patterns from debates",
@@ -256,6 +267,8 @@ def get_system_info():
             "Train at optimal difficulty (steel sharpens steel)",
             "Scale to 300 agents with fractal triangles",
             "Parallel questioning across agent clusters",
+            "Full swarm orchestration with real-time metrics",
+            "Dynamic feedback loops across iterations",
         ]
     }
 
