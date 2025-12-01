@@ -42,3 +42,4 @@ coverage/
 *.pem
 .vercel
 __pycache__/
+data/
