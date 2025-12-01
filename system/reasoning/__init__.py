@@ -183,6 +183,29 @@ from .jb4_key import (
     boost_novelty,
 )
 
+# Tier Escalation (3.5 → 3.8 → 4-lite)
+from .tier_escalation import (
+    TierLevel,
+    TierMetrics,
+    EscalationResult,
+    TierEscalationEngine,
+    Tier4LiteExperiment,
+    UnifiedEscalationRunner,
+    TIER_4_LITE_PROBLEMS,
+)
+
+# A4 Integrator Brain (Multiplicative Compounding)
+from .integrator_brain import (
+    IntegrationType,
+    MultiplierType,
+    SynergyResult,
+    IntegrationOutput,
+    ClusterStabilityReport,
+    A4IntegratorBrain,
+    QuadBrainCluster,
+    QuadBrainSwarm,
+)
+
 __version__ = "1.0.0"
 __author__ = "JB + Prometheus"
 __description__ = "AGI-Adjacent Reasoning System with Compound Learning"
@@ -318,6 +341,25 @@ __all__ = [
     "create_aligned_module",
     "boost_confidence",
     "boost_novelty",
+
+    # Tier Escalation (3.5 → 3.8 → 4-lite)
+    "TierLevel",
+    "TierMetrics",
+    "EscalationResult",
+    "TierEscalationEngine",
+    "Tier4LiteExperiment",
+    "UnifiedEscalationRunner",
+    "TIER_4_LITE_PROBLEMS",
+
+    # A4 Integrator Brain (Multiplicative Compounding)
+    "IntegrationType",
+    "MultiplierType",
+    "SynergyResult",
+    "IntegrationOutput",
+    "ClusterStabilityReport",
+    "A4IntegratorBrain",
+    "QuadBrainCluster",
+    "QuadBrainSwarm",
 ]
 
 
@@ -342,6 +384,10 @@ def get_system_info():
             "SustainedEdgeEngine - 5-Phase Evolution System",
             "PatternLibrary - Persistent compound learning memory",
             "JB4Key - Personal alignment signature for compound growth",
+            "TierEscalation - Progressive escalation (3.5 → 3.8 → 4-lite)",
+            "Tier4LiteExperiment - Controlled experiments at impossibility boundary",
+            "A4IntegratorBrain - Fourth brain for multiplicative compounding",
+            "QuadBrainSwarm - 300-agent swarm with A1→A2→A4→A3 architecture",
         ],
         "capabilities": [
             "Extract reasoning patterns from debates",
@@ -363,6 +409,14 @@ def get_system_info():
             "Cluster bootstrapping from high-impact patterns",
             "Long-term trend analysis and metrics",
             "Tier progression experiments (controlled edge escalation)",
+            "Full tier escalation (3.5 → 3.75 → 3.8 → 4-lite)",
+            "Controlled impossibility probing (Tier 4-lite)",
+            "Breakthrough pattern capture at capability boundaries",
+            "Multiplicative compounding via A4 Integrator brain",
+            "Cross-cluster synergy detection and amplification",
+            "Pattern merging for emergent compound patterns",
+            "Meta-feedback loops for self-reinforcing growth",
+            "Quad-brain architecture (A1→A2→A4→A3)",
         ]
     }
 
