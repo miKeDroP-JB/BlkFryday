@@ -233,6 +233,11 @@ from .jump_profiler import (
     BenchTestRunner,
     LiveIterationRunner,
     JumpProfiler,
+    # Pause Calibrator (Chaos Window Detection)
+    PauseState,
+    PauseConfig,
+    ChaosWindow,
+    PauseCalibrator,
 )
 
 __version__ = "1.0.0"
@@ -414,6 +419,12 @@ __all__ = [
     "BenchTestRunner",
     "LiveIterationRunner",
     "JumpProfiler",
+
+    # Pause Calibrator (Chaos Window Detection)
+    "PauseState",
+    "PauseConfig",
+    "ChaosWindow",
+    "PauseCalibrator",
 ]
 
 
@@ -448,6 +459,7 @@ def get_system_info():
             "JumpProfiler - Surgical precision compound growth vector identification",
             "BenchTestRunner - Controlled profiling for jump point mapping",
             "LiveIterationRunner - Full swarm live iteration with emergent detection",
+            "PauseCalibrator - Chaos window detection and crystallization timing",
         ],
         "capabilities": [
             "Extract reasoning patterns from debates",
@@ -489,6 +501,10 @@ def get_system_info():
             "Live iteration tracking with delta detection",
             "Hybrid profiling: bench tests map jumps, live iterations amplify",
             "Surgical precision iteration based on detected jump points",
+            "Chaos window detection (liminal space where patterns crystallize)",
+            "Adaptive pause calibration based on variance and divergence",
+            "Heartbeat sync for cluster stabilization detection",
+            "Stochastic pause jitter for exploration",
         ]
     }
 

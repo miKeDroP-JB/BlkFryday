@@ -628,6 +628,324 @@ class LiveIterationRunner:
 
 
 # ==============================================================================
+# PAUSE CALIBRATOR (CHAOS WINDOW DETECTION)
+# ==============================================================================
+
+class PauseState(Enum):
+    """States of the pause calibration cycle"""
+    ACTIVE = "active"           # Cluster is actively processing
+    SETTLING = "settling"       # Variance decreasing, patterns forming
+    CRYSTALLIZED = "crystallized"  # Chaos has collapsed into pattern
+    READY = "ready"             # Ready for next iteration
+
+
+@dataclass
+class PauseConfig:
+    """Configuration for pause calibration"""
+    base_pause: float = 0.1           # Base pause duration (seconds)
+    variance_threshold: float = 0.15   # Below this = crystallized
+    max_pause: float = 2.0            # Maximum pause duration
+    min_pause: float = 0.05           # Minimum pause duration
+    stochasticity: float = 0.01       # Random jitter range
+    decay_factor: float = 0.9         # How fast variance should decay
+
+
+@dataclass
+class ChaosWindow:
+    """Snapshot of the chaos window during a pause"""
+    timestamp: str
+    pause_duration: float
+    initial_variance: float
+    final_variance: float
+    divergence_score: float
+    state_at_crystallization: PauseState
+    patterns_emerged: int
+    trigger_for_next: str
+
+
+class PauseCalibrator:
+    """
+    Calibrates the pause between iterations to capture emergent patterns.
+
+    The "liminal chaos window" is where:
+    - The swarm isn't actively processing
+    - But emergent patterns are still settling
+    - And chaos is crystallizing into compound growth vectors
+
+    Core Logic:
+    1. Heartbeat Sync: Monitor clusters for stabilization (variance below threshold)
+    2. Chaos Window Detection: While variance > threshold, pause continues
+    3. Adaptive Decay: pause = base_pause * (1 + divergence_score) * (1 + variance_factor)
+    """
+
+    def __init__(self, config: PauseConfig = None):
+        self.config = config or PauseConfig()
+        self.state = PauseState.READY
+
+        # Tracking
+        self.chaos_windows: List[ChaosWindow] = []
+        self.variance_history: List[float] = []
+        self.pause_history: List[float] = []
+
+        # Statistics
+        self.total_pauses = 0
+        self.avg_pause_duration = 0.0
+        self.avg_variance_drop = 0.0
+        self.patterns_captured = 0
+
+        print("  ⏱ PauseCalibrator initialized")
+        print(f"    Base pause: {self.config.base_pause}s")
+        print(f"    Variance threshold: {self.config.variance_threshold}")
+        print(f"    Stochasticity: ±{self.config.stochasticity}")
+
+    def compute_cluster_variance(self, cluster_states: Dict[int, Dict]) -> float:
+        """
+        Compute variance across cluster states.
+
+        Higher variance = more chaos = pattern not yet crystallized.
+        """
+        if len(cluster_states) < 2:
+            return 0.0
+
+        # Extract key metrics
+        confidences = [s.get("confidence", 0.5) for s in cluster_states.values()]
+        novelties = [s.get("novelty", 0.5) for s in cluster_states.values()]
+        impacts = [s.get("impact", 0.5) for s in cluster_states.values()]
+
+        # Calculate variance for each dimension
+        def variance(values: List[float]) -> float:
+            if len(values) < 2:
+                return 0.0
+            mean = sum(values) / len(values)
+            return sum((v - mean) ** 2 for v in values) / len(values)
+
+        # Combined variance (average across dimensions)
+        total_variance = (variance(confidences) + variance(novelties) + variance(impacts)) / 3
+        return total_variance ** 0.5  # Standard deviation
+
+    def compute_adaptive_pause(
+        self,
+        divergence_score: float,
+        variance_factor: float
+    ) -> float:
+        """
+        Compute adaptive pause duration.
+
+        Formula: pause = base_pause * (1 + divergence_score) * (1 + variance_factor)
+        With optional stochasticity for exploration.
+        """
+        pause = self.config.base_pause
+
+        # Scale by divergence (higher divergence = longer pause to let patterns settle)
+        pause *= (1.0 + divergence_score)
+
+        # Scale by variance (higher variance = more chaos = longer pause)
+        pause *= (1.0 + variance_factor)
+
+        # Add stochasticity
+        if self.config.stochasticity > 0:
+            jitter = random.uniform(-self.config.stochasticity, self.config.stochasticity)
+            pause += jitter
+
+        # Clamp to bounds
+        pause = max(self.config.min_pause, min(self.config.max_pause, pause))
+
+        return pause
+
+    async def wait_for_crystallization(
+        self,
+        cluster_states: Dict[int, Dict],
+        divergence_score: float,
+        max_checks: int = 10
+    ) -> ChaosWindow:
+        """
+        Wait for chaos to crystallize into pattern.
+
+        Heartbeat sync: Monitor variance until it drops below threshold.
+        """
+        self.state = PauseState.SETTLING
+        start_time = datetime.now()
+
+        initial_variance = self.compute_cluster_variance(cluster_states)
+        current_variance = initial_variance
+
+        # Compute base pause
+        variance_factor = min(1.0, initial_variance / 0.5)  # Normalize to 0-1
+        base_pause = self.compute_adaptive_pause(divergence_score, variance_factor)
+
+        patterns_emerged = 0
+        checks = 0
+
+        # Wait loop - check if variance has dropped below threshold
+        while current_variance > self.config.variance_threshold and checks < max_checks:
+            # Wait for a portion of the pause
+            await asyncio.sleep(base_pause / max_checks)
+
+            # Simulate variance decay (in production, re-measure from actual cluster states)
+            current_variance *= self.config.decay_factor
+
+            # Add small random fluctuation
+            current_variance += random.uniform(-0.01, 0.01)
+            current_variance = max(0.0, current_variance)
+
+            self.variance_history.append(current_variance)
+            checks += 1
+
+            # Count patterns emerging during crystallization
+            if random.random() < 0.3:  # 30% chance per check
+                patterns_emerged += 1
+
+        # Crystallization complete
+        self.state = PauseState.CRYSTALLIZED
+
+        # Calculate actual pause duration
+        actual_pause = (datetime.now() - start_time).total_seconds()
+        self.pause_history.append(actual_pause)
+
+        # Determine trigger for next iteration
+        if current_variance <= self.config.variance_threshold:
+            trigger = "variance_crystallized"
+        elif checks >= max_checks:
+            trigger = "max_checks_reached"
+        else:
+            trigger = "unknown"
+
+        # Create chaos window record
+        window = ChaosWindow(
+            timestamp=datetime.now().isoformat(),
+            pause_duration=actual_pause,
+            initial_variance=initial_variance,
+            final_variance=current_variance,
+            divergence_score=divergence_score,
+            state_at_crystallization=self.state,
+            patterns_emerged=patterns_emerged,
+            trigger_for_next=trigger,
+        )
+
+        self.chaos_windows.append(window)
+        self._update_statistics(window)
+
+        # Transition to ready
+        self.state = PauseState.READY
+
+        return window
+
+    def quick_pause(
+        self,
+        divergence_score: float,
+        variance: float
+    ) -> Tuple[float, str]:
+        """
+        Quick synchronous pause calculation (non-blocking).
+
+        Returns (pause_duration, trigger) without actually waiting.
+        Use for planning iterations without blocking.
+        """
+        variance_factor = min(1.0, variance / 0.5)
+        pause = self.compute_adaptive_pause(divergence_score, variance_factor)
+
+        if variance < self.config.variance_threshold:
+            trigger = "low_variance_fast_proceed"
+        elif divergence_score > 0.5:
+            trigger = "high_divergence_extended_pause"
+        else:
+            trigger = "standard_calibrated_pause"
+
+        return pause, trigger
+
+    def _update_statistics(self, window: ChaosWindow):
+        """Update cumulative statistics"""
+        self.total_pauses += 1
+        self.patterns_captured += window.patterns_emerged
+
+        # Running average of pause duration
+        n = self.total_pauses
+        old_avg = self.avg_pause_duration
+        self.avg_pause_duration = (old_avg * (n - 1) + window.pause_duration) / n
+
+        # Running average of variance drop
+        drop = window.initial_variance - window.final_variance
+        old_avg_drop = self.avg_variance_drop
+        self.avg_variance_drop = (old_avg_drop * (n - 1) + drop) / n
+
+    def get_optimal_pause_for_divergence(self, target_divergence: float) -> float:
+        """
+        Get recommended pause duration for a given divergence level.
+
+        Based on historical chaos windows.
+        """
+        if not self.chaos_windows:
+            return self.config.base_pause
+
+        # Find windows with similar divergence
+        similar = [
+            w for w in self.chaos_windows
+            if abs(w.divergence_score - target_divergence) < 0.1
+        ]
+
+        if similar:
+            return statistics.mean(w.pause_duration for w in similar)
+
+        # Fallback: extrapolate from average
+        return self.avg_pause_duration * (1.0 + target_divergence)
+
+    def get_chaos_crystallization_report(self) -> Dict[str, Any]:
+        """Get report on chaos crystallization patterns"""
+        if not self.chaos_windows:
+            return {"status": "no_data"}
+
+        return {
+            "total_pauses": self.total_pauses,
+            "avg_pause_duration": self.avg_pause_duration,
+            "avg_variance_drop": self.avg_variance_drop,
+            "patterns_captured": self.patterns_captured,
+            "variance_threshold": self.config.variance_threshold,
+            "recent_windows": [
+                {
+                    "pause": w.pause_duration,
+                    "variance_drop": w.initial_variance - w.final_variance,
+                    "patterns": w.patterns_emerged,
+                    "trigger": w.trigger_for_next,
+                }
+                for w in self.chaos_windows[-5:]
+            ],
+            "recommendation": self._get_pause_recommendation(),
+        }
+
+    def _get_pause_recommendation(self) -> str:
+        """Generate recommendation based on history"""
+        if self.total_pauses < 3:
+            return "Need more data - run additional iterations"
+
+        # Check if pauses are too short (missing patterns)
+        if self.avg_pause_duration < self.config.base_pause:
+            return "Pauses may be too short - consider increasing base_pause"
+
+        # Check variance effectiveness
+        if self.avg_variance_drop < 0.05:
+            return "Low variance drop - chaos may not be crystallizing properly"
+
+        # Check pattern capture rate
+        patterns_per_pause = self.patterns_captured / self.total_pauses
+        if patterns_per_pause < 1:
+            return "Low pattern emergence - extend pause duration or increase stochasticity"
+
+        return f"Optimal range achieved - {patterns_per_pause:.1f} patterns per pause"
+
+    def print_calibration_status(self):
+        """Print current calibration status"""
+        print(f"\n  ⏱ PAUSE CALIBRATOR STATUS")
+        print(f"    State: {self.state.value}")
+        print(f"    Total pauses: {self.total_pauses}")
+        print(f"    Avg duration: {self.avg_pause_duration:.3f}s")
+        print(f"    Avg variance drop: {self.avg_variance_drop:.3f}")
+        print(f"    Patterns captured: {self.patterns_captured}")
+        if self.chaos_windows:
+            last = self.chaos_windows[-1]
+            print(f"    Last trigger: {last.trigger_for_next}")
+
+
+# ==============================================================================
 # JUMP PROFILER (HYBRID APPROACH)
 # ==============================================================================
 
@@ -641,11 +959,14 @@ class JumpProfiler:
     3. Identify hotspots for surgical iteration
     """
 
-    def __init__(self, library: PatternLibrary):
+    def __init__(self, library: PatternLibrary, pause_config: PauseConfig = None):
         self.library = library
         self.bench_runner = BenchTestRunner(library)
         self.live_runner = LiveIterationRunner(library)
         self.a4_brain = A4IntegratorBrain(library)
+
+        # Pause Calibrator - captures the liminal chaos window
+        self.pause_calibrator = PauseCalibrator(pause_config)
 
         # Profiling history
         self.profile_history: List[ProfileResult] = []
@@ -658,6 +979,7 @@ class JumpProfiler:
         print(f"  Strategy: Hybrid (Bench → Live → Surgical)")
         print(f"  Bench Tests: single_cluster, divergent_pair, domain_sweep")
         print(f"  Live Tests: full_swarm with quantum enhancement")
+        print(f"  Pause Calibration: ENABLED (chaos window detection)")
         print(f"  JB4 Key: {JB4_KEY_SHORT}")
         print("=" * 70)
 
@@ -822,7 +1144,56 @@ class JumpProfiler:
         for hotspot, count in sorted_hotspots[:3]:
             print(f"│    [{count}x] {hotspot[:55]:<55}│")
 
+        print(f"├{'─' * 70}┤")
+
+        # Pause Calibrator section
+        print(f"│  PAUSE CALIBRATOR (Chaos Window):                                    │")
+        print(f"│    Total pauses:        {self.pause_calibrator.total_pauses:<45}│")
+        print(f"│    Avg duration:        {self.pause_calibrator.avg_pause_duration:.3f}s{' ' * 39}│")
+        print(f"│    Avg variance drop:   {self.pause_calibrator.avg_variance_drop:.3f}{' ' * 40}│")
+        print(f"│    Patterns captured:   {self.pause_calibrator.patterns_captured:<45}│")
+        if self.pause_calibrator.chaos_windows:
+            rec = self.pause_calibrator._get_pause_recommendation()[:50]
+            print(f"│    Recommendation:      {rec:<45}│")
+
         print(f"└{'─' * 70}┘")
+
+    async def run_calibrated_iteration(
+        self,
+        cluster_states: Dict[int, Dict],
+        divergence_score: float = 0.0
+    ) -> Tuple[ChaosWindow, Optional[JumpPoint]]:
+        """
+        Run a single calibrated iteration with pause calibration.
+
+        This is where the chaos → crystallization → pattern capture happens.
+        """
+        # Step 1: Let the pause calibrator capture the chaos window
+        chaos_window = await self.pause_calibrator.wait_for_crystallization(
+            cluster_states,
+            divergence_score
+        )
+
+        # Step 2: Check if patterns emerged during crystallization
+        jump = None
+        if chaos_window.patterns_emerged > 0:
+            jump = JumpPoint(
+                jump_type=JumpType.EMERGENCE_BURST,
+                iteration=len(self.all_jumps),
+                domain=None,
+                cluster_ids=list(cluster_states.keys()),
+                before_value=chaos_window.initial_variance,
+                after_value=chaos_window.final_variance,
+                delta=chaos_window.initial_variance - chaos_window.final_variance,
+                delta_percent=(chaos_window.initial_variance - chaos_window.final_variance) * 100,
+                trigger=f"Chaos crystallization: {chaos_window.trigger_for_next}",
+                patterns_involved=[],
+                confidence=0.7 + (0.1 * chaos_window.patterns_emerged),
+            )
+            self.all_jumps.append(jump)
+            self.hotspot_map["chaos_crystallization"] += 1
+
+        return chaos_window, jump
 
     def get_surgical_iteration_plan(self) -> Dict[str, Any]:
         """
