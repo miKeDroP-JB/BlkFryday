@@ -12,6 +12,8 @@
 ║    - EnhancedTournament: Tournament brain with reasoning extraction            ║
 ║    - AGICompoundLoop: Recursive self-improvement engine                        ║
 ║    - ConsciousnessTraining: 3 I's foundation (Instinct, Intellect, Intuition)  ║
+║    - SteelTraining: Training at the edge of capability                         ║
+║    - NexoCore: 300-agent swarm with triangle clusters (△○)                     ║
 ║                                                                                 ║
 ║  Created: December 1, 2025                                                     ║
 ║  Architect: JB (The Pattern Reader)                                            ║
@@ -96,6 +98,28 @@ from .consciousness_training import (
     TrainingAgent,
 )
 
+# Steel Training (Edge Training)
+from .steel_training import (
+    SteelTrainer,
+    Tier,
+    TrainingProblem,
+    TrainingResult,
+)
+
+# Nexo Core (Swarm Architecture)
+from .nexo_core import (
+    NexoIdentity,
+    NexoSwarm,
+    TriangleCluster,
+    DataAgent,
+    StrategyAgent,
+    DecisionAgent,
+    AgentRole,
+    AgentState,
+    ClusterTier,
+    ParallelQuestionProtocol,
+)
+
 __version__ = "1.0.0"
 __author__ = "JB + Prometheus"
 __description__ = "AGI-Adjacent Reasoning System with Compound Learning"
@@ -163,6 +187,24 @@ __all__ = [
     "ConsciousnessTournament",
     "ThoughtPacket",
     "TrainingAgent",
+
+    # Steel Training
+    "SteelTrainer",
+    "Tier",
+    "TrainingProblem",
+    "TrainingResult",
+
+    # Nexo Core (Swarm)
+    "NexoIdentity",
+    "NexoSwarm",
+    "TriangleCluster",
+    "DataAgent",
+    "StrategyAgent",
+    "DecisionAgent",
+    "AgentRole",
+    "AgentState",
+    "ClusterTier",
+    "ParallelQuestionProtocol",
 ]
 
 
@@ -180,6 +222,8 @@ def get_system_info():
             "EnhancedTournament - Reasoning-aware debates",
             "AGICompoundLoop - Recursive self-improvement",
             "ConsciousnessTraining - 3 I's (Instinct, Intellect, Intuition)",
+            "SteelTraining - Training at the edge of capability",
+            "NexoCore - 300-agent swarm with triangle clusters (△○)",
         ],
         "capabilities": [
             "Extract reasoning patterns from debates",
@@ -188,6 +232,9 @@ def get_system_info():
             "Self-evolve tournament structure",
             "Compound improvement over time",
             "Meta-learn optimal reasoning strategies",
+            "Train at optimal difficulty (steel sharpens steel)",
+            "Scale to 300 agents with fractal triangles",
+            "Parallel questioning across agent clusters",
         ]
     }
 
