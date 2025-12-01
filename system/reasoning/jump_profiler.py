@@ -641,13 +641,14 @@ class PauseState(Enum):
 
 @dataclass
 class PauseConfig:
-    """Configuration for pause calibration"""
-    base_pause: float = 0.1           # Base pause duration (seconds)
-    variance_threshold: float = 0.15   # Below this = crystallized
+    """Configuration for pause calibration (tuned for optimal pattern capture)"""
+    base_pause: float = 0.12          # Base pause duration (seconds) - tuned up from 0.1
+    variance_threshold: float = 0.085  # Below this = crystallized - tuned down from 0.15
     max_pause: float = 2.0            # Maximum pause duration
     min_pause: float = 0.05           # Minimum pause duration
-    stochasticity: float = 0.01       # Random jitter range
-    decay_factor: float = 0.9         # How fast variance should decay
+    stochasticity: float = 0.015      # Random jitter range (±15ms)
+    decay_factor: float = 0.88        # How fast variance should decay - slightly faster
+    divergence_weight: float = 1.1    # Weight for divergence in pause formula
 
 
 @dataclass
@@ -693,10 +694,11 @@ class PauseCalibrator:
         self.avg_variance_drop = 0.0
         self.patterns_captured = 0
 
-        print("  ⏱ PauseCalibrator initialized")
+        print("  ⏱ PauseCalibrator initialized (tuned)")
         print(f"    Base pause: {self.config.base_pause}s")
         print(f"    Variance threshold: {self.config.variance_threshold}")
-        print(f"    Stochasticity: ±{self.config.stochasticity}")
+        print(f"    Divergence weight: {self.config.divergence_weight}x")
+        print(f"    Stochasticity: ±{self.config.stochasticity * 1000:.0f}ms")
 
     def compute_cluster_variance(self, cluster_states: Dict[int, Dict]) -> float:
         """
@@ -731,13 +733,15 @@ class PauseCalibrator:
         """
         Compute adaptive pause duration.
 
-        Formula: pause = base_pause * (1 + divergence_score) * (1 + variance_factor)
+        Formula: pause = base_pause * (1 + w*divergence_score) * (1 + variance_factor)
+        Where w = divergence_weight (default 1.1 for boosted divergence sensitivity)
         With optional stochasticity for exploration.
         """
         pause = self.config.base_pause
 
-        # Scale by divergence (higher divergence = longer pause to let patterns settle)
-        pause *= (1.0 + divergence_score)
+        # Scale by divergence with weight (higher divergence = longer pause)
+        w = self.config.divergence_weight
+        pause *= (1.0 + w * divergence_score)
 
         # Scale by variance (higher variance = more chaos = longer pause)
         pause *= (1.0 + variance_factor)
