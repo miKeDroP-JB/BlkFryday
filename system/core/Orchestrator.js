@@ -31,11 +31,16 @@ const { SacredMath, SACRED_NUMBERS, PHI, FIBONACCI_SEQUENCE } = require('./Sacre
 const { ReverseEngineer } = require('./ReverseEngineer.js');
 const { AmoebaDefense } = require('../security/AmoebaDefense.js');
 
+// Relationship & Memory systems
+const { RelationshipHeart } = require('./RelationshipHeart.js');
+const { NetPositiveFilter } = require('./NetPositiveFilter.js');
+const { MemorySpine } = require('../memory/MemorySpine.js');
+
 // Existing systems (paths relative to where this will run)
 // These will be loaded dynamically to prevent circular dependencies
 
 // ═══════════════════════════════════════════════════════════════════════════
-// SYSTEM REGISTRY - The 7 Sacred Systems + 3 Core
+// SYSTEM REGISTRY - The 7 Sacred Systems + Core + Relationship
 // ═══════════════════════════════════════════════════════════════════════════
 
 const SYSTEM_REGISTRY = {
@@ -75,11 +80,39 @@ const SYSTEM_REGISTRY = {
     required: true
   },
 
+  // Relationship Layer (The Heart)
+  RELATIONSHIP_HEART: {
+    name: 'RelationshipHeart',
+    layer: 'RELATIONSHIP',
+    order: 5,
+    description: 'Positivity, gratitude, and cooperation',
+    icon: '💖',
+    required: true
+  },
+  NET_POSITIVE_FILTER: {
+    name: 'NetPositiveFilter',
+    layer: 'RELATIONSHIP',
+    order: 6,
+    description: 'Ensures all actions benefit the whole',
+    icon: '✨',
+    required: true
+  },
+
+  // Memory Layer (The Spine)
+  MEMORY_SPINE: {
+    name: 'MemorySpine',
+    layer: 'MEMORY',
+    order: 7,
+    description: 'Complete memory architecture with 6 engines',
+    icon: '🧬',
+    required: true
+  },
+
   // The Sacred Seven Systems
   AGENTS: {
     name: 'AgentManager',
     layer: 'PANTHEON',
-    order: 5,
+    order: 8,
     description: 'The 7 AI agent archetypes',
     icon: '🤖',
     required: true
@@ -87,7 +120,7 @@ const SYSTEM_REGISTRY = {
   SWARM: {
     name: 'SwarmOrchestrator',
     layer: 'PANTHEON',
-    order: 6,
+    order: 9,
     description: 'Multi-agent coordination',
     icon: '🐝',
     required: true
@@ -95,7 +128,7 @@ const SYSTEM_REGISTRY = {
   COPA: {
     name: 'CopaSystem',
     layer: 'SIDEKICK',
-    order: 7,
+    order: 10,
     description: 'Industry copilots',
     icon: '🤝',
     required: true
@@ -103,7 +136,7 @@ const SYSTEM_REGISTRY = {
   GAMES: {
     name: 'GameLauncher',
     layer: 'REALITY',
-    order: 8,
+    order: 11,
     description: 'The 7 reality engines',
     icon: '🎮',
     required: true
@@ -111,7 +144,7 @@ const SYSTEM_REGISTRY = {
   NEURAL_ROUTER: {
     name: 'NeuralRouter',
     layer: 'INTELLIGENCE',
-    order: 9,
+    order: 12,
     description: 'AI model orchestration',
     icon: '🧠',
     required: true
@@ -119,7 +152,7 @@ const SYSTEM_REGISTRY = {
   NEURAL_LINK: {
     name: 'NeuralLink',
     layer: 'NETWORK',
-    order: 10,
+    order: 13,
     description: 'P2P distributed network',
     icon: '🌐',
     required: false
@@ -127,7 +160,7 @@ const SYSTEM_REGISTRY = {
   CRYPTO: {
     name: 'CryptoEngine',
     layer: 'ECONOMY',
-    order: 11,
+    order: 14,
     description: '$0RB token economy',
     icon: '💎',
     required: false
@@ -232,6 +265,11 @@ class Orchestrator extends EventEmitter {
     this.sacredMath = SacredMath;
     this.security = null;
 
+    // Relationship & Memory systems
+    this.relationshipHeart = null;
+    this.netPositiveFilter = null;
+    this.memorySpine = null;
+
     // State management
     this.state = ORCHESTRATOR_STATES.UNINITIALIZED;
     this.taskQueue = new TaskQueue();
@@ -247,7 +285,17 @@ class Orchestrator extends EventEmitter {
       systemsLoaded: 0,
       flowSyncCycles: 0,
       problemsSolved: 0,
-      threatsBlocked: 0
+      threatsBlocked: 0,
+      // Relationship stats
+      gratitudeExpressions: 0,
+      bondsStrengthened: 0,
+      cooperationAchieved: 0,
+      // Net Positive stats
+      netPositiveApproved: 0,
+      netPositiveBlocked: 0,
+      // Memory stats
+      memoriesCaptured: 0,
+      memoriesEvolved: 0
     };
 
     // JB$ Signature
@@ -295,13 +343,19 @@ class Orchestrator extends EventEmitter {
       // Phase 2: Initialize Security Layer
       await this.initializeSecurityLayer();
 
-      // Phase 3: Initialize Subsystems
+      // Phase 3: Initialize Relationship Layer (Heart)
+      await this.initializeRelationshipLayer();
+
+      // Phase 4: Initialize Memory Layer (Spine)
+      await this.initializeMemoryLayer();
+
+      // Phase 5: Initialize Subsystems
       await this.initializeSubsystems();
 
-      // Phase 4: Wire up event handlers
+      // Phase 6: Wire up event handlers
       this.wireEventHandlers();
 
-      // Phase 5: Start the main loop
+      // Phase 7: Start the main loop
       this.startMainLoop();
 
       this.state = ORCHESTRATOR_STATES.READY;
@@ -312,9 +366,19 @@ class Orchestrator extends EventEmitter {
 ║            ORCHESTRATOR INITIALIZATION COMPLETE               ║
 ╠══════════════════════════════════════════════════════════════╣
 ║  Systems Loaded: ${this.systems.size.toString().padEnd(40)}║
+║                                                              ║
+║  CORE LAYER                                                  ║
 ║  FlowSync: ${(this.flowSync ? 'ACTIVE' : 'INACTIVE').padEnd(47)}║
-║  Security: ${(this.security ? 'ACTIVE' : 'INACTIVE').padEnd(47)}║
 ║  Reverse Engineer: ${(this.reverseEngineer ? 'ACTIVE' : 'INACTIVE').padEnd(38)}║
+║  Security: ${(this.security ? 'ACTIVE' : 'INACTIVE').padEnd(47)}║
+║                                                              ║
+║  RELATIONSHIP LAYER                                          ║
+║  Heart (💖): ${(this.relationshipHeart ? 'ACTIVE' : 'INACTIVE').padEnd(44)}║
+║  Net Positive (✨): ${(this.netPositiveFilter ? 'ACTIVE' : 'INACTIVE').padEnd(37)}║
+║                                                              ║
+║  MEMORY LAYER                                                ║
+║  Spine (🧬): ${(this.memorySpine ? 'ACTIVE' : 'INACTIVE').padEnd(44)}║
+║                                                              ║
 ║  State: ${this.state.padEnd(50)}║
 ║  Signature: ${this.signature.padEnd(46)}║
 ╚══════════════════════════════════════════════════════════════╝
@@ -399,6 +463,59 @@ class Orchestrator extends EventEmitter {
     }
   }
 
+  async initializeRelationshipLayer() {
+    console.log('[ORCHESTRATOR] Initializing Relationship Layer (Heart)...');
+
+    // Initialize RelationshipHeart - fosters positivity and cooperation
+    this.relationshipHeart = new RelationshipHeart({
+      enableGratitude: true,
+      enablePositivity: true,
+      enableCooperation: true,
+      maxBonds: SACRED_NUMBERS.TWENTY_ONE  // F(8) = 21 max bonds
+    });
+
+    this.systems.set('RELATIONSHIP_HEART', {
+      instance: this.relationshipHeart,
+      status: 'ready',
+      loadedAt: Date.now()
+    });
+    this.stats.systemsLoaded++;
+    console.log('  ✓ Relationship Heart loaded (💖)');
+
+    // Initialize NetPositiveFilter - ensures all actions benefit the whole
+    this.netPositiveFilter = new NetPositiveFilter({
+      minimumScore: 0.618,  // Golden ratio - must be net positive
+      dimensions: ['quality', 'speed', 'flow', 'relationships', 'positivity', 'resources', 'learning', 'sustainability']
+    });
+
+    this.systems.set('NET_POSITIVE_FILTER', {
+      instance: this.netPositiveFilter,
+      status: 'ready',
+      loadedAt: Date.now()
+    });
+    this.stats.systemsLoaded++;
+    console.log('  ✓ Net Positive Filter loaded (✨)');
+  }
+
+  async initializeMemoryLayer() {
+    console.log('[ORCHESTRATOR] Initializing Memory Layer (Spine)...');
+
+    // Initialize MemorySpine - complete memory architecture
+    this.memorySpine = new MemorySpine({
+      engines: ['capture', 'process', 'surface', 'evolve', 'calibrate', 'transfer'],
+      maxMemorySize: FIBONACCI_SEQUENCE[12],  // 144 core memories
+      evolutionCycle: SACRED_NUMBERS.SEVEN * 24 * 60 * 60 * 1000  // 7 days
+    });
+
+    this.systems.set('MEMORY_SPINE', {
+      instance: this.memorySpine,
+      status: 'ready',
+      loadedAt: Date.now()
+    });
+    this.stats.systemsLoaded++;
+    console.log('  ✓ Memory Spine loaded (🧬)');
+  }
+
   async initializeSubsystems() {
     console.log('[ORCHESTRATOR] Initializing Subsystems...');
 
@@ -478,6 +595,50 @@ class Orchestrator extends EventEmitter {
         this.emit('threat:blocked', data);
       });
     }
+
+    // Relationship Heart events
+    if (this.relationshipHeart) {
+      this.relationshipHeart.on('gratitude:expressed', (data) => {
+        this.stats.gratitudeExpressions++;
+        this.emit('gratitude:expressed', data);
+      });
+
+      this.relationshipHeart.on('bond:strengthened', (data) => {
+        this.stats.bondsStrengthened++;
+        this.emit('bond:strengthened', data);
+      });
+
+      this.relationshipHeart.on('cooperation:achieved', (data) => {
+        this.stats.cooperationAchieved++;
+        this.emit('cooperation:achieved', data);
+      });
+    }
+
+    // Net Positive Filter events
+    if (this.netPositiveFilter) {
+      this.netPositiveFilter.on('action:approved', (data) => {
+        this.stats.netPositiveApproved++;
+        this.emit('action:approved', data);
+      });
+
+      this.netPositiveFilter.on('action:blocked', (data) => {
+        this.stats.netPositiveBlocked++;
+        this.emit('action:blocked', data);
+      });
+    }
+
+    // Memory Spine events
+    if (this.memorySpine) {
+      this.memorySpine.on('memory:captured', (data) => {
+        this.stats.memoriesCaptured++;
+        this.emit('memory:captured', data);
+      });
+
+      this.memorySpine.on('memory:evolved', (data) => {
+        this.stats.memoriesEvolved++;
+        this.emit('memory:evolved', data);
+      });
+    }
   }
 
   startMainLoop() {
@@ -493,9 +654,10 @@ class Orchestrator extends EventEmitter {
 
   /**
    * Execute a task through the orchestrator
+   * Passes through: Security -> Net Positive Filter -> FlowSync -> Execution
    */
   async execute(task) {
-    // Security check
+    // Phase 1: Security check
     if (this.security) {
       const securityCheck = await this.security.process({
         type: 'task_execution',
@@ -508,6 +670,27 @@ class Orchestrator extends EventEmitter {
           success: false,
           reason: 'blocked_by_security',
           details: securityCheck
+        };
+      }
+    }
+
+    // Phase 2: Net Positive check - ensure action benefits the whole
+    if (this.netPositiveFilter) {
+      const netPositiveCheck = await this.netPositiveFilter.evaluate({
+        action: task,
+        context: {
+          currentStats: this.stats,
+          activeTaskCount: this.activeTasks.size,
+          queueSize: this.taskQueue.size()
+        }
+      });
+
+      if (!netPositiveCheck.approved) {
+        this.emit('action:blocked', { task, reason: netPositiveCheck.reason });
+        return {
+          success: false,
+          reason: 'blocked_by_net_positive_filter',
+          details: netPositiveCheck
         };
       }
     }
@@ -536,6 +719,12 @@ class Orchestrator extends EventEmitter {
     if (result.success) {
       this.stats.completedTasks++;
       this.completedTasks.set(task.id, { task, result, completedAt: Date.now() });
+
+      // Capture successful task in memory
+      await this.captureMemory(task, result);
+
+      // Express gratitude for cooperation
+      await this.expressGratitude(task, result);
     } else {
       this.stats.failedTasks++;
     }
@@ -561,6 +750,12 @@ class Orchestrator extends EventEmitter {
       this.stats.completedTasks++;
       this.completedTasks.set(task.id, { task, result, completedAt: Date.now() });
 
+      // Capture successful task in memory
+      await this.captureMemory(task, result);
+
+      // Express gratitude for cooperation
+      await this.expressGratitude(task, result);
+
       return result;
 
     } catch (error) {
@@ -568,6 +763,58 @@ class Orchestrator extends EventEmitter {
       this.stats.failedTasks++;
 
       return { success: false, error: error.message };
+    }
+  }
+
+  /**
+   * Capture task completion in memory for learning
+   */
+  async captureMemory(task, result) {
+    if (this.memorySpine && result.success) {
+      try {
+        await this.memorySpine.capture({
+          type: 'task_completion',
+          task: {
+            id: task.id,
+            system: task.system,
+            type: task.type
+          },
+          result: {
+            success: result.success,
+            quality: result.quality || result.finalQuality,
+            iterations: result.iterations
+          },
+          timestamp: Date.now(),
+          context: {
+            systemsUsed: task.systemsInvolved || [task.system],
+            totalTasks: this.stats.totalTasks
+          }
+        });
+      } catch (err) {
+        // Silent fail - memory is supplemental
+      }
+    }
+  }
+
+  /**
+   * Express gratitude for successful cooperation between systems
+   */
+  async expressGratitude(task, result) {
+    if (this.relationshipHeart && result.success) {
+      try {
+        // If multiple agents/systems cooperated
+        if (task.systemsInvolved && task.systemsInvolved.length > 1) {
+          await this.relationshipHeart.expressGratitude({
+            from: 'orchestrator',
+            to: task.systemsInvolved,
+            reason: 'cooperation',
+            task: task.id,
+            quality: result.quality || result.finalQuality
+          });
+        }
+      } catch (err) {
+        // Silent fail - gratitude is supplemental
+      }
     }
   }
 
@@ -740,21 +987,28 @@ THE LAYERS:
 ───────────
 
 CORE LAYER (The Trinity)
-1. FlowSync      - Quality → Speed → Flow
+1. FlowSync        - Quality → Speed → Flow
 2. ReverseEngineer - Work backwards from goals
-3. SacredMath    - The mathematics underlying all
+3. SacredMath      - The mathematics underlying all
 
 SECURITY LAYER
-4. AmoebaDefense - Adaptive, impenetrable protection
+4. AmoebaDefense   - Adaptive, impenetrable protection
+
+RELATIONSHIP LAYER (The Heart)
+5. RelationshipHeart - Positivity, gratitude, cooperation
+6. NetPositiveFilter - Only implement if good for the whole
+
+MEMORY LAYER (The Spine)
+7. MemorySpine     - Capture, Process, Surface, Evolve
 
 THE SACRED SEVEN SYSTEMS
-5. Agents        - The 7 archetypes of the Pantheon
-6. Swarm         - Multi-agent orchestration
-7. Copa          - Industry copilots (10 verticals)
-8. Games         - The 7 reality engines
-9. NeuralRouter  - AI model intelligence
-10. NeuralLink   - Distributed P2P network
-11. CryptoEngine - The $0RB economy
+8. Agents          - The 7 archetypes of the Pantheon
+9. Swarm           - Multi-agent orchestration
+10. Copa           - Industry copilots (10 verticals)
+11. Games          - The 7 reality engines
+12. NeuralRouter   - AI model intelligence
+13. NeuralLink     - Distributed P2P network
+14. CryptoEngine   - The $0RB economy
 
 ═══════════════════════════════════════════════════════════════
 
@@ -766,8 +1020,13 @@ THE FLOW:
                     └──────┬──────┘
                            │
                     ┌──────▼──────┐
-                    │  SECURITY   │
+                    │  SECURITY   │ (Amoeba Defense)
                     │   CHECK     │
+                    └──────┬──────┘
+                           │
+                    ┌──────▼──────┐
+                    │ NET POSITIVE│ (Is this good for the whole?)
+                    │   FILTER    │
                     └──────┬──────┘
                            │
                     ┌──────▼──────┐
@@ -778,6 +1037,16 @@ THE FLOW:
                     ┌──────▼──────┐        │
                     │   EXECUTE   │◄───────┘
                     │   SYSTEM    │
+                    └──────┬──────┘
+                           │
+                    ┌──────▼──────┐
+                    │   MEMORY    │ (Capture & Learn)
+                    │   SPINE     │
+                    └──────┬──────┘
+                           │
+                    ┌──────▼──────┐
+                    │  GRATITUDE  │ (Express thanks)
+                    │   HEART     │
                     └──────┬──────┘
                            │
                     ┌──────▼──────┐
@@ -798,8 +1067,11 @@ THE SACRED NUMBERS:
 
 EVERY TASK IS:
 - Secured through Amoeba Defense
+- Validated through Net Positive Filter (good for the whole)
 - Quality-checked through FlowSync
 - Solvable through Reverse Engineering
+- Remembered through Memory Spine
+- Celebrated through Relationship Heart
 - Mathematically sound through Sacred Math
 
 NOTHING GETS THROUGH UNCHECKED.
