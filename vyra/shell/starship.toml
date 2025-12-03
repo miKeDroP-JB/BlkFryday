@@ -1,0 +1,116 @@
+# ═══════════════════════════════════════════════════════════════════
+# VYRA: GENESIS SECTOR - Starship Prompt Configuration
+# ═══════════════════════════════════════════════════════════════════
+
+# Neon sigil aesthetic
+
+format = """
+[╭─](cyan)$shell$username$hostname[─](cyan)$directory$git_branch$git_status$docker_context$nodejs$python$rust$golang
+[╰─▶](cyan) """
+
+right_format = """$cmd_duration$time"""
+
+# Prompt character
+[character]
+success_symbol = "[▶](bold cyan)"
+error_symbol = "[▶](bold red)"
+
+# Shell
+[shell]
+disabled = false
+bash_indicator = "[bash](yellow)"
+zsh_indicator = "[⟡](magenta)"
+format = "[$indicator]($style) "
+
+# Username
+[username]
+style_user = "magenta bold"
+style_root = "red bold"
+format = "[$user]($style)"
+show_always = true
+
+# Hostname
+[hostname]
+ssh_only = false
+format = "[@$hostname](cyan) "
+disabled = true
+
+# Directory
+[directory]
+style = "yellow"
+truncation_length = 3
+truncate_to_repo = true
+format = "[$path]($style)[$read_only]($read_only_style) "
+
+# Git
+[git_branch]
+symbol = " "
+style = "magenta"
+format = "[$symbol$branch]($style) "
+
+[git_status]
+style = "cyan"
+format = '([$all_status$ahead_behind]($style) )'
+conflicted = "⚡"
+ahead = "⇡${count}"
+behind = "⇣${count}"
+diverged = "⇕⇡${ahead_count}⇣${behind_count}"
+untracked = "?${count}"
+stashed = "📦"
+modified = "!${count}"
+staged = "+${count}"
+renamed = "»${count}"
+deleted = "✘${count}"
+
+# Docker
+[docker_context]
+symbol = "🐳 "
+style = "blue"
+format = "[$symbol$context]($style) "
+only_with_files = true
+
+# Node.js
+[nodejs]
+symbol = " "
+style = "green"
+format = "[$symbol($version)]($style) "
+
+# Python
+[python]
+symbol = " "
+style = "yellow"
+format = '[${symbol}${pyenv_prefix}(${version})(\($virtualenv\))]($style) '
+
+# Rust
+[rust]
+symbol = " "
+style = "red"
+format = "[$symbol($version)]($style) "
+
+# Go
+[golang]
+symbol = " "
+style = "cyan"
+format = "[$symbol($version)]($style) "
+
+# Command duration
+[cmd_duration]
+min_time = 500
+style = "yellow"
+format = "[$duration]($style) "
+
+# Time
+[time]
+disabled = false
+style = "bright-black"
+format = "[$time]($style)"
+time_format = "%H:%M"
+
+# Custom VYRA module (would need starship custom command)
+[custom.vyra_agents]
+command = "curl -s http://localhost:7777/agents/count 2>/dev/null || echo 0"
+when = "true"
+symbol = "⬡"
+style = "gold"
+format = "[$symbol$output]($style) "
+disabled = true
