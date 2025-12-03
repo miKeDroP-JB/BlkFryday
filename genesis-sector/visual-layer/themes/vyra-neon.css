@@ -1,0 +1,273 @@
+/* ══════════════════════════════════════════════════════════════════════
+   VYRA: GENESIS SECTOR - NEON RITUAL THEME
+   Master CSS Variables for System-wide Theming
+   ══════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* === BASE COLORS === */
+  --vyra-bg-darkest: #15161e;
+  --vyra-bg-dark: #1a1b26;
+  --vyra-bg-medium: #24283b;
+  --vyra-bg-light: #414868;
+
+  /* === ACCENT COLORS === */
+  --vyra-purple: #bb9af7;
+  --vyra-pink: #f7768e;
+  --vyra-cyan: #7dcfff;
+  --vyra-green: #9ece6a;
+  --vyra-yellow: #e0af68;
+  --vyra-blue: #7aa2f7;
+  --vyra-orange: #ff9e64;
+  --vyra-red: #db4b4b;
+
+  /* === TEXT COLORS === */
+  --vyra-text: #c0caf5;
+  --vyra-text-secondary: #a9b1d6;
+  --vyra-text-dim: #565f89;
+  --vyra-text-dark: #1a1b26;
+
+  /* === SEMANTIC COLORS === */
+  --vyra-success: var(--vyra-green);
+  --vyra-warning: var(--vyra-yellow);
+  --vyra-error: var(--vyra-pink);
+  --vyra-info: var(--vyra-cyan);
+
+  /* === BORDER COLORS === */
+  --vyra-border: var(--vyra-bg-light);
+  --vyra-border-focus: var(--vyra-purple);
+
+  /* === GRADIENT DEFINITIONS === */
+  --vyra-gradient-purple: linear-gradient(135deg, #bb9af7 0%, #9d7cd8 100%);
+  --vyra-gradient-neon: linear-gradient(135deg, #7aa2f7 0%, #bb9af7 50%, #f7768e 100%);
+  --vyra-gradient-dark: linear-gradient(180deg, #24283b 0%, #1a1b26 100%);
+  --vyra-gradient-glow: radial-gradient(circle, rgba(187,154,247,0.3) 0%, transparent 70%);
+
+  /* === SHADOWS === */
+  --vyra-shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+  --vyra-shadow-md: 0 4px 8px rgba(0, 0, 0, 0.4);
+  --vyra-shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.5);
+  --vyra-shadow-glow: 0 0 20px rgba(187, 154, 247, 0.4);
+  --vyra-shadow-glow-cyan: 0 0 20px rgba(125, 207, 255, 0.4);
+  --vyra-shadow-glow-pink: 0 0 20px rgba(247, 118, 142, 0.4);
+
+  /* === TYPOGRAPHY === */
+  --vyra-font-mono: 'JetBrains Mono', 'Fira Code', 'Hack', monospace;
+  --vyra-font-sans: 'Inter', 'Noto Sans', system-ui, sans-serif;
+
+  --vyra-font-size-xs: 0.75rem;
+  --vyra-font-size-sm: 0.875rem;
+  --vyra-font-size-md: 1rem;
+  --vyra-font-size-lg: 1.125rem;
+  --vyra-font-size-xl: 1.25rem;
+  --vyra-font-size-2xl: 1.5rem;
+  --vyra-font-size-3xl: 2rem;
+
+  /* === SPACING === */
+  --vyra-space-xs: 4px;
+  --vyra-space-sm: 8px;
+  --vyra-space-md: 16px;
+  --vyra-space-lg: 24px;
+  --vyra-space-xl: 32px;
+  --vyra-space-2xl: 48px;
+
+  /* === BORDER RADIUS === */
+  --vyra-radius-sm: 4px;
+  --vyra-radius-md: 8px;
+  --vyra-radius-lg: 12px;
+  --vyra-radius-xl: 16px;
+  --vyra-radius-full: 9999px;
+
+  /* === TRANSITIONS === */
+  --vyra-transition-fast: 150ms ease;
+  --vyra-transition-normal: 250ms ease;
+  --vyra-transition-slow: 400ms ease;
+
+  /* === Z-INDEX SCALE === */
+  --vyra-z-base: 0;
+  --vyra-z-dropdown: 100;
+  --vyra-z-sticky: 200;
+  --vyra-z-modal: 300;
+  --vyra-z-popover: 400;
+  --vyra-z-tooltip: 500;
+  --vyra-z-toast: 600;
+}
+
+/* === FOCUS MODE VARIANTS === */
+
+/* Trance Mode - Deep focus, subtle animations */
+.vyra-mode-trance {
+  --vyra-bg-dark: #16161e;
+  --vyra-bg-medium: #1e2030;
+  --vyra-animation-speed: 0.5;
+}
+
+/* Clarity Mode - High contrast for debugging */
+.vyra-mode-clarity {
+  --vyra-text: #e0e0e0;
+  --vyra-border: var(--vyra-cyan);
+  --vyra-animation-speed: 2;
+}
+
+/* Summon Mode - Active creation, energetic */
+.vyra-mode-summon {
+  --vyra-border-focus: var(--vyra-pink);
+  --vyra-animation-speed: 1.5;
+}
+
+/* === ANIMATIONS === */
+
+@keyframes vyra-pulse {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: var(--vyra-shadow-glow);
+  }
+  50% {
+    opacity: 0.8;
+    box-shadow: 0 0 30px rgba(187, 154, 247, 0.6);
+  }
+}
+
+@keyframes vyra-glow-rotate {
+  from {
+    filter: hue-rotate(0deg);
+  }
+  to {
+    filter: hue-rotate(360deg);
+  }
+}
+
+@keyframes vyra-float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes vyra-scan {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 100% 100%;
+  }
+}
+
+@keyframes vyra-typing {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes vyra-blink {
+  0%, 50%, 100% {
+    opacity: 1;
+  }
+  25%, 75% {
+    opacity: 0;
+  }
+}
+
+/* === UTILITY CLASSES === */
+
+.vyra-sigil {
+  color: var(--vyra-purple);
+  font-size: 1.5em;
+  animation: vyra-pulse 2s infinite;
+}
+
+.vyra-glow {
+  box-shadow: var(--vyra-shadow-glow);
+}
+
+.vyra-glow-cyan {
+  box-shadow: var(--vyra-shadow-glow-cyan);
+}
+
+.vyra-glow-pink {
+  box-shadow: var(--vyra-shadow-glow-pink);
+}
+
+.vyra-gradient-text {
+  background: var(--vyra-gradient-neon);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.vyra-panel {
+  background: var(--vyra-gradient-dark);
+  border: 1px solid var(--vyra-border);
+  border-radius: var(--vyra-radius-lg);
+  padding: var(--vyra-space-md);
+}
+
+.vyra-card {
+  background: var(--vyra-bg-medium);
+  border: 1px solid var(--vyra-border);
+  border-radius: var(--vyra-radius-md);
+  padding: var(--vyra-space-md);
+  transition: var(--vyra-transition-normal);
+}
+
+.vyra-card:hover {
+  border-color: var(--vyra-border-focus);
+  box-shadow: var(--vyra-shadow-glow);
+}
+
+.vyra-button {
+  background: var(--vyra-gradient-purple);
+  color: var(--vyra-text-dark);
+  border: none;
+  border-radius: var(--vyra-radius-md);
+  padding: var(--vyra-space-sm) var(--vyra-space-md);
+  font-family: var(--vyra-font-mono);
+  font-weight: bold;
+  cursor: pointer;
+  transition: var(--vyra-transition-fast);
+}
+
+.vyra-button:hover {
+  filter: brightness(1.1);
+  box-shadow: var(--vyra-shadow-glow);
+}
+
+.vyra-input {
+  background: var(--vyra-bg-darkest);
+  color: var(--vyra-text);
+  border: 1px solid var(--vyra-border);
+  border-radius: var(--vyra-radius-md);
+  padding: var(--vyra-space-sm) var(--vyra-space-md);
+  font-family: var(--vyra-font-mono);
+  transition: var(--vyra-transition-fast);
+}
+
+.vyra-input:focus {
+  outline: none;
+  border-color: var(--vyra-border-focus);
+  box-shadow: 0 0 0 2px rgba(187, 154, 247, 0.2);
+}
+
+/* === SCROLLBAR STYLING === */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--vyra-bg-darkest);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--vyra-bg-light);
+  border-radius: var(--vyra-radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--vyra-purple);
+}

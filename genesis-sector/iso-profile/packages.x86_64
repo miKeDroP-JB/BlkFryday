@@ -1,0 +1,217 @@
+# ============================================
+# VYRA: GENESIS SECTOR - PACKAGE MANIFEST
+# The complete sovereign development universe
+# ============================================
+
+# === BASE SYSTEM ===
+base
+base-devel
+linux
+linux-firmware
+linux-headers
+mkinitcpio
+mkinitcpio-archiso
+
+# === BOOTLOADER ===
+grub
+efibootmgr
+syslinux
+memtest86+
+
+# === FILESYSTEM ===
+btrfs-progs
+dosfstools
+exfatprogs
+f2fs-tools
+ntfs-3g
+xfsprogs
+
+# === NETWORKING ===
+networkmanager
+network-manager-applet
+wireless_tools
+wpa_supplicant
+iwd
+bluez
+bluez-utils
+openssh
+curl
+wget
+rsync
+aria2
+
+# === SHELL ENVIRONMENT (WarpDrive ZSH) ===
+zsh
+zsh-completions
+zsh-autosuggestions
+zsh-syntax-highlighting
+zsh-history-substring-search
+starship
+fzf
+fd
+ripgrep
+bat
+exa
+zoxide
+tmux
+neofetch
+figlet
+lolcat
+
+# === TERMINAL EMULATORS ===
+kitty
+alacritty
+
+# === DEVELOPMENT CORE ===
+git
+git-lfs
+github-cli
+lazygit
+gnupg
+openssh
+
+# === NODE.JS ECOSYSTEM ===
+nodejs
+npm
+yarn
+
+# === PYTHON ECOSYSTEM ===
+python
+python-pip
+python-pipx
+python-virtualenv
+python-poetry
+python-numpy
+python-pandas
+python-scikit-learn
+python-pytorch
+python-tensorflow
+python-requests
+python-aiohttp
+python-fastapi
+python-uvicorn
+python-pydantic
+
+# === RUST ===
+rust
+cargo
+
+# === GO ===
+go
+
+# === CONTAINERS ===
+docker
+docker-compose
+podman
+buildah
+skopeo
+
+# === EDITORS ===
+neovim
+code
+nano
+
+# === BUILD TOOLS ===
+cmake
+ninja
+meson
+make
+gcc
+clang
+llvm
+
+# === DATABASE ===
+sqlite
+postgresql
+redis
+mongodb-bin
+
+# === WEB SERVER ===
+nginx
+caddy
+
+# === CLOUD TOOLS ===
+aws-cli-v2
+
+# === GPU / CUDA ===
+nvidia-utils
+nvidia-settings
+cuda
+cudnn
+opencl-nvidia
+
+# === AUDIO ===
+pipewire
+pipewire-pulse
+pipewire-alsa
+pipewire-jack
+wireplumber
+sox
+ffmpeg
+mpv
+
+# === DISPLAY SERVER ===
+xorg-server
+xorg-xinit
+xorg-xrandr
+xorg-xsetroot
+
+# === DESKTOP ENVIRONMENT (KDE Plasma - Garuda Style) ===
+plasma-meta
+plasma-wayland-session
+kde-applications-meta
+sddm
+sddm-kcm
+kvantum
+latte-dock
+
+# === FONTS ===
+ttf-jetbrains-mono-nerd
+ttf-fira-code
+ttf-hack-nerd
+noto-fonts
+noto-fonts-emoji
+noto-fonts-cjk
+
+# === BROWSERS ===
+firefox
+chromium
+
+# === SYSTEM UTILITIES ===
+htop
+btop
+nvtop
+glances
+iotop
+ncdu
+tree
+unzip
+zip
+p7zip
+jq
+yq
+
+# === SECURITY ===
+ufw
+fail2ban
+firejail
+
+# === AI STACK DEPENDENCIES ===
+python-transformers
+python-sentencepiece
+python-tokenizers
+python-accelerate
+
+# === WEBRTC / STREAMING ===
+gstreamer
+gst-plugins-base
+gst-plugins-good
+gst-plugins-bad
+gst-plugins-ugly
+obs-studio
+
+# === MISC TOOLS ===
+imagemagick
+graphviz
+tesseract
+tesseract-data-eng
