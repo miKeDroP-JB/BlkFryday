@@ -36,6 +36,17 @@ import itertools
 import random
 import time
 import json
+from pathlib import Path
+import sys
+
+# Import pattern learner for adaptive hypothesis prioritization
+sys.path.insert(0, str(Path(__file__).parent))
+try:
+    from pattern_learner import PatternLearner
+    PATTERN_LEARNER_AVAILABLE = True
+except ImportError:
+    PatternLearner = None
+    PATTERN_LEARNER_AVAILABLE = False
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -1120,23 +1131,82 @@ class HypothesisGenerator:
 # ═══════════════════════════════════════════════════════════════════════════════
 
 class ARCSolver:
-    """Main ARC-AGI-2 solving engine"""
+    """Main ARC-AGI-2 solving engine with adaptive pattern learning"""
 
-    def __init__(self, use_swarm: bool = False):
+    def __init__(self, use_swarm: bool = False, use_learning: bool = True):
         self.generator = HypothesisGenerator()
         self.use_swarm = use_swarm
+        self.use_learning = use_learning and PATTERN_LEARNER_AVAILABLE
         self.stats = {
             'puzzles_attempted': 0,
             'puzzles_solved': 0,
-            'hypotheses_tested': 0
+            'hypotheses_tested': 0,
+            'patterns_applied': 0
         }
 
+        # Initialize pattern learner for adaptive hypothesis prioritization
+        if self.use_learning:
+            self.learner = PatternLearner(storage_path="data/arc_patterns.json")
+        else:
+            self.learner = None
+
+    def _extract_puzzle_features(self, puzzle: ARCPuzzle) -> Dict:
+        """Extract features from puzzle for pattern matching"""
+        features = {}
+
+        if puzzle.train:
+            example = puzzle.train[0]
+            inp = example.input
+            out = example.output
+
+            # Shape analysis
+            features['input_shape'] = inp.shape
+            features['output_shape'] = out.shape
+            features['shape_change'] = 'same' if inp.shape == out.shape else 'different'
+
+            # Scale analysis
+            if inp.height > 0 and inp.width > 0:
+                h_ratio = out.height / inp.height
+                w_ratio = out.width / inp.width
+                if abs(h_ratio - w_ratio) < 0.01 and h_ratio == int(h_ratio):
+                    features['scale_factor'] = int(h_ratio)
+                else:
+                    features['scale_factor'] = 1
+
+            # Color analysis
+            inp_colors = inp.colors_used()
+            out_colors = out.colors_used()
+            features['colors_added'] = list(out_colors - inp_colors)
+            features['colors_removed'] = list(inp_colors - out_colors)
+
+            # Object analysis (simplified)
+            features['input_object_count'] = len(inp_colors)
+            features['output_object_count'] = len(out_colors)
+
+            # Tiling detection
+            if out.height >= inp.height * 2 and out.width >= inp.width * 2:
+                features['is_tiled'] = True
+            else:
+                features['is_tiled'] = None
+
+        return features
+
     def solve(self, puzzle: ARCPuzzle) -> SolveResult:
-        """Attempt to solve an ARC puzzle"""
+        """Attempt to solve an ARC puzzle with adaptive pattern learning"""
         start_time = time.time()
+
+        # Extract features for pattern matching
+        features = self._extract_puzzle_features(puzzle)
 
         # Generate hypotheses
         hypotheses = self.generator.generate_hypotheses(puzzle)
+
+        # Get prioritized transforms from learned patterns
+        prioritized_transforms = []
+        if self.learner:
+            prioritized_transforms = self.learner.get_prioritized_transforms(features)
+            if prioritized_transforms:
+                self.stats['patterns_applied'] += 1
 
         # Test each hypothesis against training examples
         valid_hypotheses = []
@@ -1153,6 +1223,14 @@ class ARCSolver:
             if matches == len(puzzle.train):
                 hyp.examples_matched = matches
                 hyp.confidence = 1.0
+
+                # Boost confidence if this matches a learned pattern
+                if self.learner and prioritized_transforms:
+                    for transforms, priority in prioritized_transforms:
+                        if self._transforms_match(hyp.transforms, transforms):
+                            hyp.confidence = min(1.0, hyp.confidence + priority * 0.2)
+                            break
+
                 valid_hypotheses.append(hyp)
 
         # Sort by confidence and number of steps (prefer simpler)
@@ -1180,6 +1258,14 @@ class ARCSolver:
         if correct:
             self.stats['puzzles_solved'] += 1
 
+        # Learn from this attempt
+        if self.learner and winning_hypothesis:
+            transforms_for_learning = [(t[0], t[1] if len(t) > 1 else {}) for t in winning_hypothesis.transforms]
+            if correct:
+                self.learner.record_success(transforms_for_learning, features, winning_hypothesis.confidence)
+            else:
+                self.learner.record_failure(transforms_for_learning, features)
+
         return SolveResult(
             puzzle_id=puzzle.puzzle_id,
             predicted_output=predicted,
@@ -1188,6 +1274,15 @@ class ARCSolver:
             time_ms=elapsed_ms,
             hypotheses_tested=self.stats['hypotheses_tested']
         )
+
+    def _transforms_match(self, hyp_transforms: List, learned_transforms: List) -> bool:
+        """Check if hypothesis transforms match learned patterns"""
+        if not hyp_transforms or not learned_transforms:
+            return False
+        # Check first transform matches
+        if hyp_transforms[0][0] == learned_transforms[0][0]:
+            return True
+        return False
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
