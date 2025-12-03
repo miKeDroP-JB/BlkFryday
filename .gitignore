@@ -42,3 +42,4 @@ coverage/
 *.pem
 .vercel
 *.zip
+benchmark/benchmark/
