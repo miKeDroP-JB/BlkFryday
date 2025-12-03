@@ -1284,6 +1284,113 @@ class ARCSolver:
             return True
         return False
 
+    def solve_with_chaining(self, puzzle: ARCPuzzle, max_chain_depth: int = 4) -> SolveResult:
+        """
+        Advanced solving with adaptive hypothesis chaining.
+
+        Uses beam search to explore longer transform chains while
+        pruning unpromising paths early.
+        """
+        start_time = time.time()
+        features = self._extract_puzzle_features(puzzle)
+
+        # Beam search state: (partial_hypothesis, partial_result, score)
+        beam_width = 10
+        beam = [(Hypothesis(transforms=[], confidence=1.0), None, 1.0)]
+
+        best_hypothesis = None
+        best_predicted = None
+
+        # Get individual transforms to try
+        base_transforms = [
+            ('identity', {}),
+            ('rotate_90', {}),
+            ('rotate_180', {}),
+            ('rotate_270', {}),
+            ('flip_horizontal', {}),
+            ('flip_vertical', {}),
+            ('crop_to_content', {}),
+        ]
+
+        # Add learned transforms at higher priority
+        if self.learner:
+            prioritized = self.learner.get_prioritized_transforms(features)
+            for transforms, priority in prioritized[:3]:
+                if transforms:
+                    base_transforms.insert(0, transforms[0])
+
+        for depth in range(max_chain_depth):
+            new_beam = []
+
+            for hyp, partial, score in beam:
+                for trans_name, trans_params in base_transforms:
+                    # Extend hypothesis
+                    new_transforms = list(hyp.transforms) + [(trans_name, trans_params)]
+                    new_hyp = Hypothesis(transforms=new_transforms, confidence=score * 0.9)
+
+                    # Test on training examples
+                    matches = 0
+                    result_grid = None
+                    for example in puzzle.train:
+                        result = self.generator.apply_hypothesis(example.input, new_hyp)
+                        if result is not None and result == example.output:
+                            matches += 1
+                            result_grid = result
+
+                    if matches == len(puzzle.train):
+                        # Found complete solution!
+                        test_result = self.generator.apply_hypothesis(puzzle.test_input, new_hyp)
+                        if test_result is not None:
+                            best_hypothesis = new_hyp
+                            best_predicted = test_result
+                            break
+
+                    elif matches > 0:
+                        # Partial progress - keep in beam
+                        new_score = score * (matches / len(puzzle.train))
+                        new_beam.append((new_hyp, result_grid, new_score))
+
+                if best_hypothesis:
+                    break
+
+            if best_hypothesis:
+                break
+
+            # Prune beam to top k
+            new_beam.sort(key=lambda x: -x[2])
+            beam = new_beam[:beam_width]
+
+            if not beam:
+                break
+
+        # Fall back to regular solve if chaining didn't find solution
+        if not best_hypothesis:
+            return self.solve(puzzle)
+
+        elapsed_ms = (time.time() - start_time) * 1000
+
+        correct = False
+        if best_predicted is not None and puzzle.test_output is not None:
+            correct = best_predicted == puzzle.test_output
+
+        self.stats['puzzles_attempted'] += 1
+        if correct:
+            self.stats['puzzles_solved'] += 1
+
+        # Learn from success
+        if self.learner and best_hypothesis and correct:
+            transforms_for_learning = [(t[0], t[1] if len(t) > 1 else {}) for t in best_hypothesis.transforms]
+            self.learner.record_success(transforms_for_learning, features, best_hypothesis.confidence)
+
+        return SolveResult(
+            puzzle_id=puzzle.puzzle_id,
+            predicted_output=best_predicted,
+            correct=correct,
+            hypothesis=best_hypothesis,
+            time_ms=elapsed_ms,
+            hypotheses_tested=self.stats['hypotheses_tested']
+        )
+
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # ARC-STYLE TEST PUZZLES
