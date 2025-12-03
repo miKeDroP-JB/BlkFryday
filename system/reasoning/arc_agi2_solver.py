@@ -714,6 +714,152 @@ class TransformLibrary:
             return grid1
         return Grid((grid1.data != grid2.data).astype(np.int32))
 
+    # ─────────────────────────────────────────────────────────────────────────
+    # ADVANCED PATTERN TRANSFORMS (for ARC-AGI)
+    # ─────────────────────────────────────────────────────────────────────────
+
+    @staticmethod
+    def extract_border(grid: Grid, width: int = 1) -> Grid:
+        """Extract border/frame of grid"""
+        data = grid.data.copy()
+        h, w = data.shape
+        if h <= 2*width or w <= 2*width:
+            return grid
+        # Zero out interior
+        result = np.zeros_like(data)
+        result[:width, :] = data[:width, :]  # Top
+        result[-width:, :] = data[-width:, :]  # Bottom
+        result[:, :width] = data[:, :width]  # Left
+        result[:, -width:] = data[:, -width:]  # Right
+        return Grid(result)
+
+    @staticmethod
+    def extract_interior(grid: Grid, border: int = 1) -> Grid:
+        """Extract interior (remove border)"""
+        h, w = grid.shape
+        if h <= 2*border or w <= 2*border:
+            return grid
+        return Grid(grid.data[border:-border, border:-border])
+
+    @staticmethod
+    def add_border(grid: Grid, color: int = 1, width: int = 1) -> Grid:
+        """Add a border around the grid"""
+        data = grid.data
+        h, w = data.shape
+        result = np.full((h + 2*width, w + 2*width), color, dtype=np.int32)
+        result[width:-width, width:-width] = data
+        return Grid(result)
+
+    @staticmethod
+    def repeat_horizontally(grid: Grid, times: int = 2) -> Grid:
+        """Repeat grid horizontally"""
+        return Grid(np.tile(grid.data, (1, times)))
+
+    @staticmethod
+    def repeat_vertically(grid: Grid, times: int = 2) -> Grid:
+        """Repeat grid vertically"""
+        return Grid(np.tile(grid.data, (times, 1)))
+
+    @staticmethod
+    def get_unique_pattern(grid: Grid) -> Grid:
+        """Get smallest repeating pattern unit"""
+        data = grid.data
+        h, w = data.shape
+
+        # Try to find smallest tile that when repeated gives the original
+        for tile_h in range(1, h // 2 + 1):
+            if h % tile_h != 0:
+                continue
+            for tile_w in range(1, w // 2 + 1):
+                if w % tile_w != 0:
+                    continue
+                tile = data[:tile_h, :tile_w]
+                tiled = np.tile(tile, (h // tile_h, w // tile_w))
+                if np.array_equal(tiled, data):
+                    return Grid(tile)
+
+        return grid  # No repeating pattern found
+
+    @staticmethod
+    def fill_diagonal(grid: Grid, color: int = 1, direction: str = 'main') -> Grid:
+        """Fill diagonal with color"""
+        data = grid.data.copy()
+        h, w = data.shape
+        if direction == 'main':
+            np.fill_diagonal(data, color)
+        else:  # anti-diagonal
+            np.fill_diagonal(np.fliplr(data), color)
+        return Grid(data)
+
+    @staticmethod
+    def mask_by_color(grid: Grid, mask_grid: Grid, mask_color: int = 1) -> Grid:
+        """Keep only pixels where mask has mask_color"""
+        if grid.shape != mask_grid.shape:
+            return grid
+        result = np.zeros_like(grid.data)
+        mask = mask_grid.data == mask_color
+        result[mask] = grid.data[mask]
+        return Grid(result)
+
+    @staticmethod
+    def count_colors_to_grid(grid: Grid) -> Grid:
+        """Create grid where each cell is the count of that color"""
+        data = grid.data
+        unique, counts = np.unique(data, return_counts=True)
+        color_counts = dict(zip(unique, counts))
+        result = np.zeros_like(data)
+        for color, count in color_counts.items():
+            result[data == color] = min(count, 9)
+        return Grid(result)
+
+    @staticmethod
+    def hollow_objects(grid: Grid) -> Grid:
+        """Make all objects hollow (remove interior)"""
+        data = grid.data.copy()
+        h, w = data.shape
+
+        for i in range(1, h - 1):
+            for j in range(1, w - 1):
+                if data[i, j] != 0:
+                    # Check if surrounded by same color
+                    color = grid.data[i, j]
+                    neighbors = [
+                        grid.data[i-1, j], grid.data[i+1, j],
+                        grid.data[i, j-1], grid.data[i, j+1]
+                    ]
+                    if all(n == color for n in neighbors):
+                        data[i, j] = 0
+
+        return Grid(data)
+
+    @staticmethod
+    def solid_objects(grid: Grid) -> Grid:
+        """Fill objects to make them solid (fill holes)"""
+        data = grid.data.copy()
+        h, w = data.shape
+
+        # For each color, find bounding box and fill
+        for color in range(1, 10):
+            mask = grid.data == color
+            if not mask.any():
+                continue
+
+            rows, cols = np.where(mask)
+            if len(rows) == 0:
+                continue
+
+            min_r, max_r = rows.min(), rows.max()
+            min_c, max_c = cols.min(), cols.max()
+
+            # Fill the bounding box with this color
+            data[min_r:max_r+1, min_c:max_c+1] = np.where(
+                data[min_r:max_r+1, min_c:max_c+1] == 0,
+                color,
+                data[min_r:max_r+1, min_c:max_c+1]
+            )
+
+        return Grid(data)
+
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # FEATURE EXTRACTION - Understanding what changed
@@ -794,28 +940,44 @@ class HypothesisGenerator:
 
     # Single transforms to try
     SINGLE_TRANSFORMS = [
+        # Geometric
         ('rotate_90', {}),
         ('rotate_180', {}),
         ('rotate_270', {}),
         ('flip_horizontal', {}),
         ('flip_vertical', {}),
         ('transpose', {}),
+        # Cropping/padding
         ('crop_to_content', {}),
+        ('extract_border', {}),
+        ('extract_interior', {}),
+        # Structural
         ('fill_enclosed', {'fill_color': 1}),
         ('outline', {}),
         ('dilate', {}),
         ('erode', {}),
+        ('hollow_objects', {}),
+        ('solid_objects', {}),
+        # Gravity
         ('gravity_down', {}),
         ('gravity_up', {}),
         ('gravity_left', {}),
         ('gravity_right', {}),
+        # Object-based
         ('largest_object_only', {}),
         ('smallest_object_only', {}),
         ('sort_objects_by_size', {}),
+        # Symmetry
         ('complete_horizontal_symmetry', {}),
         ('complete_vertical_symmetry', {}),
         ('mirror_horizontal', {}),
         ('mirror_vertical', {}),
+        # Pattern
+        ('get_unique_pattern', {}),
+        ('repeat_horizontally', {'times': 2}),
+        ('repeat_horizontally', {'times': 3}),
+        ('repeat_vertically', {'times': 2}),
+        ('repeat_vertically', {'times': 3}),
     ]
 
     def __init__(self):
