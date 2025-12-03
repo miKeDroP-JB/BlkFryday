@@ -1232,7 +1232,7 @@ class TierCouncil:
             insights.append(insight)
 
         # Calculate tier contributions
-        tier_contributions = self._calculate_contributions(insights)
+        tier_contributions = self._calculate_contributions(insights, query)
 
         # Synthesize across tiers
         synthesis = self._synthesize(query, insights, tier_contributions)
@@ -1260,16 +1260,81 @@ class TierCouncil:
 
         return result
 
-    def _calculate_contributions(self, insights: List[Insight]) -> Dict[Tier, float]:
+    # Domain-specific keywords for query relevance
+    TIER_KEYWORDS = {
+        Tier.LOGIC_CORE: [
+            'prove', 'theorem', 'logic', 'formal', 'mathematical', 'proof',
+            'algorithm', 'compute', 'axiom', 'deduce', 'infer', 'valid',
+            'contradiction', 'syllogism', 'predicate', 'boolean', 'invariant'
+        ],
+        Tier.STRATEGIST: [
+            'strategy', 'strategic', 'negotiate', 'hostage', 'crisis', 'risk',
+            'scenario', 'contingency', 'adversary', 'intelligence', 'threat',
+            'mission', 'objective', 'tactical', 'operation', 'defense'
+        ],
+        Tier.MANIPULATOR: [
+            'persuade', 'influence', 'rapport', 'sales', 'convince', 'trust',
+            'objection', 'resistance', 'motivation', 'psychology', 'behavior',
+            'compliance', 'commitment', 'reciprocity', 'social', 'emotional'
+        ],
+        Tier.ARCHITECT: [
+            'design', 'system', 'architecture', 'failure', 'component', 'interface',
+            'hardware', 'infrastructure', 'scalability', 'redundancy', 'fault',
+            'circuit', 'protocol', 'reactor', 'engineering', 'technical'
+        ],
+        Tier.RAW_REALITY: [
+            'emotion', 'feel', 'experience', 'trauma', 'stress', 'panic',
+            '911', 'emergency', 'witness', 'victim', 'survivor', 'authentic',
+            'raw', 'real', 'human', 'pain', 'fear', 'grief'
+        ],
+    }
+
+    def _calculate_query_relevance(self, query: str, tier: Tier) -> float:
+        """Calculate how relevant a query is to a specific tier"""
+        query_lower = query.lower()
+        keywords = self.TIER_KEYWORDS.get(tier, [])
+
+        if not keywords:
+            return 0.5  # Default relevance
+
+        matches = sum(1 for kw in keywords if kw in query_lower)
+
+        # Sigmoid-like scaling: 0 matches = 0.2, 1 match = 0.5, 2+ = 0.7-1.0
+        if matches == 0:
+            return 0.2
+        elif matches == 1:
+            return 0.5
+        elif matches == 2:
+            return 0.7
+        else:
+            return min(1.0, 0.7 + matches * 0.1)
+
+    def _calculate_contributions(self, insights: List[Insight], query: Query = None) -> Dict[Tier, float]:
         """Calculate each tier's contribution to the synthesis"""
         contributions = {}
-        total_confidence = sum(i.confidence for i in insights)
 
+        # Calculate relevance-weighted scores
+        weighted_scores = {}
         for insight in insights:
-            if total_confidence > 0:
-                contributions[insight.tier] = insight.confidence / total_confidence
+            base_confidence = insight.confidence
+
+            # Apply query relevance if query provided
+            if query:
+                relevance = self._calculate_query_relevance(query.content, insight.tier)
+                # Relevance has strong effect: multiply confidence by relevance^2
+                weighted_score = base_confidence * (relevance ** 1.5)
             else:
-                contributions[insight.tier] = 1.0 / len(insights)
+                weighted_score = base_confidence
+
+            weighted_scores[insight.tier] = weighted_score
+
+        # Normalize
+        total = sum(weighted_scores.values())
+        for tier, score in weighted_scores.items():
+            if total > 0:
+                contributions[tier] = score / total
+            else:
+                contributions[tier] = 1.0 / len(insights)
 
         return contributions
 
