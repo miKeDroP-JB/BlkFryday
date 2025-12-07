@@ -1,0 +1,38 @@
+{
+  "name": "orb-contracts",
+  "version": "1.0.0",
+  "description": "0RB System Smart Contracts - Token, NFT, Staking, Marketplace",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "test:gas": "REPORT_GAS=true hardhat test",
+    "coverage": "hardhat coverage",
+    "deploy:local": "hardhat run scripts/deploy.js --network localhost",
+    "deploy:sepolia": "hardhat run scripts/deploy.js --network sepolia",
+    "deploy:base-sepolia": "hardhat run scripts/deploy.js --network baseSepolia",
+    "deploy:base": "hardhat run scripts/deploy.js --network base",
+    "deploy:polygon": "hardhat run scripts/deploy.js --network polygon",
+    "verify:sepolia": "hardhat run scripts/verify.js --network sepolia",
+    "verify:base-sepolia": "hardhat run scripts/verify.js --network baseSepolia",
+    "verify:base": "hardhat run scripts/verify.js --network base",
+    "node": "hardhat node",
+    "clean": "hardhat clean"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.0"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "dotenv": "^16.3.1",
+    "hardhat": "^2.19.0"
+  },
+  "keywords": [
+    "ethereum",
+    "solidity",
+    "nft",
+    "defi",
+    "staking",
+    "marketplace"
+  ],
+  "license": "MIT"
+}
