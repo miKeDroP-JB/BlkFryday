@@ -41,6 +41,13 @@ const {
 } = require('./agents/executor');
 
 // ═══════════════════════════════════════════════════════════════════════════
+// PERSONAL AI AGENTS - ATLAS & IRIS
+// ═══════════════════════════════════════════════════════════════════════════
+
+const { AtlasAgent, PRIORITY, EMAIL_CATEGORIES } = require('./agents/atlas');
+const { IrisAgent, OPPORTUNITY_TYPES, INTEL_SOURCES } = require('./agents/iris');
+
+// ═══════════════════════════════════════════════════════════════════════════
 // COMPANY FACTORY - THE META-SYSTEM
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -516,6 +523,14 @@ module.exports = {
   AgentExecutor,
   AGENT_ARCHETYPES,
   AGENT_PROMPTS,
+
+  // Personal Agents
+  AtlasAgent,
+  IrisAgent,
+  PRIORITY,
+  EMAIL_CATEGORIES,
+  OPPORTUNITY_TYPES,
+  INTEL_SOURCES,
 
   // Factory Layer
   CompanyFactory,
