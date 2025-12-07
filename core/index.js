@@ -64,6 +64,16 @@ const {
 } = require('./crypto/web3-engine');
 
 // ═══════════════════════════════════════════════════════════════════════════
+// HYDRA SECURITY LAYER - AMOEBA PROTOCOL
+// ═══════════════════════════════════════════════════════════════════════════
+
+const {
+  HydraSentinel,
+  EXPLOIT_PATTERNS,
+  THREAT_INTEL
+} = require('./security/hydra-sentinel');
+
+// ═══════════════════════════════════════════════════════════════════════════
 // ORCHESTRATION LAYER
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -105,6 +115,14 @@ class ORBCore extends EventEmitter {
         defaultBlueprint: config.factory?.defaultBlueprint || 'SAAS',
         outputDir: config.factory?.outputDir || './output',
         ...config.factory
+      },
+
+      // Security Configuration (HYDRA)
+      security: {
+        enabled: config.security?.enabled !== false,
+        sentinelApprovalThreshold: config.security?.sentinelApprovalThreshold || 1, // ETH
+        autoLockdownThreshold: config.security?.autoLockdownThreshold || 95,
+        ...config.security
       }
     };
 
@@ -115,7 +133,8 @@ class ORBCore extends EventEmitter {
         ai: false,
         agents: false,
         crypto: false,
-        factory: false
+        factory: false,
+        security: false
       }
     };
 
@@ -124,6 +143,7 @@ class ORBCore extends EventEmitter {
     this.agents = null;
     this.crypto = null;
     this.factory = null;
+    this.security = null;
 
     // Active sessions
     this.sessions = new Map();
@@ -175,6 +195,18 @@ class ORBCore extends EventEmitter {
       });
       this.state.subsystems.factory = true;
       console.log('  ✓ Company Factory ready');
+
+      // Initialize HYDRA Security Layer
+      if (this.config.security.enabled) {
+        console.log('⟡ Initializing HYDRA Sentinel...');
+        this.security = new HydraSentinel({
+          aiProvider: this.config.ai.defaultProvider,
+          deepAnalysisThreshold: this.config.security.sentinelApprovalThreshold
+        });
+        await this.security.initialize();
+        this.state.subsystems.security = true;
+        console.log('  ✓ HYDRA Sentinel ready');
+      }
 
       // Wire up cross-system events
       this._wireEvents();
@@ -332,6 +364,45 @@ class ORBCore extends EventEmitter {
   }
 
   // ═══════════════════════════════════════════════════════════════════════
+  // SECURITY METHODS (HYDRA)
+  // ═══════════════════════════════════════════════════════════════════════
+
+  /**
+   * Analyze a transaction for threats
+   */
+  async analyzeTransaction(tx) {
+    if (!this.state.subsystems.security) {
+      throw new Error('Security subsystem not initialized');
+    }
+
+    return this.security.analyzeTransaction(tx);
+  }
+
+  /**
+   * Get security status and threat level
+   */
+  getSecurityStatus() {
+    if (!this.security) return { enabled: false };
+
+    return {
+      enabled: true,
+      stats: this.security.getStats(),
+      threats: this.security.getThreatSummary()
+    };
+  }
+
+  /**
+   * Start monitoring pending transactions
+   */
+  async startSecurityMonitoring() {
+    if (!this.state.subsystems.security) {
+      throw new Error('Security subsystem not initialized');
+    }
+
+    return this.security.startMonitoring();
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════
   // CONVENIENCE METHODS
   // ═══════════════════════════════════════════════════════════════════════
 
@@ -358,6 +429,11 @@ class ORBCore extends EventEmitter {
         factory: {
           active: this.state.subsystems.factory,
           blueprints: Object.keys(COMPANY_BLUEPRINTS)
+        },
+        security: {
+          active: this.state.subsystems.security,
+          enabled: this.config.security.enabled,
+          stats: this.security?.getStats() || null
         }
       },
       activeSessions: this.sessions.size
@@ -452,5 +528,10 @@ module.exports = {
   WalletConnector,
   TransactionManager,
   CONTRACT_ABIS,
-  NETWORK_CONFIG
+  NETWORK_CONFIG,
+
+  // Security Layer (HYDRA)
+  HydraSentinel,
+  EXPLOIT_PATTERNS,
+  THREAT_INTEL
 };
