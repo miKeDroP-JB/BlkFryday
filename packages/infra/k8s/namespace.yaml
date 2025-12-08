@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: blk-system
+  labels:
+    app.kubernetes.io/name: blk
+    app.kubernetes.io/component: system
