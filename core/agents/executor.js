@@ -258,9 +258,13 @@ class AgentPool extends EventEmitter {
 // EXPORTS
 // ═══════════════════════════════════════════════════════════════════════════════
 
+// Alias for backward compatibility
+const AgentExecutor = AgentPool;
+
 module.exports = {
   Agent,
   AgentPool,
+  AgentExecutor,  // Alias for AgentPool
   AGENT_PROMPTS,
   AGENT_ARCHETYPES  // Also export from shared module
 };
