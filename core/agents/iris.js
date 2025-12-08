@@ -17,6 +17,7 @@
  */
 
 const { EventEmitter } = require('events');
+const { parseJSON, generateId } = require('../utils');
 
 // ═══════════════════════════════════════════════════════════════════════════
 // OPPORTUNITY TYPES
@@ -168,7 +169,7 @@ ${article.content || article.body || article.text || 'No content provided'}
       temperature: 0.4
     });
 
-    const result = this._parseJSON(response.content);
+    const result = parseJSON(response.content, 'IRIS');
 
     // Store findings
     if (result.opportunities) {
@@ -263,7 +264,7 @@ Respond in JSON:
       temperature: 0.3
     });
 
-    const result = this._parseJSON(response.content);
+    const result = parseJSON(response.content, 'IRIS');
 
     // Store findings
     if (result.painPoints) {
@@ -351,7 +352,7 @@ ${competitor.reviews || 'None provided'}
       temperature: 0.4
     });
 
-    const result = this._parseJSON(response.content);
+    const result = parseJSON(response.content, 'IRIS');
 
     // Store intel
     this.competitorMoves.push({
@@ -419,7 +420,7 @@ Respond in JSON:
       temperature: 0.3
     });
 
-    const result = this._parseJSON(response.content);
+    const result = parseJSON(response.content, 'IRIS');
 
     // Store sentiment data
     this.sentimentData.push({
@@ -488,7 +489,7 @@ Respond in JSON:
       temperature: 0.5
     });
 
-    const result = this._parseJSON(response.content);
+    const result = parseJSON(response.content, 'IRIS');
 
     // Store trends
     if (result.trends) {
@@ -569,7 +570,7 @@ Respond in JSON:
       temperature: 0.3
     });
 
-    const result = this._parseJSON(response.content);
+    const result = parseJSON(response.content, 'IRIS');
 
     this.emit('opportunities:scored', result);
 
@@ -674,21 +675,6 @@ ${this.sentimentData.slice(0, 5).map(s => `- ${s.topic}: ${s.analysis?.overall |
   // ═══════════════════════════════════════════════════════════════════════
   // UTILITIES
   // ═══════════════════════════════════════════════════════════════════════
-
-  /**
-   * Parse JSON from AI response
-   */
-  _parseJSON(content) {
-    try {
-      const jsonMatch = content.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        return JSON.parse(jsonMatch[0]);
-      }
-    } catch (e) {
-      console.warn('[IRIS] Failed to parse JSON:', e.message);
-    }
-    return { raw: content };
-  }
 
   /**
    * Get full status

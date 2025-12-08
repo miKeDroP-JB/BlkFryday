@@ -548,5 +548,8 @@ module.exports = {
   // Security Layer (HYDRA)
   HydraSentinel,
   EXPLOIT_PATTERNS,
-  THREAT_INTEL
+  THREAT_INTEL,
+
+  // Utilities
+  utils: require('./utils')
 };

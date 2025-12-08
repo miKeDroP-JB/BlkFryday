@@ -17,6 +17,7 @@
  */
 
 const { EventEmitter } = require('events');
+const { parseJSON, generateId } = require('../utils');
 
 // ═══════════════════════════════════════════════════════════════════════════
 // PRIORITY LEVELS
@@ -146,7 +147,7 @@ Preview: ${e.body?.slice(0, 500) || e.preview || 'No preview'}
       temperature: 0.3
     });
 
-    const result = this._parseJSON(response.content);
+    const result = parseJSON(response.content, 'ATLAS');
 
     // Store for context
     this.emails = result.emails || [];
@@ -277,7 +278,7 @@ Respond in JSON:
       temperature: 0.3
     });
 
-    const result = this._parseJSON(response.content);
+    const result = parseJSON(response.content, 'ATLAS');
 
     // Update task priorities
     if (result.prioritized) {
@@ -546,7 +547,7 @@ Work hours: ${this.config.workHoursStart}:00 - ${this.config.workHoursEnd}:00
 
     const response = await this.aiEngine.run(systemPrompt, context, { temperature: 0.3 });
 
-    return this._parseJSON(response.content);
+    return parseJSON(response.content, 'ATLAS');
   }
 
   // ═══════════════════════════════════════════════════════════════════════
@@ -590,7 +591,7 @@ Respond in JSON:
       temperature: 0.3
     });
 
-    const parsed = this._parseJSON(response.content);
+    const parsed = parseJSON(response.content, 'ATLAS');
 
     // Route to appropriate handler
     if (parsed.type === 'TASK') {
@@ -609,21 +610,6 @@ Respond in JSON:
   // ═══════════════════════════════════════════════════════════════════════
   // UTILITIES
   // ═══════════════════════════════════════════════════════════════════════
-
-  /**
-   * Parse JSON from AI response
-   */
-  _parseJSON(content) {
-    try {
-      const jsonMatch = content.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        return JSON.parse(jsonMatch[0]);
-      }
-    } catch (e) {
-      console.warn('[ATLAS] Failed to parse JSON:', e.message);
-    }
-    return { raw: content };
-  }
 
   /**
    * Get full status
