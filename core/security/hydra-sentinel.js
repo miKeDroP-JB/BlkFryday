@@ -688,6 +688,158 @@ Preliminary risk score: ${quickResult.riskScore}`;
 
     return threats.sort((a, b) => b.riskScore - a.riskScore);
   }
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // MEMORY PROTECTION (AMOEBA PROTOCOL)
+  // ═══════════════════════════════════════════════════════════════════════
+
+  /**
+   * Approve or deny a memory write operation
+   * Used to protect SOVEREIGN-level memories
+   */
+  async approveMemoryWrite(key, value) {
+    console.log(`[HYDRA] Memory write request: ${key}`);
+
+    // Check for sensitive patterns
+    const sensitivePatterns = [
+      /password/i,
+      /private.?key/i,
+      /secret/i,
+      /api.?key/i,
+      /credential/i,
+      /token/i
+    ];
+
+    const keyValue = JSON.stringify({ key, value });
+    const isSensitive = sensitivePatterns.some(p => p.test(keyValue));
+
+    if (isSensitive) {
+      console.log(`[HYDRA] ⚠ Sensitive data detected in memory write`);
+      // For sensitive data, apply additional encryption check
+      this.emit('memory:sensitive_write', { key });
+    }
+
+    // Check for injection attempts
+    const injectionPatterns = [
+      /<script/i,
+      /javascript:/i,
+      /eval\(/i,
+      /exec\(/i,
+      /system\(/i,
+      /\$\{.*\}/,
+      /`.*`/
+    ];
+
+    const hasInjection = injectionPatterns.some(p => p.test(keyValue));
+    if (hasInjection) {
+      console.log(`[HYDRA] ✗ Injection attempt blocked in memory write`);
+      this.emit('memory:blocked', { key, reason: 'injection_detected' });
+      return false;
+    }
+
+    // Log for audit
+    this._logMemoryOperation('write', key, true);
+
+    return true;
+  }
+
+  /**
+   * Approve or deny a memory delete operation
+   */
+  async approveMemoryDelete(key) {
+    console.log(`[HYDRA] Memory delete request: ${key}`);
+
+    // Prevent deletion of system-critical memories
+    const protectedPrefixes = [
+      'system:',
+      'config:',
+      'hydra:',
+      'security:'
+    ];
+
+    const isProtected = protectedPrefixes.some(p => key.startsWith(p));
+    if (isProtected) {
+      console.log(`[HYDRA] ✗ Protected memory delete blocked: ${key}`);
+      this.emit('memory:blocked', { key, reason: 'protected_memory' });
+      return false;
+    }
+
+    this._logMemoryOperation('delete', key, true);
+    return true;
+  }
+
+  /**
+   * Audit memory access patterns for anomalies
+   */
+  async auditMemoryAccess(accessLog) {
+    const analysis = {
+      totalAccesses: accessLog.length,
+      uniqueKeys: new Set(accessLog.map(a => a.key)).size,
+      suspiciousPatterns: []
+    };
+
+    // Check for rapid access (potential exfiltration)
+    const recentAccesses = accessLog.filter(a =>
+      Date.now() - a.timestamp < 60000
+    );
+    if (recentAccesses.length > 100) {
+      analysis.suspiciousPatterns.push({
+        type: 'RAPID_ACCESS',
+        count: recentAccesses.length,
+        severity: 'high'
+      });
+    }
+
+    // Check for sequential key enumeration
+    const sortedKeys = accessLog.map(a => a.key).sort();
+    let sequentialCount = 0;
+    for (let i = 1; i < sortedKeys.length; i++) {
+      if (sortedKeys[i].startsWith(sortedKeys[i-1].slice(0, -1))) {
+        sequentialCount++;
+      }
+    }
+    if (sequentialCount > 20) {
+      analysis.suspiciousPatterns.push({
+        type: 'KEY_ENUMERATION',
+        count: sequentialCount,
+        severity: 'medium'
+      });
+    }
+
+    if (analysis.suspiciousPatterns.length > 0) {
+      this.emit('memory:audit_alert', analysis);
+    }
+
+    return analysis;
+  }
+
+  /**
+   * Log memory operation for audit trail
+   */
+  _logMemoryOperation(operation, key, approved) {
+    if (!this._memoryAuditLog) {
+      this._memoryAuditLog = [];
+    }
+
+    this._memoryAuditLog.push({
+      timestamp: Date.now(),
+      operation,
+      key,
+      approved
+    });
+
+    // Keep only last 1000 entries
+    if (this._memoryAuditLog.length > 1000) {
+      this._memoryAuditLog = this._memoryAuditLog.slice(-1000);
+    }
+  }
+
+  /**
+   * Get memory audit log
+   */
+  getMemoryAuditLog() {
+    return this._memoryAuditLog || [];
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════════════════

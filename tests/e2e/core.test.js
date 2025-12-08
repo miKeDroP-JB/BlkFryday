@@ -257,6 +257,75 @@ describe('0RB Core System', () => {
   });
 });
 
+describe('Memory System', () => {
+  const { MemoryCore, MemoryEntry, VectorIndex, MEMORY_TYPES, PROTECTION_LEVELS } = require('../../core');
+
+  test('exports Memory components', () => {
+    expect(MemoryCore).toBeDefined();
+    expect(MemoryEntry).toBeDefined();
+    expect(VectorIndex).toBeDefined();
+    expect(MEMORY_TYPES).toBeDefined();
+    expect(PROTECTION_LEVELS).toBeDefined();
+  });
+
+  test('has all memory types', () => {
+    expect(MEMORY_TYPES.KNOWLEDGE).toBe('knowledge');
+    expect(MEMORY_TYPES.EXPERIENCE).toBe('experience');
+    expect(MEMORY_TYPES.SKILL).toBe('skill');
+    expect(MEMORY_TYPES.CONTEXT).toBe('context');
+    expect(MEMORY_TYPES.SYSTEM).toBe('system');
+  });
+
+  test('has protection levels', () => {
+    expect(PROTECTION_LEVELS.PUBLIC).toBe(0);
+    expect(PROTECTION_LEVELS.PRIVATE).toBe(1);
+    expect(PROTECTION_LEVELS.SOVEREIGN).toBe(2);
+  });
+
+  test('VectorIndex stores and searches', () => {
+    const index = new VectorIndex(3);
+
+    // Add some vectors
+    index.add('a', [1, 0, 0]);
+    index.add('b', [0, 1, 0]);
+    index.add('c', [0.9, 0.1, 0]);
+
+    expect(index.size()).toBe(3);
+
+    // Search for similar to [1, 0, 0]
+    const results = index.search([1, 0, 0], 2, 0.5);
+    expect(results.length).toBe(2);
+    expect(results[0].id).toBe('a'); // Exact match
+    expect(results[0].similarity).toBeCloseTo(1);
+  });
+
+  test('MemoryEntry creates with metadata', () => {
+    const entry = new MemoryEntry({
+      key: 'test-key',
+      value: 'test-value',
+      type: MEMORY_TYPES.KNOWLEDGE,
+      tags: ['test']
+    });
+
+    expect(entry.id).toBeDefined();
+    expect(entry.key).toBe('test-key');
+    expect(entry.value).toBe('test-value');
+    expect(entry.type).toBe('knowledge');
+    expect(entry.tags).toContain('test');
+    expect(entry.metadata.created).toBeDefined();
+    expect(entry.metadata.accessCount).toBe(0);
+  });
+
+  test('MemoryEntry touch updates access count', () => {
+    const entry = new MemoryEntry({ key: 'test', value: 'data' });
+    expect(entry.metadata.accessCount).toBe(0);
+
+    entry.touch();
+    expect(entry.metadata.accessCount).toBe(1);
+    expect(entry.metadata.lastAccessed).toBeDefined();
+  });
+});
+
 describe('Sequence Templates', () => {
   const { SEQUENCE_TEMPLATES, MESSAGE_TEMPLATES } = require('../../core');
 

@@ -55,6 +55,12 @@ function printHelp() {
   \x1b[33mhelp\x1b[0m               - Show this help
   \x1b[33mexit\x1b[0m               - Exit
 
+\x1b[36mMemory Commands:\x1b[0m
+  \x1b[33mremember <key> <value>\x1b[0m - Store knowledge in memory
+  \x1b[33mrecall <key>\x1b[0m           - Retrieve from memory
+  \x1b[33msearch <query>\x1b[0m         - Search memory semantically
+  \x1b[33mmemory\x1b[0m                 - Show memory stats
+
 \x1b[36mAgent Archetypes:\x1b[0m
   APOLLO    - Research & Illumination
   ATHENA    - Strategy & Wisdom
@@ -134,6 +140,46 @@ async function startREPL(orb) {
 
         case 'security':
           console.log('\n\x1b[36m' + JSON.stringify(orb.getSecurityStatus(), null, 2) + '\x1b[0m\n');
+          break;
+
+        case 'remember':
+          const [remKey, ...remValueParts] = args;
+          const remValue = remValueParts.join(' ');
+          if (!remKey || !remValue) {
+            console.log('\x1b[31mUsage: remember <key> <value>\x1b[0m');
+            break;
+          }
+          console.log('\x1b[33m⟡ Storing in memory...\x1b[0m');
+          await orb.remember(remKey, remValue);
+          console.log('\x1b[32m✓ Remembered: ' + remKey + '\x1b[0m\n');
+          break;
+
+        case 'recall':
+          if (!args[0]) {
+            console.log('\x1b[31mUsage: recall <key>\x1b[0m');
+            break;
+          }
+          console.log('\x1b[33m⟡ Searching memory...\x1b[0m');
+          const recalled = await orb.recall(args[0]);
+          if (recalled) {
+            console.log('\n\x1b[32m' + JSON.stringify(recalled, null, 2) + '\x1b[0m\n');
+          } else {
+            console.log('\x1b[31mNo memory found for: ' + args[0] + '\x1b[0m\n');
+          }
+          break;
+
+        case 'search':
+          if (!argString) {
+            console.log('\x1b[31mUsage: search <query>\x1b[0m');
+            break;
+          }
+          console.log('\x1b[33m⟡ Searching memory...\x1b[0m');
+          const searchResults = await orb.search(argString);
+          console.log('\n\x1b[32m' + JSON.stringify(searchResults.slice(0, 5), null, 2) + '\x1b[0m\n');
+          break;
+
+        case 'memory':
+          console.log('\n\x1b[36m' + JSON.stringify(orb.getMemoryStats(), null, 2) + '\x1b[0m\n');
           break;
 
         case 'help':

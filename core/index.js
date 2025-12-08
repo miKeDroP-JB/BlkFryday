@@ -81,6 +81,18 @@ const {
 } = require('./security/hydra-sentinel');
 
 // ═══════════════════════════════════════════════════════════════════════════
+// MEMORY & KNOWLEDGE LAYER
+// ═══════════════════════════════════════════════════════════════════════════
+
+const {
+  MemoryCore,
+  MemoryEntry,
+  VectorIndex,
+  MEMORY_TYPES,
+  PROTECTION_LEVELS
+} = require('./memory');
+
+// ═══════════════════════════════════════════════════════════════════════════
 // OUTREACH & SALES ENGINE
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -145,6 +157,15 @@ class ORBCore extends EventEmitter {
         sentinelApprovalThreshold: config.security?.sentinelApprovalThreshold || 1, // ETH
         autoLockdownThreshold: config.security?.autoLockdownThreshold || 95,
         ...config.security
+      },
+
+      // Memory Configuration
+      memory: {
+        enabled: config.memory?.enabled !== false,
+        dataDir: config.memory?.dataDir || '.orb-data',
+        encryptionKey: config.memory?.encryptionKey || process.env.ORB_ENCRYPTION_KEY,
+        persistInterval: config.memory?.persistInterval || 30000,
+        ...config.memory
       }
     };
 
@@ -156,7 +177,8 @@ class ORBCore extends EventEmitter {
         agents: false,
         crypto: false,
         factory: false,
-        security: false
+        security: false,
+        memory: false
       }
     };
 
@@ -166,6 +188,7 @@ class ORBCore extends EventEmitter {
     this.crypto = null;
     this.factory = null;
     this.security = null;
+    this.memory = null;
 
     // Active sessions
     this.sessions = new Map();
@@ -230,6 +253,25 @@ class ORBCore extends EventEmitter {
         console.log('  ✓ HYDRA Sentinel ready');
       }
 
+      // Initialize Memory Core (Knowledge Layer)
+      if (this.config.memory.enabled) {
+        console.log('⟡ Initializing Memory Core...');
+        this.memory = new MemoryCore({
+          dataDir: this.config.memory.dataDir,
+          encryptionKey: this.config.memory.encryptionKey,
+          persistInterval: this.config.memory.persistInterval
+        });
+        await this.memory.initialize();
+
+        // Connect HYDRA to protect memory
+        if (this.security) {
+          this.memory.connectHydra(this.security);
+        }
+
+        this.state.subsystems.memory = true;
+        console.log('  ✓ Memory Core ready');
+      }
+
       // Wire up cross-system events
       this._wireEvents();
 
@@ -254,26 +296,55 @@ class ORBCore extends EventEmitter {
    * Wire cross-system events
    */
   _wireEvents() {
-    // Agent completion -> Log & potentially mint NFT
+    // Agent completion -> Log, store to memory & potentially mint NFT
     this.agents.on('agent:complete', async (result) => {
       console.log(`[ORB CORE] Agent ${result.archetype} completed task`);
 
+      // Store experience in memory for learning
+      if (this.memory) {
+        await this.memory.learn(
+          { agent: result.archetype, task: result.task },
+          result.output,
+          { success: result.success, tags: ['agent', result.archetype.toLowerCase()] }
+        );
+      }
+
       // Could automatically record on-chain
-      if (this.crypto.isConnected) {
+      if (this.crypto?.isConnected) {
         // this.crypto.recordTaskCompletion(result);
       }
     });
 
-    // Factory phase completion -> Emit progress
-    this.factory.on('phase:complete', (phase) => {
+    // Factory phase completion -> Emit progress & store
+    this.factory.on('phase:complete', async (phase) => {
       console.log(`[ORB CORE] Factory phase complete: ${phase.name}`);
       this.emit('build:progress', phase);
+
+      // Store build progress in memory
+      if (this.memory) {
+        await this.memory.store(`build:${Date.now()}`, phase, {
+          type: MEMORY_TYPES.EXPERIENCE,
+          tags: ['factory', 'build', phase.name]
+        });
+      }
     });
 
     // Crypto transactions -> Log
     this.crypto.on('transaction:confirmed', (tx) => {
       console.log(`[ORB CORE] Transaction confirmed: ${tx.hash}`);
     });
+
+    // Memory events -> Learning loop
+    if (this.memory) {
+      this.memory.on('memory:stored', (data) => {
+        this.emit('learned', data);
+      });
+
+      this.memory.on('memory:blocked', (data) => {
+        console.log(`[ORB CORE] Memory operation blocked: ${data.reason}`);
+        this.emit('security:memory_blocked', data);
+      });
+    }
   }
 
   // ═══════════════════════════════════════════════════════════════════════
@@ -425,6 +496,94 @@ class ORBCore extends EventEmitter {
   }
 
   // ═══════════════════════════════════════════════════════════════════════
+  // MEMORY & KNOWLEDGE METHODS
+  // ═══════════════════════════════════════════════════════════════════════
+
+  /**
+   * Store knowledge in persistent memory
+   */
+  async remember(key, value, options = {}) {
+    if (!this.state.subsystems.memory) {
+      throw new Error('Memory subsystem not initialized');
+    }
+
+    return this.memory.store(key, value, {
+      type: options.type || MEMORY_TYPES.KNOWLEDGE,
+      tags: options.tags || [],
+      protection: options.protected ? PROTECTION_LEVELS.SOVEREIGN : PROTECTION_LEVELS.PRIVATE,
+      ...options
+    });
+  }
+
+  /**
+   * Retrieve knowledge from memory
+   */
+  async recall(key) {
+    if (!this.state.subsystems.memory) {
+      throw new Error('Memory subsystem not initialized');
+    }
+
+    const entry = await this.memory.retrieve(key);
+    return entry ? entry.value : null;
+  }
+
+  /**
+   * Search memory semantically
+   */
+  async search(query, options = {}) {
+    if (!this.state.subsystems.memory) {
+      throw new Error('Memory subsystem not initialized');
+    }
+
+    return this.memory.search(query, options);
+  }
+
+  /**
+   * Learn from an experience (stores with learning metadata)
+   */
+  async learn(experience, outcome, options = {}) {
+    if (!this.state.subsystems.memory) {
+      throw new Error('Memory subsystem not initialized');
+    }
+
+    return this.memory.learn(experience, outcome, options);
+  }
+
+  /**
+   * Provide feedback on a memory (reinforcement learning)
+   */
+  async feedback(key, positive = true) {
+    if (!this.state.subsystems.memory) {
+      throw new Error('Memory subsystem not initialized');
+    }
+
+    return this.memory.feedback(key, positive);
+  }
+
+  /**
+   * Get memory statistics
+   */
+  getMemoryStats() {
+    if (!this.memory) return { enabled: false };
+
+    return {
+      enabled: true,
+      stats: this.memory.getStats()
+    };
+  }
+
+  /**
+   * Extract patterns from learned experiences
+   */
+  async extractPatterns() {
+    if (!this.state.subsystems.memory) {
+      throw new Error('Memory subsystem not initialized');
+    }
+
+    return this.memory.extractPatterns();
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════
   // CONVENIENCE METHODS
   // ═══════════════════════════════════════════════════════════════════════
 
@@ -456,6 +615,11 @@ class ORBCore extends EventEmitter {
           active: this.state.subsystems.security,
           enabled: this.config.security.enabled,
           stats: this.security?.getStats() || null
+        },
+        memory: {
+          active: this.state.subsystems.memory,
+          enabled: this.config.memory.enabled,
+          stats: this.memory?.getStats() || null
         }
       },
       activeSessions: this.sessions.size
@@ -481,6 +645,13 @@ class ORBCore extends EventEmitter {
    */
   async shutdown() {
     console.log('\n⟡ Shutting down ORB Core...');
+
+    // Persist memory before shutdown
+    if (this.memory) {
+      console.log('  ⟡ Persisting memory...');
+      await this.memory.shutdown();
+      console.log('  ✓ Memory persisted');
+    }
 
     // Close crypto connections
     if (this.crypto?.isConnected) {
@@ -564,6 +735,13 @@ module.exports = {
   HydraSentinel,
   EXPLOIT_PATTERNS,
   THREAT_INTEL,
+
+  // Memory & Knowledge Layer
+  MemoryCore,
+  MemoryEntry,
+  VectorIndex,
+  MEMORY_TYPES,
+  PROTECTION_LEVELS,
 
   // Outreach & Sales
   OutreachEngine,
