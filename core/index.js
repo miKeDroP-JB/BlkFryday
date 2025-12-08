@@ -81,6 +81,21 @@ const {
 } = require('./security/hydra-sentinel');
 
 // ═══════════════════════════════════════════════════════════════════════════
+// OUTREACH & SALES ENGINE
+// ═══════════════════════════════════════════════════════════════════════════
+
+const {
+  OutreachEngine,
+  Campaign,
+  Prospect,
+  CHANNELS,
+  CAMPAIGN_TYPES,
+  SEQUENCE_TEMPLATES,
+  MESSAGE_TEMPLATES,
+  createEmailProvider
+} = require('./outreach');
+
+// ═══════════════════════════════════════════════════════════════════════════
 // ORCHESTRATION LAYER
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -549,6 +564,16 @@ module.exports = {
   HydraSentinel,
   EXPLOIT_PATTERNS,
   THREAT_INTEL,
+
+  // Outreach & Sales
+  OutreachEngine,
+  Campaign,
+  Prospect,
+  CHANNELS,
+  CAMPAIGN_TYPES,
+  SEQUENCE_TEMPLATES,
+  MESSAGE_TEMPLATES,
+  createEmailProvider,
 
   // Utilities
   utils: require('./utils')
