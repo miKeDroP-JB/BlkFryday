@@ -1,0 +1,39 @@
+{
+  "name": "@fractal-memory/edge",
+  "version": "1.0.0",
+  "description": "Fractal Memory Engine - Edge Layer (THE NODES)",
+  "main": "src/index.ts",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "deploy:staging": "wrangler deploy --env staging",
+    "deploy:production": "wrangler deploy --env production",
+    "tail": "wrangler tail",
+    "build": "esbuild src/index.ts --bundle --outdir=dist --format=esm --target=es2022",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest",
+    "test:ci": "vitest run"
+  },
+  "dependencies": {
+    "itty-router": "^4.0.27"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240117.0",
+    "esbuild": "^0.19.11",
+    "typescript": "^5.3.3",
+    "vitest": "^1.2.0",
+    "wrangler": "^3.23.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "cloudflare-workers",
+    "edge",
+    "fractal-memory",
+    "0r8"
+  ],
+  "author": "0RB System",
+  "license": "UNLICENSED"
+}
