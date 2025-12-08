@@ -16,6 +16,16 @@
     "automate:evening": "node scripts/automate.js evening",
     "schedule": "node scripts/automate.js schedule",
 
+    "backup": "node scripts/backup.js",
+    "backup:list": "node scripts/backup.js --list",
+    "backup:restore": "node scripts/backup.js --restore",
+    "backup:verify": "node scripts/backup.js --verify",
+    "backup:schedule": "node scripts/backup.js --schedule",
+
+    "server": "node server/index.js",
+    "server:dev": "LOG_LEVEL=debug node server/index.js",
+    "api": "node server/index.js",
+
     "quick-setup": "bash scripts/quick-setup.sh",
 
     "electron": "electron .",

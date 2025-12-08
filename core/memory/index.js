@@ -614,9 +614,29 @@ class MemoryCore extends EventEmitter {
   // ═══════════════════════════════════════════════════════════════════════
 
   async _generateEmbedding(text) {
-    // Placeholder - will be connected to AI engine
-    if (this.embedder) {
-      return this.embedder.embed(text);
+    // Convert to string if needed
+    const textToEmbed = typeof text === 'string'
+      ? text
+      : JSON.stringify(text);
+
+    if (this.embedder && textToEmbed.length > 0) {
+      try {
+        const embedding = await this.embedder.embed(textToEmbed);
+        // Update vector index dimensions if needed
+        if (embedding && embedding.length !== this.vectorIndex.dimensions) {
+          this.vectorIndex = new VectorIndex(embedding.length);
+          // Re-index existing entries with embeddings
+          for (const [key, entry] of this.entries) {
+            if (entry.embedding) {
+              this.vectorIndex.add(entry.id, entry.embedding);
+            }
+          }
+        }
+        return embedding;
+      } catch (error) {
+        console.error('  ⚠ Embedding generation failed:', error.message);
+        return null;
+      }
     }
     return null;
   }

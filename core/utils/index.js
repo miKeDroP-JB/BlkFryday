@@ -374,6 +374,31 @@ function omit(obj, keys) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
+// RATE LIMITING
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const {
+  TokenBucket,
+  RateLimiter,
+  PROVIDER_LIMITS,
+  createRateLimiter
+} = require('./rate-limiter');
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// LOGGING
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const {
+  Logger,
+  LOG_LEVELS,
+  ConsoleTransport,
+  FileTransport,
+  MemoryTransport,
+  getLogger,
+  createLogger
+} = require('./logger');
+
+// ═══════════════════════════════════════════════════════════════════════════════
 // EXPORTS
 // ═══════════════════════════════════════════════════════════════════════════════
 
@@ -410,5 +435,20 @@ module.exports = {
   // Objects
   deepMerge,
   pick,
-  omit
+  omit,
+
+  // Rate Limiting
+  TokenBucket,
+  RateLimiter,
+  PROVIDER_LIMITS,
+  createRateLimiter,
+
+  // Logging
+  Logger,
+  LOG_LEVELS,
+  ConsoleTransport,
+  FileTransport,
+  MemoryTransport,
+  getLogger,
+  createLogger
 };

@@ -175,14 +175,13 @@ class HydraSentinel extends EventEmitter {
     console.log('╚════════════════════════════════════════════════════════════╝\n');
 
     // Load AI providers
-    const { ProviderRegistry } = require('../ai/providers');
+    const { ProviderManager } = require('../ai/providers');
     const { AIEngine } = require('../ai/engine');
 
-    const registry = new ProviderRegistry();
-    registry.registerFromEnv();
+    const manager = ProviderManager.autoInit();
 
     this.aiEngine = new AIEngine({
-      providers: registry,
+      providers: manager,
       defaultProvider: this.config.aiProvider
     });
 

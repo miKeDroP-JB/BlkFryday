@@ -29,6 +29,14 @@ const {
 
 const { AIEngine, ToolExecutor } = require('./ai/engine');
 
+const {
+  createEmbeddingProvider,
+  EmbeddingRegistry,
+  OpenAIEmbeddingProvider,
+  OllamaEmbeddingProvider,
+  LocalEmbeddingProvider
+} = require('./ai/embeddings');
+
 // ═══════════════════════════════════════════════════════════════════════════
 // AGENT EXECUTION SYSTEM
 // ═══════════════════════════════════════════════════════════════════════════
@@ -266,6 +274,15 @@ class ORBCore extends EventEmitter {
         // Connect HYDRA to protect memory
         if (this.security) {
           this.memory.connectHydra(this.security);
+        }
+
+        // Connect embeddings for semantic search
+        try {
+          const embedder = createEmbeddingProvider('auto');
+          this.memory.connectEmbedder(embedder);
+          this.embedder = embedder;
+        } catch (e) {
+          console.log('  ⚠ Embeddings unavailable (will use keyword search)');
         }
 
         this.state.subsystems.memory = true;
@@ -703,6 +720,13 @@ module.exports = {
   AnthropicProvider,
   OllamaProvider,
   GroqProvider,
+
+  // Embeddings
+  createEmbeddingProvider,
+  EmbeddingRegistry,
+  OpenAIEmbeddingProvider,
+  OllamaEmbeddingProvider,
+  LocalEmbeddingProvider,
 
   // Agent Layer
   Agent,

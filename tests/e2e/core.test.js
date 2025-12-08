@@ -257,6 +257,121 @@ describe('0RB Core System', () => {
   });
 });
 
+describe('Logging', () => {
+  const { Logger, LOG_LEVELS, createLogger, MemoryTransport } = require('../../core').utils;
+
+  test('exports logging components', () => {
+    expect(Logger).toBeDefined();
+    expect(LOG_LEVELS).toBeDefined();
+    expect(createLogger).toBeDefined();
+    expect(MemoryTransport).toBeDefined();
+  });
+
+  test('Logger logs at correct levels', () => {
+    const logger = createLogger({ console: false, memory: { maxEntries: 100 } });
+    logger.setLevel('debug');
+    logger.error('test error');
+    logger.info('test info');
+    logger.debug('test debug');
+
+    const logs = logger.getRecentLogs();
+    expect(logs.length).toBe(3);
+  });
+
+  test('Logger respects level filtering', () => {
+    const logger = createLogger({ console: false, memory: { maxEntries: 100 } });
+    logger.setLevel('warn');
+    logger.error('error msg');
+    logger.warn('warn msg');
+    logger.info('info msg'); // Should not log
+    logger.debug('debug msg'); // Should not log
+
+    const logs = logger.getRecentLogs();
+    expect(logs.length).toBe(2);
+  });
+
+  test('Logger child inherits context', () => {
+    const logger = createLogger({ console: false, memory: { maxEntries: 100 } });
+    const child = logger.child({ component: 'test' });
+    child.info('test message');
+
+    const logs = logger.getRecentLogs();
+    expect(logs[0].meta.component).toBe('test');
+  });
+});
+
+describe('Rate Limiting', () => {
+  const { TokenBucket, RateLimiter, createRateLimiter, PROVIDER_LIMITS } = require('../../core').utils;
+
+  test('exports rate limiting components', () => {
+    expect(TokenBucket).toBeDefined();
+    expect(RateLimiter).toBeDefined();
+    expect(createRateLimiter).toBeDefined();
+    expect(PROVIDER_LIMITS).toBeDefined();
+  });
+
+  test('TokenBucket consumes tokens', () => {
+    const bucket = new TokenBucket({ capacity: 10, refillRate: 1 });
+    expect(bucket.tryConsume(5)).toBe(true);
+    expect(bucket.getTokens()).toBe(5);
+    expect(bucket.tryConsume(10)).toBe(false); // Not enough tokens
+  });
+
+  test('TokenBucket refills over time', async () => {
+    const bucket = new TokenBucket({ capacity: 10, refillRate: 100 }); // 100 tokens/sec
+    bucket.tryConsume(10); // Drain all tokens
+    const before = bucket.getTokens();
+    await new Promise(r => setTimeout(r, 100)); // Wait 100ms
+    const after = bucket.getTokens();
+    expect(after).toBeGreaterThan(before);
+  });
+
+  test('RateLimiter tracks per-provider stats', async () => {
+    const limiter = new RateLimiter({ defaultRPM: 100 });
+    await limiter.acquire('test-provider', 10);
+    const status = limiter.getStatus('test-provider');
+    expect(status.stats.requests).toBe(1);
+  });
+
+  test('createRateLimiter pre-configures providers', () => {
+    const limiter = createRateLimiter();
+    expect(limiter.buckets.has('openai')).toBe(true);
+    expect(limiter.buckets.has('anthropic')).toBe(true);
+  });
+});
+
+describe('Embedding System', () => {
+  const { createEmbeddingProvider, LocalEmbeddingProvider, EmbeddingRegistry } = require('../../core');
+
+  test('exports embedding components', () => {
+    expect(createEmbeddingProvider).toBeDefined();
+    expect(LocalEmbeddingProvider).toBeDefined();
+    expect(EmbeddingRegistry).toBeDefined();
+  });
+
+  test('creates local embedding provider', () => {
+    const embedder = createEmbeddingProvider('local');
+    expect(embedder.name).toBe('local');
+    expect(embedder.dimensions).toBe(384);
+  });
+
+  test('local embedder generates embeddings', async () => {
+    const embedder = new LocalEmbeddingProvider({ dimensions: 128 });
+    const embedding = await embedder.embed('hello world test');
+    expect(embedding).toBeDefined();
+    expect(embedding.length).toBe(128);
+    expect(typeof embedding[0]).toBe('number');
+  });
+
+  test('embeddings are cached', async () => {
+    const embedder = new LocalEmbeddingProvider();
+    await embedder.embed('cached text');
+    await embedder.embed('cached text'); // Should hit cache
+    const stats = embedder.getStats();
+    expect(stats.cacheHits).toBe(1);
+  });
+});
+
 describe('Memory System', () => {
   const { MemoryCore, MemoryEntry, VectorIndex, MEMORY_TYPES, PROTECTION_LEVELS } = require('../../core');
 
