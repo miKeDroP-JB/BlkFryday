@@ -7,9 +7,10 @@
 
 const AbstractionEngine = require('./AbstractionEngine');
 const Grid = require('./Primitives');
+const { REAL_ARC_TASKS } = require('./RealTasks');
 
 // ═══════════════════════════════════════════════════════════════
-// SAMPLE ARC TASKS (from official dataset)
+// SAMPLE ARC TASKS (hand-picked for primitives testing)
 // ═══════════════════════════════════════════════════════════════
 
 const SAMPLE_TASKS = [
@@ -263,6 +264,67 @@ class Evaluator {
 
     return result;
   }
+
+  // Extended evaluation with real ARC tasks
+  runExtended() {
+    console.log('╔═══════════════════════════════════════════════════════════════╗');
+    console.log('║      0RB SYSTEM - EXTENDED ARC-AGI EVALUATION (20 TASKS)      ║');
+    console.log('║                THE SIMULATION FACES REALITY                    ║');
+    console.log('╚═══════════════════════════════════════════════════════════════╝');
+    console.log('');
+
+    const results = this.engine.evaluate(REAL_ARC_TASKS);
+
+    console.log('─────────────────────────────────────────────────────────────────');
+    console.log('TASK RESULTS:');
+    console.log('─────────────────────────────────────────────────────────────────');
+
+    let passed = 0;
+    let failed = 0;
+
+    for (const task of REAL_ARC_TASKS) {
+      const taskResults = results.results.filter(r => r.taskId === task.id);
+      const allCorrect = taskResults.every(r => r.correct);
+      const strategy = taskResults[0]?.strategy || 'unknown';
+
+      if (allCorrect) {
+        passed++;
+        console.log(`✓ PASS | ${task.id.padEnd(22)} | ${strategy}`);
+      } else {
+        failed++;
+        console.log(`✗ FAIL | ${task.id.padEnd(22)} | ${strategy}`);
+      }
+    }
+
+    console.log('─────────────────────────────────────────────────────────────────');
+    console.log('');
+    console.log('═══════════════════════════════════════════════════════════════');
+    console.log(`TASKS PASSED: ${passed}/${REAL_ARC_TASKS.length}`);
+    console.log(`TEST CASES:   ${results.correct}/${results.total} (${(results.accuracy * 100).toFixed(1)}%)`);
+    console.log('═══════════════════════════════════════════════════════════════');
+    console.log('');
+
+    // Reality check
+    console.log('BENCHMARK COMPARISON (Real ARC-AGI):');
+    console.log('─────────────────────────────────────────────────────────────────');
+    console.log(`0RB System (extended):     ${(results.accuracy * 100).toFixed(1)}%`);
+    console.log(`GPT-4:                     ~5%`);
+    console.log(`Claude 3.5 Sonnet:         ~21%`);
+    console.log(`Best ARC Prize 2024:       55.5%`);
+    console.log(`OpenAI o3:                 87.5%`);
+    console.log(`Human average:             ~85%`);
+    console.log('─────────────────────────────────────────────────────────────────');
+    console.log('');
+
+    if (results.accuracy > 0.20) {
+      console.log('🔥 BEATING GPT-4 BASELINE!');
+    }
+    if (results.accuracy > 0.50) {
+      console.log('⚡ COMPETITIVE WITH TOP ARC SOLVERS!');
+    }
+
+    return results;
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -271,7 +333,14 @@ class Evaluator {
 
 if (require.main === module) {
   const evaluator = new Evaluator();
-  evaluator.runBaseline();
+
+  const mode = process.argv[2];
+  if (mode === '--extended' || mode === '-e') {
+    evaluator.runExtended();
+  } else {
+    evaluator.runBaseline();
+    console.log('\nRun with --extended for real ARC task evaluation');
+  }
 }
 
-module.exports = { Evaluator, SAMPLE_TASKS };
+module.exports = { Evaluator, SAMPLE_TASKS, REAL_ARC_TASKS };
