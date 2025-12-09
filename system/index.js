@@ -114,6 +114,26 @@ const {
 } = require('./governance/HiveGovernance');
 
 // ═══════════════════════════════════════════════════════════════════
+// ETHICS SYSTEM - "Tech That Listens. Tech That Respects."
+// ═══════════════════════════════════════════════════════════════════
+
+const {
+  EthicsGateway,
+  createEthicsGateway,
+  PrivacyEngine,
+  ConsentManager,
+  EdgeLayer,
+  TrustFilter,
+  AuditLogger,
+  EthicsSupervisor,
+  CONSENT_TYPES,
+  TRUST_LEVELS,
+  AUDIT_CATEGORIES,
+  SEVERITY,
+  ALERT_LEVEL
+} = require('./ethics/EthicsGateway');
+
+// ═══════════════════════════════════════════════════════════════════
 // SYSTEM INITIALIZATION
 // ═══════════════════════════════════════════════════════════════════
 
@@ -154,7 +174,10 @@ async function initializeSystem(config = {}) {
     nexus: null,
     genesis: null,
     sdk: null,
-    governance: null
+    governance: null,
+
+    // Ethics - "Tech That Listens. Tech That Respects."
+    ethics: null
   };
 
   // Initialize based on config
@@ -229,6 +252,20 @@ async function initializeSystem(config = {}) {
   if (config.governance !== false) {
     systems.governance = new HiveGovernance(config.governanceConfig);
     console.log('✓ Hive Governance initialized');
+  }
+
+  // Initialize Ethics System - FIRST GATE for all data
+  if (config.ethics !== false) {
+    systems.ethics = createEthicsGateway({
+      config: {
+        enabled: true,
+        strictMode: config.ethicsStrict || false,
+        auditAllRequests: true,
+      },
+      ...config.ethicsConfig
+    });
+    await systems.ethics.start();
+    console.log('✓ Ethics Gateway initialized - "Tech That Listens. Tech That Respects."');
   }
 
   console.log('\n🌟 0RB System fully operational\n');
@@ -380,5 +417,22 @@ module.exports = {
     PROPOSAL_CATEGORIES,
     PROPOSAL_STATES,
     VOTE_TYPES
+  },
+
+  // Ethics System - "Tech That Listens. Tech That Respects."
+  Ethics: {
+    EthicsGateway,
+    createEthicsGateway,
+    PrivacyEngine,
+    ConsentManager,
+    EdgeLayer,
+    TrustFilter,
+    AuditLogger,
+    EthicsSupervisor,
+    CONSENT_TYPES,
+    TRUST_LEVELS,
+    AUDIT_CATEGORIES,
+    SEVERITY,
+    ALERT_LEVEL
   }
 };
