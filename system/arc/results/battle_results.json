@@ -1,0 +1,2033 @@
+[
+  {
+    "taskId": "1cf80156",
+    "strategy": "extractBoundingBox",
+    "confidence": 1,
+    "program": null,
+    "runtime": 3,
+    "testCases": 1,
+    "passedCases": 1,
+    "allPassed": true,
+    "testResults": [
+      {
+        "index": 0,
+        "correct": true,
+        "expected": [
+          [
+            0,
+            0,
+            6,
+            6,
+            6,
+            6
+          ],
+          [
+            0,
+            0,
+            6,
+            0,
+            0,
+            0
+          ],
+          [
+            6,
+            0,
+            6,
+            0,
+            0,
+            0
+          ],
+          [
+            6,
+            6,
+            6,
+            6,
+            0,
+            0
+          ]
+        ],
+        "predicted": [
+          [
+            0,
+            0,
+            6,
+            6,
+            6,
+            6
+          ],
+          [
+            0,
+            0,
+            6,
+            0,
+            0,
+            0
+          ],
+          [
+            6,
+            0,
+            6,
+            0,
+            0,
+            0
+          ],
+          [
+            6,
+            6,
+            6,
+            6,
+            0,
+            0
+          ]
+        ],
+        "similarity": 1
+      }
+    ],
+    "analysis": {
+      "inputSize": "12x10",
+      "outputSize": "4x4",
+      "sizeChange": "shrink",
+      "inputColors": 1,
+      "outputColors": 1,
+      "complexity": 45
+    }
+  },
+  {
+    "taskId": "0d3d703e",
+    "strategy": "learnedColorMapping",
+    "confidence": 1,
+    "program": null,
+    "runtime": 1,
+    "testCases": 1,
+    "passedCases": 1,
+    "allPassed": true,
+    "testResults": [
+      {
+        "index": 0,
+        "correct": true,
+        "expected": [
+          [
+            9,
+            5,
+            4
+          ],
+          [
+            9,
+            5,
+            4
+          ],
+          [
+            9,
+            5,
+            4
+          ]
+        ],
+        "predicted": [
+          [
+            9,
+            5,
+            4
+          ],
+          [
+            9,
+            5,
+            4
+          ],
+          [
+            9,
+            5,
+            4
+          ]
+        ],
+        "similarity": 1
+      }
+    ],
+    "analysis": {
+      "inputSize": "3x3",
+      "outputSize": "3x3",
+      "sizeChange": "same",
+      "inputColors": 3,
+      "outputColors": 3,
+      "complexity": 14
+    }
+  },
+  {
+    "taskId": "25ff71a9",
+    "strategy": "shiftDown",
+    "confidence": 1,
+    "program": null,
+    "runtime": 3,
+    "testCases": 2,
+    "passedCases": 2,
+    "allPassed": true,
+    "testResults": [
+      {
+        "index": 0,
+        "correct": true,
+        "expected": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            2,
+            0,
+            0
+          ],
+          [
+            2,
+            0,
+            0
+          ]
+        ],
+        "predicted": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            2,
+            0,
+            0
+          ],
+          [
+            2,
+            0,
+            0
+          ]
+        ],
+        "similarity": 1
+      },
+      {
+        "index": 1,
+        "correct": true,
+        "expected": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "predicted": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "similarity": 1
+      }
+    ],
+    "analysis": {
+      "inputSize": "3x3",
+      "outputSize": "3x3",
+      "sizeChange": "same",
+      "inputColors": 1,
+      "outputColors": 1,
+      "complexity": 5
+    }
+  },
+  {
+    "taskId": "3c9b0459",
+    "strategy": "rotate180",
+    "confidence": 1,
+    "program": null,
+    "runtime": 0,
+    "testCases": 1,
+    "passedCases": 1,
+    "allPassed": true,
+    "testResults": [
+      {
+        "index": 0,
+        "correct": true,
+        "expected": [
+          [
+            7,
+            6,
+            4
+          ],
+          [
+            4,
+            6,
+            6
+          ],
+          [
+            4,
+            4,
+            6
+          ]
+        ],
+        "predicted": [
+          [
+            7,
+            6,
+            4
+          ],
+          [
+            4,
+            6,
+            6
+          ],
+          [
+            4,
+            4,
+            6
+          ]
+        ],
+        "similarity": 1
+      }
+    ],
+    "analysis": {
+      "inputSize": "3x3",
+      "outputSize": "3x3",
+      "sizeChange": "same",
+      "inputColors": 3,
+      "outputColors": 3,
+      "complexity": 14
+    }
+  },
+  {
+    "taskId": "6150a2bd",
+    "strategy": "rotate180",
+    "confidence": 1,
+    "program": null,
+    "runtime": 0,
+    "testCases": 1,
+    "passedCases": 1,
+    "allPassed": true,
+    "testResults": [
+      {
+        "index": 0,
+        "correct": true,
+        "expected": [
+          [
+            0,
+            0,
+            4
+          ],
+          [
+            0,
+            8,
+            6
+          ],
+          [
+            5,
+            3,
+            6
+          ]
+        ],
+        "predicted": [
+          [
+            0,
+            0,
+            4
+          ],
+          [
+            0,
+            8,
+            6
+          ],
+          [
+            5,
+            3,
+            6
+          ]
+        ],
+        "similarity": 1
+      }
+    ],
+    "analysis": {
+      "inputSize": "3x3",
+      "outputSize": "3x3",
+      "sizeChange": "same",
+      "inputColors": 4,
+      "outputColors": 4,
+      "complexity": 36
+    }
+  },
+  {
+    "taskId": "74dd1130",
+    "strategy": "transpose",
+    "confidence": 1,
+    "program": null,
+    "runtime": 0,
+    "testCases": 1,
+    "passedCases": 1,
+    "allPassed": true,
+    "testResults": [
+      {
+        "index": 0,
+        "correct": true,
+        "expected": [
+          [
+            9,
+            9,
+            9
+          ],
+          [
+            3,
+            4,
+            3
+          ],
+          [
+            4,
+            4,
+            4
+          ]
+        ],
+        "predicted": [
+          [
+            9,
+            9,
+            9
+          ],
+          [
+            3,
+            4,
+            3
+          ],
+          [
+            4,
+            4,
+            4
+          ]
+        ],
+        "similarity": 1
+      }
+    ],
+    "analysis": {
+      "inputSize": "3x3",
+      "outputSize": "3x3",
+      "sizeChange": "same",
+      "inputColors": 3,
+      "outputColors": 3,
+      "complexity": 14
+    }
+  },
+  {
+    "taskId": "6d0aefbc",
+    "strategy": "mirrorHorizontal",
+    "confidence": 1,
+    "program": null,
+    "runtime": 1,
+    "testCases": 1,
+    "passedCases": 1,
+    "allPassed": true,
+    "testResults": [
+      {
+        "index": 0,
+        "correct": true,
+        "expected": [
+          [
+            6,
+            8,
+            6,
+            6,
+            8,
+            6
+          ],
+          [
+            8,
+            6,
+            8,
+            8,
+            6,
+            8
+          ],
+          [
+            1,
+            6,
+            1,
+            1,
+            6,
+            1
+          ]
+        ],
+        "predicted": [
+          [
+            6,
+            8,
+            6,
+            6,
+            8,
+            6
+          ],
+          [
+            8,
+            6,
+            8,
+            8,
+            6,
+            8
+          ],
+          [
+            1,
+            6,
+            1,
+            1,
+            6,
+            1
+          ]
+        ],
+        "similarity": 1
+      }
+    ],
+    "analysis": {
+      "inputSize": "3x3",
+      "outputSize": "6x3",
+      "sizeChange": "grow",
+      "inputColors": 3,
+      "outputColors": 3,
+      "complexity": 20
+    }
+  },
+  {
+    "taskId": "7b7f7511",
+    "strategy": "deduplicate",
+    "confidence": 1,
+    "program": null,
+    "runtime": 1,
+    "testCases": 1,
+    "passedCases": 1,
+    "allPassed": true,
+    "testResults": [
+      {
+        "index": 0,
+        "correct": true,
+        "expected": [
+          [
+            5,
+            4,
+            5
+          ],
+          [
+            4,
+            5,
+            4
+          ],
+          [
+            6,
+            6,
+            4
+          ],
+          [
+            2,
+            6,
+            2
+          ]
+        ],
+        "predicted": [
+          [
+            5,
+            4,
+            5
+          ],
+          [
+            4,
+            5,
+            4
+          ],
+          [
+            6,
+            6,
+            4
+          ],
+          [
+            2,
+            6,
+            2
+          ]
+        ],
+        "similarity": 1
+      }
+    ],
+    "analysis": {
+      "inputSize": "8x4",
+      "outputSize": "4x4",
+      "sizeChange": "shrink",
+      "inputColors": 3,
+      "outputColors": 3,
+      "complexity": 48
+    }
+  },
+  {
+    "taskId": "8be77c9e",
+    "strategy": "mirrorVertical",
+    "confidence": 1,
+    "program": null,
+    "runtime": 0,
+    "testCases": 1,
+    "passedCases": 1,
+    "allPassed": true,
+    "testResults": [
+      {
+        "index": 0,
+        "correct": true,
+        "expected": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ],
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "predicted": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ],
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "similarity": 1
+      }
+    ],
+    "analysis": {
+      "inputSize": "3x3",
+      "outputSize": "3x6",
+      "sizeChange": "grow",
+      "inputColors": 1,
+      "outputColors": 1,
+      "complexity": 9
+    }
+  },
+  {
+    "taskId": "a416b8f3",
+    "strategy": "tileHorizontal",
+    "confidence": 1,
+    "program": null,
+    "runtime": 0,
+    "testCases": 1,
+    "passedCases": 1,
+    "allPassed": true,
+    "testResults": [
+      {
+        "index": 0,
+        "correct": true,
+        "expected": [
+          [
+            4,
+            0,
+            0,
+            0,
+            4,
+            0,
+            0,
+            0
+          ],
+          [
+            4,
+            5,
+            0,
+            0,
+            4,
+            5,
+            0,
+            0
+          ],
+          [
+            0,
+            5,
+            6,
+            0,
+            0,
+            5,
+            6,
+            0
+          ],
+          [
+            6,
+            6,
+            1,
+            0,
+            6,
+            6,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            1
+          ]
+        ],
+        "predicted": [
+          [
+            4,
+            0,
+            0,
+            0,
+            4,
+            0,
+            0,
+            0
+          ],
+          [
+            4,
+            5,
+            0,
+            0,
+            4,
+            5,
+            0,
+            0
+          ],
+          [
+            0,
+            5,
+            6,
+            0,
+            0,
+            5,
+            6,
+            0
+          ],
+          [
+            6,
+            6,
+            1,
+            0,
+            6,
+            6,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            1
+          ]
+        ],
+        "similarity": 1
+      }
+    ],
+    "analysis": {
+      "inputSize": "3x3",
+      "outputSize": "6x3",
+      "sizeChange": "grow",
+      "inputColors": 2,
+      "outputColors": 2,
+      "complexity": 18
+    }
+  },
+  {
+    "taskId": "aabf363d",
+    "strategy": "replaceColorWithMarker",
+    "confidence": 1,
+    "program": null,
+    "runtime": 0,
+    "testCases": 1,
+    "passedCases": 1,
+    "allPassed": true,
+    "testResults": [
+      {
+        "index": 0,
+        "correct": true,
+        "expected": [
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            2,
+            2,
+            2,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            2,
+            2,
+            2,
+            2,
+            2,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            2,
+            2,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            2,
+            2,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            2,
+            2,
+            2,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        ],
+        "predicted": [
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            2,
+            2,
+            2,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            2,
+            2,
+            2,
+            2,
+            2,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            2,
+            2,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            2,
+            2,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            2,
+            2,
+            2,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        ],
+        "similarity": 1
+      }
+    ],
+    "analysis": {
+      "inputSize": "7x7",
+      "outputSize": "7x7",
+      "sizeChange": "same",
+      "inputColors": 2,
+      "outputColors": 1,
+      "complexity": 98
+    }
+  },
+  {
+    "taskId": "b1948b0a",
+    "strategy": "swapColors",
+    "confidence": 1,
+    "program": null,
+    "runtime": 1,
+    "testCases": 1,
+    "passedCases": 1,
+    "allPassed": true,
+    "testResults": [
+      {
+        "index": 0,
+        "correct": true,
+        "expected": [
+          [
+            2,
+            7,
+            7,
+            2
+          ],
+          [
+            2,
+            7,
+            2,
+            7
+          ],
+          [
+            7,
+            7,
+            7,
+            2
+          ],
+          [
+            7,
+            2,
+            7,
+            2
+          ]
+        ],
+        "predicted": [
+          [
+            2,
+            7,
+            7,
+            2
+          ],
+          [
+            2,
+            7,
+            2,
+            7
+          ],
+          [
+            7,
+            7,
+            7,
+            2
+          ],
+          [
+            7,
+            2,
+            7,
+            2
+          ]
+        ],
+        "similarity": 1
+      }
+    ],
+    "analysis": {
+      "inputSize": "4x3",
+      "outputSize": "4x3",
+      "sizeChange": "same",
+      "inputColors": 2,
+      "outputColors": 2,
+      "complexity": 16
+    }
+  },
+  {
+    "taskId": "c8f0f002",
+    "strategy": "swapColors",
+    "confidence": 1,
+    "program": null,
+    "runtime": 0,
+    "testCases": 1,
+    "passedCases": 1,
+    "allPassed": true,
+    "testResults": [
+      {
+        "index": 0,
+        "correct": true,
+        "expected": [
+          [
+            1,
+            5,
+            5,
+            1,
+            5
+          ],
+          [
+            8,
+            1,
+            5,
+            5,
+            5
+          ],
+          [
+            8,
+            5,
+            1,
+            5,
+            8
+          ]
+        ],
+        "predicted": [
+          [
+            1,
+            5,
+            5,
+            1,
+            5
+          ],
+          [
+            8,
+            1,
+            5,
+            5,
+            5
+          ],
+          [
+            8,
+            5,
+            1,
+            5,
+            8
+          ]
+        ],
+        "similarity": 1
+      }
+    ],
+    "analysis": {
+      "inputSize": "6x3",
+      "outputSize": "6x3",
+      "sizeChange": "same",
+      "inputColors": 3,
+      "outputColors": 3,
+      "complexity": 36
+    }
+  },
+  {
+    "taskId": "67385a82",
+    "strategy": "colorSignificantComponents",
+    "confidence": 1,
+    "program": null,
+    "runtime": 1,
+    "testCases": 1,
+    "passedCases": 1,
+    "allPassed": true,
+    "testResults": [
+      {
+        "index": 0,
+        "correct": true,
+        "expected": [
+          [
+            8,
+            0,
+            8,
+            0,
+            3
+          ],
+          [
+            8,
+            8,
+            8,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            3
+          ],
+          [
+            0,
+            8,
+            8,
+            0,
+            0
+          ],
+          [
+            0,
+            8,
+            8,
+            0,
+            0
+          ]
+        ],
+        "predicted": [
+          [
+            8,
+            0,
+            8,
+            0,
+            3
+          ],
+          [
+            8,
+            8,
+            8,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            3
+          ],
+          [
+            0,
+            8,
+            8,
+            0,
+            0
+          ],
+          [
+            0,
+            8,
+            8,
+            0,
+            0
+          ]
+        ],
+        "similarity": 1
+      }
+    ],
+    "analysis": {
+      "inputSize": "3x3",
+      "outputSize": "3x3",
+      "sizeChange": "same",
+      "inputColors": 1,
+      "outputColors": 2,
+      "complexity": 5
+    }
+  },
+  {
+    "taskId": "3aa6fb7a",
+    "strategy": "fillLShapeCorner",
+    "confidence": 1,
+    "program": null,
+    "runtime": 1,
+    "testCases": 1,
+    "passedCases": 1,
+    "allPassed": true,
+    "testResults": [
+      {
+        "index": 0,
+        "correct": true,
+        "expected": [
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            8,
+            8
+          ],
+          [
+            8,
+            8,
+            0,
+            0,
+            0,
+            1,
+            8
+          ],
+          [
+            8,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            8,
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            8,
+            8,
+            0,
+            0
+          ],
+          [
+            1,
+            8,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            8,
+            8,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        ],
+        "predicted": [
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            8,
+            8
+          ],
+          [
+            8,
+            8,
+            0,
+            0,
+            0,
+            1,
+            8
+          ],
+          [
+            8,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            8,
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            8,
+            8,
+            0,
+            0
+          ],
+          [
+            1,
+            8,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            8,
+            8,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        ],
+        "similarity": 1
+      }
+    ],
+    "analysis": {
+      "inputSize": "7x7",
+      "outputSize": "7x7",
+      "sizeChange": "same",
+      "inputColors": 1,
+      "outputColors": 2,
+      "complexity": 49
+    }
+  },
+  {
+    "taskId": "007bbfb7",
+    "strategy": "selfTile",
+    "confidence": 1,
+    "program": null,
+    "runtime": 0,
+    "testCases": 1,
+    "passedCases": 1,
+    "allPassed": true,
+    "testResults": [
+      {
+        "index": 0,
+        "correct": true,
+        "expected": [
+          [
+            7,
+            0,
+            7,
+            0,
+            0,
+            0,
+            7,
+            0,
+            7
+          ],
+          [
+            7,
+            0,
+            7,
+            0,
+            0,
+            0,
+            7,
+            0,
+            7
+          ],
+          [
+            7,
+            7,
+            0,
+            0,
+            0,
+            0,
+            7,
+            7,
+            0
+          ],
+          [
+            7,
+            0,
+            7,
+            0,
+            0,
+            0,
+            7,
+            0,
+            7
+          ],
+          [
+            7,
+            0,
+            7,
+            0,
+            0,
+            0,
+            7,
+            0,
+            7
+          ],
+          [
+            7,
+            7,
+            0,
+            0,
+            0,
+            0,
+            7,
+            7,
+            0
+          ],
+          [
+            7,
+            0,
+            7,
+            7,
+            0,
+            7,
+            0,
+            0,
+            0
+          ],
+          [
+            7,
+            0,
+            7,
+            7,
+            0,
+            7,
+            0,
+            0,
+            0
+          ],
+          [
+            7,
+            7,
+            0,
+            7,
+            7,
+            0,
+            0,
+            0,
+            0
+          ]
+        ],
+        "predicted": [
+          [
+            7,
+            0,
+            7,
+            0,
+            0,
+            0,
+            7,
+            0,
+            7
+          ],
+          [
+            7,
+            0,
+            7,
+            0,
+            0,
+            0,
+            7,
+            0,
+            7
+          ],
+          [
+            7,
+            7,
+            0,
+            0,
+            0,
+            0,
+            7,
+            7,
+            0
+          ],
+          [
+            7,
+            0,
+            7,
+            0,
+            0,
+            0,
+            7,
+            0,
+            7
+          ],
+          [
+            7,
+            0,
+            7,
+            0,
+            0,
+            0,
+            7,
+            0,
+            7
+          ],
+          [
+            7,
+            7,
+            0,
+            0,
+            0,
+            0,
+            7,
+            7,
+            0
+          ],
+          [
+            7,
+            0,
+            7,
+            7,
+            0,
+            7,
+            0,
+            0,
+            0
+          ],
+          [
+            7,
+            0,
+            7,
+            7,
+            0,
+            7,
+            0,
+            0,
+            0
+          ],
+          [
+            7,
+            7,
+            0,
+            7,
+            7,
+            0,
+            0,
+            0,
+            0
+          ]
+        ],
+        "similarity": 1
+      }
+    ],
+    "analysis": {
+      "inputSize": "3x3",
+      "outputSize": "9x9",
+      "sizeChange": "grow",
+      "inputColors": 1,
+      "outputColors": 1,
+      "complexity": 45
+    }
+  },
+  {
+    "taskId": "0520fde7",
+    "strategy": "andHalves",
+    "confidence": 1,
+    "program": null,
+    "runtime": 0,
+    "testCases": 1,
+    "passedCases": 1,
+    "allPassed": true,
+    "testResults": [
+      {
+        "index": 0,
+        "correct": true,
+        "expected": [
+          [
+            2,
+            0,
+            2
+          ],
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "predicted": [
+          [
+            2,
+            0,
+            2
+          ],
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "similarity": 1
+      }
+    ],
+    "analysis": {
+      "inputSize": "7x3",
+      "outputSize": "3x3",
+      "sizeChange": "shrink",
+      "inputColors": 2,
+      "outputColors": 1,
+      "complexity": 20
+    }
+  },
+  {
+    "taskId": "9dfd6313",
+    "strategy": "transpose",
+    "confidence": 1,
+    "program": null,
+    "runtime": 0,
+    "testCases": 1,
+    "passedCases": 1,
+    "allPassed": true,
+    "testResults": [
+      {
+        "index": 0,
+        "correct": true,
+        "expected": [
+          [
+            5,
+            0,
+            3,
+            0,
+            2,
+            2
+          ],
+          [
+            0,
+            5,
+            3,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            5,
+            0,
+            8,
+            6
+          ],
+          [
+            0,
+            0,
+            0,
+            5,
+            8,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            5,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            5
+          ]
+        ],
+        "predicted": [
+          [
+            5,
+            0,
+            3,
+            0,
+            2,
+            2
+          ],
+          [
+            0,
+            5,
+            3,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            5,
+            0,
+            8,
+            6
+          ],
+          [
+            0,
+            0,
+            0,
+            5,
+            8,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            5,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            5
+          ]
+        ],
+        "similarity": 1
+      }
+    ],
+    "analysis": {
+      "inputSize": "3x3",
+      "outputSize": "3x3",
+      "sizeChange": "same",
+      "inputColors": 2,
+      "outputColors": 2,
+      "complexity": 12
+    }
+  },
+  {
+    "taskId": "4258a5f9",
+    "strategy": "expandAroundMarkers",
+    "confidence": 1,
+    "program": null,
+    "runtime": 0,
+    "testCases": 1,
+    "passedCases": 1,
+    "allPassed": true,
+    "testResults": [
+      {
+        "index": 0,
+        "correct": true,
+        "expected": [
+          [
+            1,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            1,
+            5,
+            1,
+            0,
+            0,
+            0,
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            0,
+            0,
+            0,
+            1,
+            5,
+            1
+          ],
+          [
+            0,
+            0,
+            1,
+            1,
+            1,
+            0,
+            1,
+            1,
+            1
+          ],
+          [
+            0,
+            0,
+            1,
+            5,
+            1,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            1,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            1,
+            1,
+            1,
+            0,
+            1,
+            1,
+            1,
+            0,
+            0
+          ],
+          [
+            1,
+            5,
+            1,
+            0,
+            1,
+            5,
+            1,
+            0,
+            0
+          ],
+          [
+            1,
+            1,
+            1,
+            0,
+            1,
+            1,
+            1,
+            0,
+            0
+          ]
+        ],
+        "predicted": [
+          [
+            1,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            1,
+            5,
+            1,
+            0,
+            0,
+            0,
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            0,
+            0,
+            0,
+            1,
+            5,
+            1
+          ],
+          [
+            0,
+            0,
+            1,
+            1,
+            1,
+            0,
+            1,
+            1,
+            1
+          ],
+          [
+            0,
+            0,
+            1,
+            5,
+            1,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            1,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            1,
+            1,
+            1,
+            0,
+            1,
+            1,
+            1,
+            0,
+            0
+          ],
+          [
+            1,
+            5,
+            1,
+            0,
+            1,
+            5,
+            1,
+            0,
+            0
+          ],
+          [
+            1,
+            1,
+            1,
+            0,
+            1,
+            1,
+            1,
+            0,
+            0
+          ]
+        ],
+        "similarity": 1
+      }
+    ],
+    "analysis": {
+      "inputSize": "9x9",
+      "outputSize": "9x9",
+      "sizeChange": "same",
+      "inputColors": 1,
+      "outputColors": 2,
+      "complexity": 81
+    }
+  },
+  {
+    "taskId": "identity_calibration",
+    "strategy": "expandAroundMarkers",
+    "confidence": 1,
+    "program": null,
+    "runtime": 0,
+    "testCases": 1,
+    "passedCases": 1,
+    "allPassed": true,
+    "testResults": [
+      {
+        "index": 0,
+        "correct": true,
+        "expected": [
+          [
+            8,
+            9
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "predicted": [
+          [
+            8,
+            9
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "similarity": 1
+      }
+    ],
+    "analysis": {
+      "inputSize": "2x2",
+      "outputSize": "2x2",
+      "sizeChange": "same",
+      "inputColors": 4,
+      "outputColors": 4,
+      "complexity": 16
+    }
+  }
+]
