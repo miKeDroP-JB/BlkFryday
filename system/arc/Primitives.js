@@ -561,6 +561,22 @@ class GridPrimitives {
     return result;
   }
 
+  // AND operation: output where BOTH grids have non-zero values
+  static and(a, b, outputColor = 2) {
+    const height = Math.min(a.length, b.length);
+    const width = Math.min(a[0]?.length || 0, b[0]?.length || 0);
+    const result = this.create(height, width, 0);
+
+    for (let i = 0; i < height; i++) {
+      for (let j = 0; j < width; j++) {
+        const va = a[i][j] !== 0;
+        const vb = b[i][j] !== 0;
+        if (va && vb) result[i][j] = outputColor;
+      }
+    }
+    return result;
+  }
+
   static splitVerticalHalves(grid, separator = 5) {
     const { width } = this.dimensions(grid);
     let splitCol = -1;
@@ -629,10 +645,12 @@ class GridPrimitives {
       if (shapeColor) break;
     }
 
-    // Replace shape color with marker color
+    // Replace shape color with marker color, REMOVE the marker itself
     for (let i = 0; i < height; i++) {
       for (let j = 0; j < width; j++) {
-        if (grid[i][j] === shapeColor) {
+        if (i === marker.row && j === marker.col) {
+          result[i][j] = 0; // Remove marker
+        } else if (grid[i][j] === shapeColor) {
           result[i][j] = marker.color;
         }
       }
@@ -671,17 +689,30 @@ class GridPrimitives {
   // ADVANCED OBJECT OPERATIONS
   // ═══════════════════════════════════════════════════════════════
 
-  static findLargestComponent(grid) {
+  static findLargestComponent(grid, targetColor = null) {
     const components = this.findConnectedComponents(grid);
     if (components.length === 0) return null;
 
-    return components.reduce((largest, comp) =>
+    // Filter by color if specified
+    const filtered = targetColor !== null
+      ? components.filter(c => c.color === targetColor)
+      : components;
+
+    if (filtered.length === 0) return null;
+
+    return filtered.reduce((largest, comp) =>
       comp.cells.length > largest.cells.length ? comp : largest
     );
   }
 
-  static colorLargestComponent(grid, newColor = 8) {
-    const largest = this.findLargestComponent(grid);
+  static colorLargestComponent(grid, newColor = 8, targetColor = null) {
+    // If no targetColor specified, find the dominant non-zero color
+    if (targetColor === null) {
+      const colors = this.getNonZeroColors(grid);
+      targetColor = colors[0] || 0;
+    }
+
+    const largest = this.findLargestComponent(grid, targetColor);
     if (!largest) return this.copy(grid);
 
     const result = this.copy(grid);
@@ -691,29 +722,52 @@ class GridPrimitives {
     return result;
   }
 
+  // Color ALL connected components larger than size threshold
+  static colorSignificantComponents(grid, newColor = 8, minSize = 2, targetColor = null) {
+    if (targetColor === null) {
+      const colors = this.getNonZeroColors(grid);
+      targetColor = colors[0] || 0;
+    }
+
+    const components = this.findConnectedComponents(grid);
+    const significant = components.filter(c =>
+      c.color === targetColor && c.cells.length >= minSize
+    );
+
+    const result = this.copy(grid);
+    for (const comp of significant) {
+      for (const { r, c } of comp.cells) {
+        result[r][c] = newColor;
+      }
+    }
+    return result;
+  }
+
   static fillLShapeCorner(grid, shapeColor = 8, fillColor = 1) {
     const { height, width } = this.dimensions(grid);
     const result = this.copy(grid);
 
-    // Find L-shaped patterns and fill the corner
-    for (let i = 0; i < height; i++) {
-      for (let j = 0; j < width; j++) {
-        if (grid[i][j] === shapeColor) {
-          // Check for L-shape patterns
-          // Pattern: vertical then horizontal
-          if (i > 0 && j + 1 < width &&
-              grid[i - 1][j] === shapeColor &&
-              grid[i][j + 1] === shapeColor &&
-              grid[i - 1][j + 1] === 0) {
-            result[i - 1][j + 1] = fillColor;
-          }
-          // Pattern: horizontal then vertical (down-right)
-          if (i + 1 < height && j > 0 &&
-              grid[i][j - 1] === shapeColor &&
-              grid[i + 1][j] === shapeColor &&
-              grid[i + 1][j - 1] === 0) {
-            result[i + 1][j - 1] = fillColor;
-          }
+    // Find ALL L-shaped patterns (all 4 orientations) and fill the corner
+    // An L-shape is 3 cells in an L, we fill the 4th to make a 2x2
+    for (let i = 0; i < height - 1; i++) {
+      for (let j = 0; j < width - 1; j++) {
+        // Check each 2x2 region for L-shapes
+        const tl = grid[i][j];
+        const tr = grid[i][j + 1];
+        const bl = grid[i + 1][j];
+        const br = grid[i + 1][j + 1];
+
+        // Count how many cells have shapeColor
+        const cells = [tl, tr, bl, br];
+        const shapeCount = cells.filter(c => c === shapeColor).length;
+        const zeroCount = cells.filter(c => c === 0).length;
+
+        // L-shape: exactly 3 cells with shapeColor, 1 with 0
+        if (shapeCount === 3 && zeroCount === 1) {
+          if (tl === 0) result[i][j] = fillColor;
+          else if (tr === 0) result[i][j + 1] = fillColor;
+          else if (bl === 0) result[i + 1][j] = fillColor;
+          else if (br === 0) result[i + 1][j + 1] = fillColor;
         }
       }
     }

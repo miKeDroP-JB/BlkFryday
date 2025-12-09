@@ -48,9 +48,11 @@ class AbstractionEngine {
       'learnedColorMapping',
       'replaceColorWithMarker',
       'colorLargestComponent',
+      'colorSignificantComponents',
 
       // === SPLIT & COMPARE ===
       'xorHalves',
+      'andHalves',
 
       // === MARKER OPERATIONS ===
       'expandAroundMarkers',
@@ -261,7 +263,7 @@ class AbstractionEngine {
     if (analysis.sizeRelation === 'same') {
       prioritized.push('identity', 'rotate180', 'flipHorizontal', 'flipVertical',
         'transpose', 'swapColors', 'learnedColorMapping', 'colorLargestComponent',
-        'fillLShapeCorner', 'replaceColorWithMarker');
+        'colorSignificantComponents', 'fillLShapeCorner', 'replaceColorWithMarker');
     }
 
     if (analysis.isDoubleWidth) {
@@ -285,11 +287,12 @@ class AbstractionEngine {
     }
 
     if (analysis.hasMarker) {
-      prioritized.push('replaceColorWithMarker', 'expandAroundMarkers');
+      // Marker operations should come FIRST before color mapping
+      prioritized.unshift('replaceColorWithMarker', 'expandAroundMarkers');
     }
 
     if (analysis.hasSeparator) {
-      prioritized.push('xorHalves');
+      prioritized.push('andHalves', 'xorHalves');
     }
 
     // Add remaining strategies
@@ -363,11 +366,16 @@ class AbstractionEngine {
       case 'learnedColorMapping': return Grid.applyColorMapping(input, analysis.learnedColorMapping);
       case 'replaceColorWithMarker': return Grid.replaceColorWithMarker(input);
       case 'colorLargestComponent': return Grid.colorLargestComponent(input, 8);
+      case 'colorSignificantComponents': return Grid.colorSignificantComponents(input, 8, 2);
 
       // Split & Compare
       case 'xorHalves': {
         const { left, right } = Grid.splitVerticalHalves(input);
         return Grid.xor(left, right, 2);
+      }
+      case 'andHalves': {
+        const { left, right } = Grid.splitVerticalHalves(input);
+        return Grid.and(left, right, 2);
       }
 
       // Marker operations
