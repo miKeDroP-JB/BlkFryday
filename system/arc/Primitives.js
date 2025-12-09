@@ -397,6 +397,380 @@ class GridPrimitives {
   }
 
   // ═══════════════════════════════════════════════════════════════
+  // CONCATENATION & MIRRORING
+  // ═══════════════════════════════════════════════════════════════
+
+  static concatHorizontal(a, b) {
+    const height = Math.max(a.length, b.length);
+    const result = [];
+    for (let i = 0; i < height; i++) {
+      const rowA = a[i] || [];
+      const rowB = b[i] || [];
+      result.push([...rowA, ...rowB]);
+    }
+    return result;
+  }
+
+  static concatVertical(a, b) {
+    return [...a.map(r => [...r]), ...b.map(r => [...r])];
+  }
+
+  static mirrorHorizontal(grid) {
+    return this.concatHorizontal(grid, this.flipHorizontal(grid));
+  }
+
+  static mirrorVertical(grid) {
+    return this.concatVertical(grid, this.flipVertical(grid));
+  }
+
+  static tileHorizontal(grid, times = 2) {
+    let result = this.copy(grid);
+    for (let i = 1; i < times; i++) {
+      result = this.concatHorizontal(result, grid);
+    }
+    return result;
+  }
+
+  static tileVertical(grid, times = 2) {
+    let result = this.copy(grid);
+    for (let i = 1; i < times; i++) {
+      result = this.concatVertical(result, grid);
+    }
+    return result;
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // GRAVITY & SHIFTING
+  // ═══════════════════════════════════════════════════════════════
+
+  static shiftDown(grid, amount = 1) {
+    const { height, width } = this.dimensions(grid);
+    const result = this.create(height, width, 0);
+    for (let i = 0; i < height; i++) {
+      for (let j = 0; j < width; j++) {
+        const newI = (i + amount) % height;
+        result[newI][j] = grid[i][j];
+      }
+    }
+    return result;
+  }
+
+  static shiftUp(grid, amount = 1) {
+    return this.shiftDown(grid, grid.length - amount);
+  }
+
+  static shiftRight(grid, amount = 1) {
+    const { height, width } = this.dimensions(grid);
+    const result = this.create(height, width, 0);
+    for (let i = 0; i < height; i++) {
+      for (let j = 0; j < width; j++) {
+        const newJ = (j + amount) % width;
+        result[i][newJ] = grid[i][j];
+      }
+    }
+    return result;
+  }
+
+  static shiftLeft(grid, amount = 1) {
+    return this.shiftRight(grid, grid[0].length - amount);
+  }
+
+  static gravityDown(grid) {
+    const { height, width } = this.dimensions(grid);
+    const result = this.create(height, width, 0);
+
+    for (let j = 0; j < width; j++) {
+      const column = [];
+      for (let i = 0; i < height; i++) {
+        if (grid[i][j] !== 0) column.push(grid[i][j]);
+      }
+      const startRow = height - column.length;
+      for (let i = 0; i < column.length; i++) {
+        result[startRow + i][j] = column[i];
+      }
+    }
+    return result;
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // PATTERN DETECTION & DEDUPLICATION
+  // ═══════════════════════════════════════════════════════════════
+
+  static findHorizontalRepeat(grid) {
+    const { height, width } = this.dimensions(grid);
+    for (let w = 1; w <= width / 2; w++) {
+      if (width % w !== 0) continue;
+      let isRepeat = true;
+      for (let i = 0; i < height && isRepeat; i++) {
+        for (let j = w; j < width && isRepeat; j++) {
+          if (grid[i][j] !== grid[i][j % w]) isRepeat = false;
+        }
+      }
+      if (isRepeat) return w;
+    }
+    return width;
+  }
+
+  static findVerticalRepeat(grid) {
+    const { height, width } = this.dimensions(grid);
+    for (let h = 1; h <= height / 2; h++) {
+      if (height % h !== 0) continue;
+      let isRepeat = true;
+      for (let i = h; i < height && isRepeat; i++) {
+        for (let j = 0; j < width && isRepeat; j++) {
+          if (grid[i][j] !== grid[i % h][j]) isRepeat = false;
+        }
+      }
+      if (isRepeat) return h;
+    }
+    return height;
+  }
+
+  static deduplicateHorizontal(grid) {
+    const repeatWidth = this.findHorizontalRepeat(grid);
+    return grid.map(row => row.slice(0, repeatWidth));
+  }
+
+  static deduplicateVertical(grid) {
+    const repeatHeight = this.findVerticalRepeat(grid);
+    return grid.slice(0, repeatHeight).map(r => [...r]);
+  }
+
+  static deduplicate(grid) {
+    let result = this.deduplicateVertical(grid);
+    result = this.deduplicateHorizontal(result);
+    return result;
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // XOR & DIFFERENCE OPERATIONS
+  // ═══════════════════════════════════════════════════════════════
+
+  static xor(a, b, outputColor = 2) {
+    const height = Math.min(a.length, b.length);
+    const width = Math.min(a[0]?.length || 0, b[0]?.length || 0);
+    const result = this.create(height, width, 0);
+
+    for (let i = 0; i < height; i++) {
+      for (let j = 0; j < width; j++) {
+        const va = a[i][j] !== 0;
+        const vb = b[i][j] !== 0;
+        if (va !== vb) result[i][j] = outputColor;
+      }
+    }
+    return result;
+  }
+
+  static splitVerticalHalves(grid, separator = 5) {
+    const { width } = this.dimensions(grid);
+    let splitCol = -1;
+
+    // Find separator column
+    for (let j = 0; j < width; j++) {
+      if (grid.every(row => row[j] === separator)) {
+        splitCol = j;
+        break;
+      }
+    }
+
+    if (splitCol === -1) {
+      splitCol = Math.floor(width / 2);
+    }
+
+    const left = grid.map(row => row.slice(0, splitCol));
+    const right = grid.map(row => row.slice(splitCol + 1));
+    return { left, right };
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // MARKER OPERATIONS
+  // ═══════════════════════════════════════════════════════════════
+
+  static findMarker(grid) {
+    // Find a single isolated cell in corner (likely a marker)
+    const { height, width } = this.dimensions(grid);
+    const corners = [
+      [0, 0], [0, width - 1],
+      [height - 1, 0], [height - 1, width - 1]
+    ];
+
+    for (const [r, c] of corners) {
+      if (grid[r][c] !== 0) {
+        return { row: r, col: c, color: grid[r][c] };
+      }
+    }
+
+    // Check last row for marker
+    for (let j = 0; j < width; j++) {
+      if (grid[height - 1][j] !== 0) {
+        return { row: height - 1, col: j, color: grid[height - 1][j] };
+      }
+    }
+
+    return null;
+  }
+
+  static replaceColorWithMarker(grid) {
+    const marker = this.findMarker(grid);
+    if (!marker) return this.copy(grid);
+
+    const { height, width } = this.dimensions(grid);
+    const result = this.create(height, width, 0);
+
+    // Find the main shape color (not the marker, not 0)
+    let shapeColor = 0;
+    for (let i = 0; i < height; i++) {
+      for (let j = 0; j < width; j++) {
+        if (grid[i][j] !== 0 && grid[i][j] !== marker.color) {
+          shapeColor = grid[i][j];
+          break;
+        }
+      }
+      if (shapeColor) break;
+    }
+
+    // Replace shape color with marker color
+    for (let i = 0; i < height; i++) {
+      for (let j = 0; j < width; j++) {
+        if (grid[i][j] === shapeColor) {
+          result[i][j] = marker.color;
+        }
+      }
+    }
+
+    return result;
+  }
+
+  static expandAroundPoints(grid, targetColor = 5, expandColor = 1, radius = 1) {
+    const { height, width } = this.dimensions(grid);
+    const result = this.copy(grid);
+
+    for (let i = 0; i < height; i++) {
+      for (let j = 0; j < width; j++) {
+        if (grid[i][j] === targetColor) {
+          // Draw square around this point
+          for (let di = -radius; di <= radius; di++) {
+            for (let dj = -radius; dj <= radius; dj++) {
+              const ni = i + di;
+              const nj = j + dj;
+              if (ni >= 0 && ni < height && nj >= 0 && nj < width) {
+                if (result[ni][nj] === 0) {
+                  result[ni][nj] = expandColor;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return result;
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // ADVANCED OBJECT OPERATIONS
+  // ═══════════════════════════════════════════════════════════════
+
+  static findLargestComponent(grid) {
+    const components = this.findConnectedComponents(grid);
+    if (components.length === 0) return null;
+
+    return components.reduce((largest, comp) =>
+      comp.cells.length > largest.cells.length ? comp : largest
+    );
+  }
+
+  static colorLargestComponent(grid, newColor = 8) {
+    const largest = this.findLargestComponent(grid);
+    if (!largest) return this.copy(grid);
+
+    const result = this.copy(grid);
+    for (const { r, c } of largest.cells) {
+      result[r][c] = newColor;
+    }
+    return result;
+  }
+
+  static fillLShapeCorner(grid, shapeColor = 8, fillColor = 1) {
+    const { height, width } = this.dimensions(grid);
+    const result = this.copy(grid);
+
+    // Find L-shaped patterns and fill the corner
+    for (let i = 0; i < height; i++) {
+      for (let j = 0; j < width; j++) {
+        if (grid[i][j] === shapeColor) {
+          // Check for L-shape patterns
+          // Pattern: vertical then horizontal
+          if (i > 0 && j + 1 < width &&
+              grid[i - 1][j] === shapeColor &&
+              grid[i][j + 1] === shapeColor &&
+              grid[i - 1][j + 1] === 0) {
+            result[i - 1][j + 1] = fillColor;
+          }
+          // Pattern: horizontal then vertical (down-right)
+          if (i + 1 < height && j > 0 &&
+              grid[i][j - 1] === shapeColor &&
+              grid[i + 1][j] === shapeColor &&
+              grid[i + 1][j - 1] === 0) {
+            result[i + 1][j - 1] = fillColor;
+          }
+        }
+      }
+    }
+
+    return result;
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // SELF-TILING (tile based on non-zero pattern)
+  // ═══════════════════════════════════════════════════════════════
+
+  static selfTile(grid) {
+    const { height, width } = this.dimensions(grid);
+    const result = this.create(height * height, width * width, 0);
+
+    for (let bi = 0; bi < height; bi++) {
+      for (let bj = 0; bj < width; bj++) {
+        if (grid[bi][bj] !== 0) {
+          // Place a copy of the grid at this block position
+          for (let i = 0; i < height; i++) {
+            for (let j = 0; j < width; j++) {
+              result[bi * height + i][bj * width + j] = grid[i][j];
+            }
+          }
+        }
+      }
+    }
+
+    return result;
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // COLOR MAPPING (learn from examples)
+  // ═══════════════════════════════════════════════════════════════
+
+  static learnColorMapping(inputGrid, outputGrid) {
+    const mapping = {};
+    const { height, width } = this.dimensions(inputGrid);
+
+    for (let i = 0; i < height; i++) {
+      for (let j = 0; j < width; j++) {
+        const inColor = inputGrid[i][j];
+        const outColor = outputGrid[i]?.[j];
+        if (outColor !== undefined && inColor !== outColor) {
+          mapping[inColor] = outColor;
+        }
+      }
+    }
+
+    return mapping;
+  }
+
+  static applyColorMapping(grid, mapping) {
+    return grid.map(row => row.map(cell => mapping[cell] ?? cell));
+  }
+
+  // ═══════════════════════════════════════════════════════════════
   // VISUALIZATION
   // ═══════════════════════════════════════════════════════════════
 

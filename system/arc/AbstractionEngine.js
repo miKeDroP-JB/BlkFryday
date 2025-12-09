@@ -1,21 +1,20 @@
 /**
- * ARC-AGI ABSTRACTION ENGINE
- * The core reasoning module for abstract pattern recognition
+ * ARC-AGI ABSTRACTION ENGINE v2.0
+ * Championship-grade reasoning module
  *
- * "The alchemists weren't trying to make gold.
- *  They were trying to understand the source code of reality."
+ * "They said it couldn't be done. We did it anyway."
  *
- * THE SIMULATION LEARNS TO THINK
+ * THE SIMULATION BECOMES SOVEREIGN
  */
 
 const Grid = require('./Primitives');
 
 class AbstractionEngine {
   constructor() {
+    // Expanded strategy list - ordered by specificity
     this.strategies = [
-      // Direct transformations
+      // === IDENTITY & BASIC TRANSFORMS ===
       'identity',
-      'extractBoundingBox',
       'rotate90',
       'rotate180',
       'rotate270',
@@ -23,26 +22,44 @@ class AbstractionEngine {
       'flipVertical',
       'transpose',
 
-      // Object-based
+      // === EXTRACTION ===
+      'extractBoundingBox',
       'extractLargestObject',
       'extractSmallestObject',
-      'extractByColor',
 
-      // Color operations
+      // === CONCATENATION & MIRRORING ===
+      'mirrorHorizontal',
+      'mirrorVertical',
+      'tileHorizontal',
+      'tileVertical',
+
+      // === GRAVITY & SHIFTING ===
+      'shiftDown',
+      'gravityDown',
+
+      // === PATTERN OPERATIONS ===
+      'deduplicate',
+      'deduplicateHorizontal',
+      'deduplicateVertical',
+      'selfTile',
+
+      // === COLOR OPERATIONS ===
       'swapColors',
-      'replaceBackground',
-      'mostCommonToOutput',
+      'learnedColorMapping',
+      'replaceColorWithMarker',
+      'colorLargestComponent',
 
-      // Pattern operations
-      'tilePattern',
-      'scaleUp',
-      'scaleDown',
-      'fillEnclosed',
+      // === SPLIT & COMPARE ===
+      'xorHalves',
 
-      // Composite strategies
+      // === MARKER OPERATIONS ===
+      'expandAroundMarkers',
+      'fillLShapeCorner',
+
+      // === COMPOSITE STRATEGIES ===
       'extractThenRotate',
       'extractThenFlip',
-      'objectsToPattern',
+      'extractThenTranspose',
     ];
 
     this.debugMode = false;
@@ -55,14 +72,16 @@ class AbstractionEngine {
   solve(task) {
     const { train, test } = task;
 
-    // Phase 1: Analyze training examples
+    // Phase 1: Deep analysis of training examples
     const analysis = this.analyzeExamples(train);
 
-    // Phase 2: Try each strategy
-    for (const strategy of this.strategies) {
+    // Phase 2: Smart strategy selection based on analysis
+    const prioritizedStrategies = this.prioritizeStrategies(analysis);
+
+    // Phase 3: Try each strategy in priority order
+    for (const strategy of prioritizedStrategies) {
       const hypothesis = this.testStrategy(strategy, train, analysis);
       if (hypothesis.valid) {
-        // Apply to test inputs
         const predictions = test.map(t => this.applyStrategy(strategy, t.input, analysis));
         return {
           success: true,
@@ -73,10 +92,10 @@ class AbstractionEngine {
       }
     }
 
-    // Phase 3: Try program synthesis (DSL search)
+    // Phase 4: Program synthesis (expanded DSL)
     const synthesized = this.synthesizeProgram(train, analysis);
     if (synthesized) {
-      const predictions = test.map(t => this.runProgram(synthesized.program, t.input));
+      const predictions = test.map(t => this.runProgram(synthesized.program, t.input, analysis));
       return {
         success: true,
         strategy: 'synthesized',
@@ -86,7 +105,19 @@ class AbstractionEngine {
       };
     }
 
-    // Phase 4: Fallback - best guess
+    // Phase 5: Learned transformation from examples
+    const learned = this.learnTransformation(train, analysis);
+    if (learned) {
+      const predictions = test.map(t => learned.transform(t.input));
+      return {
+        success: true,
+        strategy: 'learned',
+        predictions,
+        confidence: learned.confidence
+      };
+    }
+
+    // Phase 6: Fallback
     return {
       success: false,
       strategy: 'fallback',
@@ -96,7 +127,7 @@ class AbstractionEngine {
   }
 
   // ═══════════════════════════════════════════════════════════════
-  // ANALYSIS
+  // DEEP ANALYSIS
   // ═══════════════════════════════════════════════════════════════
 
   analyzeExamples(examples) {
@@ -107,8 +138,16 @@ class AbstractionEngine {
       inputColors: new Set(),
       outputColors: new Set(),
       colorMapping: {},
+      learnedColorMapping: {},
       objectCounts: [],
-      commonPatterns: []
+      hasMarker: false,
+      markerColor: null,
+      hasSeparator: false,
+      separatorCol: -1,
+      isDoubleWidth: false,
+      isDoubleHeight: false,
+      isHalfWidth: false,
+      isHalfHeight: false,
     };
 
     for (const { input, output } of examples) {
@@ -125,12 +164,43 @@ class AbstractionEngine {
         input: Grid.findConnectedComponents(input).length,
         output: Grid.findConnectedComponents(output).length
       });
+
+      // Learn color mapping from this example
+      const mapping = Grid.learnColorMapping(input, output);
+      Object.assign(analysis.learnedColorMapping, mapping);
     }
 
-    // Detect size relationship
+    // Detect size relationships
     analysis.sizeRelation = this.detectSizeRelation(analysis);
+    analysis.isDoubleWidth = analysis.outputSizes.every((s, i) =>
+      s.width === analysis.inputSizes[i].width * 2 && s.height === analysis.inputSizes[i].height);
+    analysis.isDoubleHeight = analysis.outputSizes.every((s, i) =>
+      s.height === analysis.inputSizes[i].height * 2 && s.width === analysis.inputSizes[i].width);
+    analysis.isHalfWidth = analysis.outputSizes.every((s, i) =>
+      s.width * 2 === analysis.inputSizes[i].width && s.height === analysis.inputSizes[i].height);
+    analysis.isHalfHeight = analysis.outputSizes.every((s, i) =>
+      s.height * 2 === analysis.inputSizes[i].height && s.width === analysis.inputSizes[i].width);
 
-    // Detect color mapping
+    // Detect markers
+    for (const { input } of examples) {
+      const marker = Grid.findMarker(input);
+      if (marker) {
+        analysis.hasMarker = true;
+        analysis.markerColor = marker.color;
+        break;
+      }
+    }
+
+    // Detect separators
+    for (const { input } of examples) {
+      const { left, right } = Grid.splitVerticalHalves(input);
+      if (left[0]?.length > 0 && right[0]?.length > 0) {
+        analysis.hasSeparator = true;
+        break;
+      }
+    }
+
+    // Legacy color mapping
     analysis.colorMapping = this.detectColorMapping(examples);
 
     return analysis;
@@ -139,19 +209,16 @@ class AbstractionEngine {
   detectSizeRelation(analysis) {
     const { inputSizes, outputSizes } = analysis;
 
-    // Same size?
     if (inputSizes.every((s, i) =>
       s.height === outputSizes[i].height && s.width === outputSizes[i].width)) {
       return 'same';
     }
 
-    // Output is cropped?
     if (outputSizes.every((s, i) =>
       s.height <= inputSizes[i].height && s.width <= inputSizes[i].width)) {
       return 'crop';
     }
 
-    // Output is scaled?
     const scales = inputSizes.map((s, i) => ({
       h: outputSizes[i].height / s.height,
       w: outputSizes[i].width / s.width
@@ -160,7 +227,6 @@ class AbstractionEngine {
       return { type: 'scale', factor: scales[0].h };
     }
 
-    // Constant output size?
     if (outputSizes.every(s =>
       s.height === outputSizes[0].height && s.width === outputSizes[0].width)) {
       return { type: 'constant', size: outputSizes[0] };
@@ -175,7 +241,6 @@ class AbstractionEngine {
       const inColors = Grid.getNonZeroColors(input);
       const outColors = Grid.getNonZeroColors(output);
 
-      // Simple 1:1 mapping check
       if (inColors.length === outColors.length) {
         inColors.forEach((c, i) => {
           mapping[c] = outColors[i];
@@ -186,16 +251,72 @@ class AbstractionEngine {
   }
 
   // ═══════════════════════════════════════════════════════════════
-  // STRATEGY TESTING
+  // SMART STRATEGY PRIORITIZATION
+  // ═══════════════════════════════════════════════════════════════
+
+  prioritizeStrategies(analysis) {
+    const prioritized = [];
+
+    // Size-based hints
+    if (analysis.sizeRelation === 'same') {
+      prioritized.push('identity', 'rotate180', 'flipHorizontal', 'flipVertical',
+        'transpose', 'swapColors', 'learnedColorMapping', 'colorLargestComponent',
+        'fillLShapeCorner', 'replaceColorWithMarker');
+    }
+
+    if (analysis.isDoubleWidth) {
+      prioritized.push('mirrorHorizontal', 'tileHorizontal');
+    }
+
+    if (analysis.isDoubleHeight) {
+      prioritized.push('mirrorVertical', 'tileVertical');
+    }
+
+    if (analysis.isHalfWidth) {
+      prioritized.push('deduplicateHorizontal', 'deduplicate');
+    }
+
+    if (analysis.isHalfHeight) {
+      prioritized.push('deduplicateVertical', 'deduplicate');
+    }
+
+    if (analysis.sizeRelation === 'crop') {
+      prioritized.push('extractBoundingBox', 'extractLargestObject', 'deduplicate');
+    }
+
+    if (analysis.hasMarker) {
+      prioritized.push('replaceColorWithMarker', 'expandAroundMarkers');
+    }
+
+    if (analysis.hasSeparator) {
+      prioritized.push('xorHalves');
+    }
+
+    // Add remaining strategies
+    for (const s of this.strategies) {
+      if (!prioritized.includes(s)) {
+        prioritized.push(s);
+      }
+    }
+
+    return prioritized;
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // STRATEGY TESTING & APPLICATION
   // ═══════════════════════════════════════════════════════════════
 
   testStrategy(strategy, examples, analysis) {
     let correct = 0;
 
     for (const { input, output } of examples) {
-      const predicted = this.applyStrategy(strategy, input, analysis);
-      if (Grid.equals(predicted, output)) {
-        correct++;
+      try {
+        const predicted = this.applyStrategy(strategy, input, analysis);
+        if (Grid.equals(predicted, output)) {
+          correct++;
+        }
+      } catch (e) {
+        // Strategy failed
       }
     }
 
@@ -207,76 +328,71 @@ class AbstractionEngine {
 
   applyStrategy(strategy, input, analysis) {
     switch (strategy) {
-      case 'identity':
-        return Grid.copy(input);
+      // Basic transforms
+      case 'identity': return Grid.copy(input);
+      case 'rotate90': return Grid.rotate90(input);
+      case 'rotate180': return Grid.rotate180(input);
+      case 'rotate270': return Grid.rotate270(input);
+      case 'flipHorizontal': return Grid.flipHorizontal(input);
+      case 'flipVertical': return Grid.flipVertical(input);
+      case 'transpose': return Grid.transpose(input);
 
-      case 'extractBoundingBox':
-        return Grid.extractBoundingBox(input);
+      // Extraction
+      case 'extractBoundingBox': return Grid.extractBoundingBox(input);
+      case 'extractLargestObject': return this.extractLargestObject(input);
+      case 'extractSmallestObject': return this.extractSmallestObject(input);
 
-      case 'rotate90':
-        return Grid.rotate90(input);
+      // Concatenation & Mirroring
+      case 'mirrorHorizontal': return Grid.mirrorHorizontal(input);
+      case 'mirrorVertical': return Grid.mirrorVertical(input);
+      case 'tileHorizontal': return Grid.tileHorizontal(input, 2);
+      case 'tileVertical': return Grid.tileVertical(input, 2);
 
-      case 'rotate180':
-        return Grid.rotate180(input);
+      // Gravity & Shifting
+      case 'shiftDown': return Grid.shiftDown(input, 1);
+      case 'gravityDown': return Grid.gravityDown(input);
 
-      case 'rotate270':
-        return Grid.rotate270(input);
+      // Pattern operations
+      case 'deduplicate': return Grid.deduplicate(input);
+      case 'deduplicateHorizontal': return Grid.deduplicateHorizontal(input);
+      case 'deduplicateVertical': return Grid.deduplicateVertical(input);
+      case 'selfTile': return Grid.selfTile(input);
 
-      case 'flipHorizontal':
-        return Grid.flipHorizontal(input);
+      // Color operations
+      case 'swapColors': return this.applyColorSwap(input, analysis);
+      case 'learnedColorMapping': return Grid.applyColorMapping(input, analysis.learnedColorMapping);
+      case 'replaceColorWithMarker': return Grid.replaceColorWithMarker(input);
+      case 'colorLargestComponent': return Grid.colorLargestComponent(input, 8);
 
-      case 'flipVertical':
-        return Grid.flipVertical(input);
+      // Split & Compare
+      case 'xorHalves': {
+        const { left, right } = Grid.splitVerticalHalves(input);
+        return Grid.xor(left, right, 2);
+      }
 
-      case 'transpose':
-        return Grid.transpose(input);
+      // Marker operations
+      case 'expandAroundMarkers': return Grid.expandAroundPoints(input, 5, 1, 1);
+      case 'fillLShapeCorner': return Grid.fillLShapeCorner(input, 8, 1);
 
-      case 'extractLargestObject':
-        return this.extractLargestObject(input);
+      // Composite
+      case 'extractThenRotate': return Grid.rotate90(Grid.extractBoundingBox(input));
+      case 'extractThenFlip': return Grid.flipHorizontal(Grid.extractBoundingBox(input));
+      case 'extractThenTranspose': return Grid.transpose(Grid.extractBoundingBox(input));
 
-      case 'extractSmallestObject':
-        return this.extractSmallestObject(input);
-
-      case 'extractByColor':
-        return this.extractByMostCommonColor(input);
-
-      case 'fillEnclosed':
-        const mainColor = Grid.getMostCommonColor(input);
-        return Grid.fillEnclosed(input, mainColor, mainColor);
-
-      case 'scaleUp':
-        if (typeof analysis.sizeRelation === 'object' && analysis.sizeRelation.type === 'scale') {
-          return Grid.scale(input, analysis.sizeRelation.factor);
-        }
-        return Grid.scale(input, 2);
-
-      case 'extractThenRotate':
-        return Grid.rotate90(Grid.extractBoundingBox(input));
-
-      case 'extractThenFlip':
-        return Grid.flipHorizontal(Grid.extractBoundingBox(input));
-
-      case 'swapColors':
-        return this.applyColorSwap(input, analysis);
-
-      default:
-        return Grid.copy(input);
+      default: return Grid.copy(input);
     }
   }
 
   // ═══════════════════════════════════════════════════════════════
-  // OBJECT EXTRACTION HELPERS
+  // OBJECT HELPERS
   // ═══════════════════════════════════════════════════════════════
 
   extractLargestObject(grid) {
     const components = Grid.findConnectedComponents(grid);
     if (components.length === 0) return [[]];
-
     let largest = components[0];
     for (const comp of components) {
-      if (comp.cells.length > largest.cells.length) {
-        largest = comp;
-      }
+      if (comp.cells.length > largest.cells.length) largest = comp;
     }
     return Grid.extractObject(grid, largest);
   }
@@ -284,20 +400,11 @@ class AbstractionEngine {
   extractSmallestObject(grid) {
     const components = Grid.findConnectedComponents(grid);
     if (components.length === 0) return [[]];
-
     let smallest = components[0];
     for (const comp of components) {
-      if (comp.cells.length < smallest.cells.length) {
-        smallest = comp;
-      }
+      if (comp.cells.length < smallest.cells.length) smallest = comp;
     }
     return Grid.extractObject(grid, smallest);
-  }
-
-  extractByMostCommonColor(grid) {
-    const color = Grid.getMostCommonColor(grid);
-    const filtered = grid.map(row => row.map(c => c === color ? c : 0));
-    return Grid.extractBoundingBox(filtered);
   }
 
   applyColorSwap(grid, analysis) {
@@ -309,44 +416,52 @@ class AbstractionEngine {
   }
 
   // ═══════════════════════════════════════════════════════════════
-  // PROGRAM SYNTHESIS (DSL)
+  // EXPANDED PROGRAM SYNTHESIS
   // ═══════════════════════════════════════════════════════════════
 
   synthesizeProgram(examples, analysis) {
-    // Build a DSL program from primitives
     const dsl = [
       { op: 'extract', fn: g => Grid.extractBoundingBox(g) },
       { op: 'rotate90', fn: g => Grid.rotate90(g) },
       { op: 'rotate180', fn: g => Grid.rotate180(g) },
+      { op: 'rotate270', fn: g => Grid.rotate270(g) },
       { op: 'flipH', fn: g => Grid.flipHorizontal(g) },
       { op: 'flipV', fn: g => Grid.flipVertical(g) },
       { op: 'transpose', fn: g => Grid.transpose(g) },
+      { op: 'mirrorH', fn: g => Grid.mirrorHorizontal(g) },
+      { op: 'mirrorV', fn: g => Grid.mirrorVertical(g) },
+      { op: 'tileH', fn: g => Grid.tileHorizontal(g, 2) },
+      { op: 'tileV', fn: g => Grid.tileVertical(g, 2) },
+      { op: 'dedup', fn: g => Grid.deduplicate(g) },
+      { op: 'dedupH', fn: g => Grid.deduplicateHorizontal(g) },
+      { op: 'dedupV', fn: g => Grid.deduplicateVertical(g) },
+      { op: 'gravity', fn: g => Grid.gravityDown(g) },
+      { op: 'shiftD', fn: g => Grid.shiftDown(g, 1) },
+      { op: 'colorMap', fn: g => Grid.applyColorMapping(g, analysis.learnedColorMapping) },
     ];
 
-    // Try single operations
+    // Single ops
     for (const { op, fn } of dsl) {
       if (this.programSolvesAll([fn], examples)) {
         return { program: [op], confidence: 1.0 };
       }
     }
 
-    // Try pairs of operations
+    // Pairs
     for (const op1 of dsl) {
       for (const op2 of dsl) {
-        const program = [op1.fn, op2.fn];
-        if (this.programSolvesAll(program, examples)) {
-          return { program: [op1.op, op2.op], confidence: 0.9 };
+        if (this.programSolvesAll([op1.fn, op2.fn], examples)) {
+          return { program: [op1.op, op2.op], confidence: 0.95 };
         }
       }
     }
 
-    // Try triples
+    // Triples
     for (const op1 of dsl) {
       for (const op2 of dsl) {
         for (const op3 of dsl) {
-          const program = [op1.fn, op2.fn, op3.fn];
-          if (this.programSolvesAll(program, examples)) {
-            return { program: [op1.op, op2.op, op3.op], confidence: 0.8 };
+          if (this.programSolvesAll([op1.fn, op2.fn, op3.fn], examples)) {
+            return { program: [op1.op, op2.op, op3.op], confidence: 0.9 };
           }
         }
       }
@@ -358,33 +473,63 @@ class AbstractionEngine {
   programSolvesAll(program, examples) {
     for (const { input, output } of examples) {
       let result = input;
-      for (const fn of program) {
-        result = fn(result);
-      }
-      if (!Grid.equals(result, output)) {
+      try {
+        for (const fn of program) {
+          result = fn(result);
+        }
+        if (!Grid.equals(result, output)) return false;
+      } catch (e) {
         return false;
       }
     }
     return true;
   }
 
-  runProgram(programOps, input) {
+  runProgram(programOps, input, analysis) {
     const ops = {
       'extract': g => Grid.extractBoundingBox(g),
       'rotate90': g => Grid.rotate90(g),
       'rotate180': g => Grid.rotate180(g),
+      'rotate270': g => Grid.rotate270(g),
       'flipH': g => Grid.flipHorizontal(g),
       'flipV': g => Grid.flipVertical(g),
       'transpose': g => Grid.transpose(g),
+      'mirrorH': g => Grid.mirrorHorizontal(g),
+      'mirrorV': g => Grid.mirrorVertical(g),
+      'tileH': g => Grid.tileHorizontal(g, 2),
+      'tileV': g => Grid.tileVertical(g, 2),
+      'dedup': g => Grid.deduplicate(g),
+      'dedupH': g => Grid.deduplicateHorizontal(g),
+      'dedupV': g => Grid.deduplicateVertical(g),
+      'gravity': g => Grid.gravityDown(g),
+      'shiftD': g => Grid.shiftDown(g, 1),
+      'colorMap': g => Grid.applyColorMapping(g, analysis.learnedColorMapping),
     };
 
     let result = input;
     for (const op of programOps) {
-      if (ops[op]) {
-        result = ops[op](result);
-      }
+      if (ops[op]) result = ops[op](result);
     }
     return result;
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // LEARNED TRANSFORMATIONS
+  // ═══════════════════════════════════════════════════════════════
+
+  learnTransformation(examples, analysis) {
+    // Try to learn a consistent transformation from examples
+    // This is a fallback that tries common patterns
+
+    // Check if it's a simple color replacement task
+    if (analysis.sizeRelation === 'same' && Object.keys(analysis.learnedColorMapping).length > 0) {
+      const transform = (input) => Grid.applyColorMapping(input, analysis.learnedColorMapping);
+      if (this.programSolvesAll([transform], examples)) {
+        return { transform, confidence: 0.85 };
+      }
+    }
+
+    return null;
   }
 
   // ═══════════════════════════════════════════════════════════════
@@ -392,7 +537,6 @@ class AbstractionEngine {
   // ═══════════════════════════════════════════════════════════════
 
   bestGuess(input, examples, analysis) {
-    // Use most similar training example
     let bestSim = -1;
     let bestOutput = input;
 
@@ -404,7 +548,6 @@ class AbstractionEngine {
       }
     }
 
-    // If input is similar size to a training input, try same transformation
     if (analysis.sizeRelation === 'crop') {
       return Grid.extractBoundingBox(input);
     }
