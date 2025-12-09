@@ -3,8 +3,8 @@
 const nextConfig = {
   reactStrictMode: true,
 
-  // Enable static exports for USB deployment (only in production)
-  // output: 'export', // Uncomment for USB build
+  // Enable static exports
+  output: 'export',
 
   // Base path for USB boot
   basePath: '',
