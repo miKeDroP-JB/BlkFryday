@@ -134,6 +134,44 @@ const {
 } = require('./ethics/EthicsGateway');
 
 // ═══════════════════════════════════════════════════════════════════
+// YELLOW LAYERS - Intent, Ritual, External Tether
+// ═══════════════════════════════════════════════════════════════════
+
+// Ritual Engine - Scheduled events and ceremonies
+const {
+  RitualEngine,
+  Ritual,
+  RitualScheduler,
+  RitualOrchestrator,
+  RITUAL_TYPES,
+  RITUAL_STATES,
+  SEASONAL_EVENTS
+} = require('./ritual/RitualEngine');
+
+// External Tether - OAuth and webhooks
+const {
+  ExternalTether,
+  OAuthStateManager,
+  TokenStore,
+  WebhookManager,
+  OAUTH_PROVIDERS,
+  WEBHOOK_EVENTS
+} = require('./tether/ExternalTether');
+
+// Intent Grid - User intent parsing and routing
+const {
+  IntentGrid,
+  IntentClassifier,
+  EntityExtractor,
+  ConversationContext,
+  IntentRouter,
+  INTENT_CATEGORIES,
+  INTENT_PATTERNS,
+  INTENT_AGENT_ROUTING,
+  ENTITY_TYPES
+} = require('./intent/IntentGrid');
+
+// ═══════════════════════════════════════════════════════════════════
 // SYSTEM INITIALIZATION
 // ═══════════════════════════════════════════════════════════════════
 
@@ -177,7 +215,12 @@ async function initializeSystem(config = {}) {
     governance: null,
 
     // Ethics - "Tech That Listens. Tech That Respects."
-    ethics: null
+    ethics: null,
+
+    // Yellow Layers
+    ritual: null,
+    tether: null,
+    intent: null
   };
 
   // Initialize based on config
@@ -266,6 +309,32 @@ async function initializeSystem(config = {}) {
     });
     await systems.ethics.start();
     console.log('✓ Ethics Gateway initialized - "Tech That Listens. Tech That Respects."');
+  }
+
+  // Initialize Yellow Layers
+  if (config.ritual !== false) {
+    systems.ritual = new RitualEngine({
+      ethicsGateway: systems.ethics,
+      agents: systems.agents,
+      ...config.ritualConfig
+    });
+    console.log('✓ Ritual Engine initialized - Xmas/NYE events ready');
+  }
+
+  if (config.tether !== false) {
+    systems.tether = new ExternalTether({
+      ethicsGateway: systems.ethics,
+      ...config.tetherConfig
+    });
+    console.log('✓ External Tether initialized - OAuth/Webhooks ready');
+  }
+
+  if (config.intent !== false) {
+    systems.intent = new IntentGrid({
+      ethicsGateway: systems.ethics,
+      ...config.intentConfig
+    });
+    console.log('✓ Intent Grid initialized - User intent routing ready');
   }
 
   console.log('\n🌟 0RB System fully operational\n');
@@ -434,5 +503,37 @@ module.exports = {
     AUDIT_CATEGORIES,
     SEVERITY,
     ALERT_LEVEL
+  },
+
+  // Yellow Layers - Intent, Ritual, Tether
+  Ritual: {
+    RitualEngine,
+    Ritual,
+    RitualScheduler,
+    RitualOrchestrator,
+    RITUAL_TYPES,
+    RITUAL_STATES,
+    SEASONAL_EVENTS
+  },
+
+  Tether: {
+    ExternalTether,
+    OAuthStateManager,
+    TokenStore,
+    WebhookManager,
+    OAUTH_PROVIDERS,
+    WEBHOOK_EVENTS
+  },
+
+  Intent: {
+    IntentGrid,
+    IntentClassifier,
+    EntityExtractor,
+    ConversationContext,
+    IntentRouter,
+    INTENT_CATEGORIES,
+    INTENT_PATTERNS,
+    INTENT_AGENT_ROUTING,
+    ENTITY_TYPES
   }
 };
