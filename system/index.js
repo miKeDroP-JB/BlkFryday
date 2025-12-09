@@ -172,6 +172,19 @@ const {
 } = require('./intent/IntentGrid');
 
 // ═══════════════════════════════════════════════════════════════════
+// SOVEREIGN BOOT - Cinematic Startup Ritual
+// ═══════════════════════════════════════════════════════════════════
+
+const {
+  SovereignBoot,
+  VoiceprintAuth,
+  PhraseMatcher,
+  MusicController,
+  BOOT_CONFIG,
+  VISUAL_MANIFEST
+} = require('./boot/SovereignBoot');
+
+// ═══════════════════════════════════════════════════════════════════
 // SYSTEM INITIALIZATION
 // ═══════════════════════════════════════════════════════════════════
 
@@ -535,5 +548,15 @@ module.exports = {
     INTENT_PATTERNS,
     INTENT_AGENT_ROUTING,
     ENTITY_TYPES
+  },
+
+  // Sovereign Boot - Cinematic Startup Ritual
+  Boot: {
+    SovereignBoot,
+    VoiceprintAuth,
+    PhraseMatcher,
+    MusicController,
+    BOOT_CONFIG,
+    VISUAL_MANIFEST
   }
 };
