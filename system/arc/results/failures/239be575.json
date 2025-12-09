@@ -1,0 +1,173 @@
+{
+  "taskId": "239be575",
+  "category": "training",
+  "strategy": "fallback",
+  "confidence": 0.1,
+  "program": null,
+  "runtime": 16,
+  "testCases": 2,
+  "passedCases": 0,
+  "allPassed": false,
+  "testResults": [
+    {
+      "index": 0,
+      "correct": false,
+      "expected": [
+        [
+          8
+        ]
+      ],
+      "predicted": [
+        [
+          2,
+          2,
+          8,
+          8,
+          0,
+          8
+        ],
+        [
+          2,
+          2,
+          0,
+          8,
+          0,
+          0
+        ],
+        [
+          8,
+          8,
+          0,
+          0,
+          0,
+          8
+        ],
+        [
+          0,
+          8,
+          8,
+          8,
+          0,
+          0
+        ],
+        [
+          8,
+          0,
+          8,
+          0,
+          0,
+          8
+        ],
+        [
+          0,
+          0,
+          8,
+          2,
+          2,
+          0
+        ],
+        [
+          8,
+          0,
+          0,
+          2,
+          2,
+          0
+        ],
+        [
+          0,
+          8,
+          0,
+          0,
+          0,
+          8
+        ]
+      ],
+      "similarity": 0
+    },
+    {
+      "index": 1,
+      "correct": false,
+      "expected": [
+        [
+          0
+        ]
+      ],
+      "predicted": [
+        [
+          0,
+          8,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          8,
+          2,
+          2
+        ],
+        [
+          0,
+          8,
+          8,
+          8,
+          2,
+          2
+        ],
+        [
+          0,
+          8,
+          0,
+          0,
+          0,
+          8
+        ],
+        [
+          0,
+          0,
+          0,
+          8,
+          0,
+          0
+        ],
+        [
+          8,
+          2,
+          2,
+          0,
+          0,
+          8
+        ],
+        [
+          0,
+          2,
+          2,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          8,
+          0,
+          8,
+          8,
+          0
+        ]
+      ],
+      "similarity": 0
+    }
+  ],
+  "analysis": {
+    "inputSize": "5x5",
+    "outputSize": "1x1",
+    "sizeChange": "shrink",
+    "inputColors": 2,
+    "outputColors": 0,
+    "complexity": 9
+  }
+}

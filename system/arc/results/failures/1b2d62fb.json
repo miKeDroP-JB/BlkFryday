@@ -1,0 +1,100 @@
+{
+  "taskId": "1b2d62fb",
+  "category": "training",
+  "strategy": "fallback",
+  "confidence": 0.1,
+  "program": null,
+  "runtime": 18,
+  "testCases": 1,
+  "passedCases": 0,
+  "allPassed": false,
+  "testResults": [
+    {
+      "index": 0,
+      "correct": false,
+      "expected": [
+        [
+          0,
+          0,
+          8
+        ],
+        [
+          8,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          8
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          8,
+          0,
+          0
+        ]
+      ],
+      "predicted": [
+        [
+          9,
+          9,
+          0,
+          1,
+          0,
+          9,
+          0
+        ],
+        [
+          0,
+          9,
+          9,
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          9,
+          9,
+          0,
+          1,
+          0,
+          9,
+          0
+        ],
+        [
+          9,
+          9,
+          9,
+          1,
+          9,
+          0,
+          9
+        ],
+        [
+          0,
+          9,
+          9,
+          1,
+          0,
+          9,
+          9
+        ]
+      ],
+      "similarity": 0
+    }
+  ],
+  "analysis": {
+    "inputSize": "7x5",
+    "outputSize": "3x5",
+    "sizeChange": "shrink",
+    "inputColors": 2,
+    "outputColors": 1,
+    "complexity": 20
+  }
+}

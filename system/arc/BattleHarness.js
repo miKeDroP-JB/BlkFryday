@@ -71,8 +71,18 @@ class BattleHarness {
       console.log('Remote load failed, using local tasks...');
     }
 
-    // Select tasks - use local RealTasks if remote failed
+    // Select tasks - use local files if remote failed
     let tasks = this.loader.tasks;
+    if (!tasks || tasks.length === 0) {
+      // Try raw/ directory first (curl downloaded)
+      try {
+        const { loadLocalTasks } = require('./LocalTasks');
+        tasks = loadLocalTasks();
+        if (tasks.length > 0) {
+          console.log(`Loaded ${tasks.length} tasks from raw/ directory`);
+        }
+      } catch (e) {}
+    }
     if (!tasks || tasks.length === 0) {
       console.log('Using local RealTasks dataset...');
       const { REAL_ARC_TASKS } = require('./RealTasks');

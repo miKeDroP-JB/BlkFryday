@@ -1,27 +1,138 @@
 {
-  "timestamp": "2025-12-09T11:54:42.673Z",
-  "total": 20,
-  "passed": 20,
-  "failed": 0,
-  "passRate": 1,
-  "avgRuntime": 0.6,
+  "timestamp": "2025-12-09T12:02:38.333Z",
+  "total": 50,
+  "passed": 9,
+  "failed": 41,
+  "passRate": 0.19230769230769232,
+  "avgRuntime": 34.74,
   "strategyUsage": {
-    "extractBoundingBox": 1,
-    "learnedColorMapping": 1,
-    "shiftDown": 1,
-    "rotate180": 2,
-    "transpose": 2,
-    "mirrorHorizontal": 1,
-    "deduplicate": 1,
-    "mirrorVertical": 1,
-    "tileHorizontal": 1,
-    "replaceColorWithMarker": 1,
-    "swapColors": 2,
-    "colorSignificantComponents": 1,
-    "fillLShapeCorner": 1,
     "selfTile": 1,
+    "floodFillEnclosed": 1,
+    "fallback": 41,
     "andHalves": 1,
-    "expandAroundMarkers": 2
+    "learnedColorMapping": 1,
+    "extractBoundingBox": 1,
+    "gravityDown": 1,
+    "extractLargestObject": 1,
+    "extractSmallestObject": 1,
+    "shiftDown": 1
   },
-  "failureClusters": {}
+  "failureClusters": {
+    "size:grow|colors:few|strat:fallback|sim:medium": {
+      "count": 1,
+      "tasks": [
+        "017c7c7b"
+      ]
+    },
+    "size:same|colors:few|strat:fallback|sim:none": {
+      "count": 5,
+      "tasks": [
+        "025d127b",
+        "0a938d79",
+        "150deff5",
+        "253bf280",
+        "25d487eb"
+      ]
+    },
+    "size:same|colors:medium|strat:fallback|sim:high": {
+      "count": 2,
+      "tasks": [
+        "045e512c",
+        "11852cab"
+      ]
+    },
+    "size:same|colors:medium|strat:fallback|sim:low": {
+      "count": 2,
+      "tasks": [
+        "05269061",
+        "264363fd"
+      ]
+    },
+    "size:same|colors:few|strat:fallback|sim:high": {
+      "count": 3,
+      "tasks": [
+        "05f2a901",
+        "0ca9ddb6",
+        "1b60fb0c"
+      ]
+    },
+    "size:same|colors:medium|strat:fallback|sim:none": {
+      "count": 4,
+      "tasks": [
+        "06df4c85",
+        "0e206a2e",
+        "178fcbfb",
+        "1a07d186"
+      ]
+    },
+    "size:same|colors:few|strat:fallback|sim:medium": {
+      "count": 7,
+      "tasks": [
+        "08ed6ac7",
+        "0962bcdd",
+        "1e32b0e9",
+        "1f0c79e5",
+        "22168020",
+        "22233c11",
+        "2281f1f4"
+      ]
+    },
+    "size:same|colors:many|strat:fallback|sim:medium": {
+      "count": 1,
+      "tasks": [
+        "09629e4f"
+      ]
+    },
+    "size:shrink|colors:few|strat:fallback|sim:none": {
+      "count": 5,
+      "tasks": [
+        "0b148d64",
+        "1190e5a7",
+        "1b2d62fb",
+        "1fad071e",
+        "239be575"
+      ]
+    },
+    "size:same|colors:many|strat:fallback|sim:low": {
+      "count": 1,
+      "tasks": [
+        "0dfd9992"
+      ]
+    },
+    "size:grow|colors:few|strat:fallback|sim:none": {
+      "count": 1,
+      "tasks": [
+        "10fcaaa3"
+      ]
+    },
+    "size:shrink|colors:medium|strat:fallback|sim:none": {
+      "count": 2,
+      "tasks": [
+        "137eaa0f",
+        "2013d3e2"
+      ]
+    },
+    "size:same|colors:few|strat:fallback|sim:low": {
+      "count": 2,
+      "tasks": [
+        "1bfc4729",
+        "23581191"
+      ]
+    },
+    "size:shrink|colors:many|strat:fallback|sim:none": {
+      "count": 1,
+      "tasks": [
+        "1c786137"
+      ]
+    },
+    "size:same|colors:medium|strat:fallback|sim:medium": {
+      "count": 4,
+      "tasks": [
+        "1f642eb9",
+        "2204b7a8",
+        "228f6490",
+        "25d8a9c8"
+      ]
+    }
+  }
 }

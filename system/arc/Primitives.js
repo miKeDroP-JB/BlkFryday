@@ -825,6 +825,209 @@ class GridPrimitives {
   }
 
   // ═══════════════════════════════════════════════════════════════
+  // ADVANCED SPATIAL OPERATIONS (2027 MODE)
+  // ═══════════════════════════════════════════════════════════════
+
+  // Flood fill enclosed regions (regions bounded by a color)
+  static floodFillEnclosed(grid, boundaryColor, fillColor = 4) {
+    const { height, width } = this.dimensions(grid);
+    const result = this.copy(grid);
+
+    // Find all cells reachable from edge (not enclosed)
+    const reachableFromEdge = this.create(height, width, false);
+    const queue = [];
+
+    // Start from all edge cells that are NOT boundary
+    for (let i = 0; i < height; i++) {
+      if (grid[i][0] !== boundaryColor) queue.push([i, 0]);
+      if (grid[i][width - 1] !== boundaryColor) queue.push([i, width - 1]);
+    }
+    for (let j = 0; j < width; j++) {
+      if (grid[0][j] !== boundaryColor) queue.push([0, j]);
+      if (grid[height - 1][j] !== boundaryColor) queue.push([height - 1, j]);
+    }
+
+    // BFS to mark all cells reachable from edge
+    while (queue.length > 0) {
+      const [r, c] = queue.shift();
+      if (r < 0 || r >= height || c < 0 || c >= width) continue;
+      if (reachableFromEdge[r][c] || grid[r][c] === boundaryColor) continue;
+      reachableFromEdge[r][c] = true;
+      queue.push([r - 1, c], [r + 1, c], [r, c - 1], [r, c + 1]);
+    }
+
+    // Fill cells that are NOT reachable from edge and NOT boundary
+    for (let i = 0; i < height; i++) {
+      for (let j = 0; j < width; j++) {
+        if (!reachableFromEdge[i][j] && grid[i][j] !== boundaryColor) {
+          result[i][j] = fillColor;
+        }
+      }
+    }
+
+    return result;
+  }
+
+  // Draw a cross/plus pattern around each cell of a specific color
+  static drawCrossAround(grid, targetColor, crossColor, radius = 1) {
+    const { height, width } = this.dimensions(grid);
+    const result = this.copy(grid);
+
+    for (let i = 0; i < height; i++) {
+      for (let j = 0; j < width; j++) {
+        if (grid[i][j] === targetColor) {
+          // Draw cross arms
+          for (let d = 1; d <= radius; d++) {
+            if (i - d >= 0 && result[i - d][j] === 0) result[i - d][j] = crossColor; // up
+            if (i + d < height && result[i + d][j] === 0) result[i + d][j] = crossColor; // down
+            if (j - d >= 0 && result[i][j - d] === 0) result[i][j - d] = crossColor; // left
+            if (j + d < width && result[i][j + d] === 0) result[i][j + d] = crossColor; // right
+          }
+        }
+      }
+    }
+
+    return result;
+  }
+
+  // Draw crosses with different colors based on marker color
+  static drawCrossWithMapping(grid, colorMap) {
+    const { height, width } = this.dimensions(grid);
+    const result = this.copy(grid);
+
+    for (let i = 0; i < height; i++) {
+      for (let j = 0; j < width; j++) {
+        const cellColor = grid[i][j];
+        if (cellColor !== 0 && colorMap[cellColor]) {
+          const crossColor = colorMap[cellColor];
+          // Draw cross arms
+          if (i - 1 >= 0 && result[i - 1][j] === 0) result[i - 1][j] = crossColor;
+          if (i + 1 < height && result[i + 1][j] === 0) result[i + 1][j] = crossColor;
+          if (j - 1 >= 0 && result[i][j - 1] === 0) result[i][j - 1] = crossColor;
+          if (j + 1 < width && result[i][j + 1] === 0) result[i][j + 1] = crossColor;
+        }
+      }
+    }
+
+    return result;
+  }
+
+  // Move object of one color to be adjacent to anchor color
+  static moveObjectToAnchor(grid, objectColor, anchorColor) {
+    const { height, width } = this.dimensions(grid);
+
+    // Find object bounding box
+    let objMinR = height, objMaxR = -1, objMinC = width, objMaxC = -1;
+    for (let i = 0; i < height; i++) {
+      for (let j = 0; j < width; j++) {
+        if (grid[i][j] === objectColor) {
+          objMinR = Math.min(objMinR, i);
+          objMaxR = Math.max(objMaxR, i);
+          objMinC = Math.min(objMinC, j);
+          objMaxC = Math.max(objMaxC, j);
+        }
+      }
+    }
+
+    // Find anchor bounding box
+    let ancMinR = height, ancMaxR = -1, ancMinC = width, ancMaxC = -1;
+    for (let i = 0; i < height; i++) {
+      for (let j = 0; j < width; j++) {
+        if (grid[i][j] === anchorColor) {
+          ancMinR = Math.min(ancMinR, i);
+          ancMaxR = Math.max(ancMaxR, i);
+          ancMinC = Math.min(ancMinC, j);
+          ancMaxC = Math.max(ancMaxC, j);
+        }
+      }
+    }
+
+    if (objMaxR < 0 || ancMaxR < 0) return this.copy(grid);
+
+    // Calculate move to place object just above anchor
+    const objHeight = objMaxR - objMinR + 1;
+    const targetRow = ancMinR - objHeight;
+    const deltaR = targetRow - objMinR;
+    const deltaC = 0; // Keep horizontal position
+
+    // Create result with object moved
+    const result = this.copy(grid);
+
+    // Clear old object position
+    for (let i = 0; i < height; i++) {
+      for (let j = 0; j < width; j++) {
+        if (grid[i][j] === objectColor) {
+          result[i][j] = 0;
+        }
+      }
+    }
+
+    // Place object at new position
+    for (let i = 0; i < height; i++) {
+      for (let j = 0; j < width; j++) {
+        if (grid[i][j] === objectColor) {
+          const newR = i + deltaR;
+          const newC = j + deltaC;
+          if (newR >= 0 && newR < height && newC >= 0 && newC < width) {
+            result[newR][newC] = objectColor;
+          }
+        }
+      }
+    }
+
+    return result;
+  }
+
+  // Scale grid by factor
+  static scale(grid, factor) {
+    const { height, width } = this.dimensions(grid);
+    const result = this.create(height * factor, width * factor, 0);
+
+    for (let i = 0; i < height; i++) {
+      for (let j = 0; j < width; j++) {
+        for (let di = 0; di < factor; di++) {
+          for (let dj = 0; dj < factor; dj++) {
+            result[i * factor + di][j * factor + dj] = grid[i][j];
+          }
+        }
+      }
+    }
+
+    return result;
+  }
+
+  // Downscale grid by factor (take mode of each block)
+  static downscale(grid, factor) {
+    const { height, width } = this.dimensions(grid);
+    const newHeight = Math.floor(height / factor);
+    const newWidth = Math.floor(width / factor);
+    const result = this.create(newHeight, newWidth, 0);
+
+    for (let i = 0; i < newHeight; i++) {
+      for (let j = 0; j < newWidth; j++) {
+        // Find most common non-zero color in block
+        const counts = {};
+        for (let di = 0; di < factor; di++) {
+          for (let dj = 0; dj < factor; dj++) {
+            const c = grid[i * factor + di][j * factor + dj];
+            if (c !== 0) counts[c] = (counts[c] || 0) + 1;
+          }
+        }
+        let maxCount = 0, maxColor = 0;
+        for (const [color, count] of Object.entries(counts)) {
+          if (count > maxCount) {
+            maxCount = count;
+            maxColor = parseInt(color);
+          }
+        }
+        result[i][j] = maxColor;
+      }
+    }
+
+    return result;
+  }
+
+  // ═══════════════════════════════════════════════════════════════
   // VISUALIZATION
   // ═══════════════════════════════════════════════════════════════
 

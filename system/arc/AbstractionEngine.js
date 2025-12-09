@@ -62,6 +62,14 @@ class AbstractionEngine {
       'extractThenRotate',
       'extractThenFlip',
       'extractThenTranspose',
+
+      // === ADVANCED SPATIAL (2027) ===
+      'floodFillEnclosed',
+      'drawCrossAround',
+      'moveObjectToAnchor',
+      'scale2x',
+      'scale3x',
+      'downscale2x',
     ];
 
     this.debugMode = false;
@@ -386,6 +394,34 @@ class AbstractionEngine {
       case 'extractThenRotate': return Grid.rotate90(Grid.extractBoundingBox(input));
       case 'extractThenFlip': return Grid.flipHorizontal(Grid.extractBoundingBox(input));
       case 'extractThenTranspose': return Grid.transpose(Grid.extractBoundingBox(input));
+
+      // Advanced Spatial (2027)
+      case 'floodFillEnclosed': {
+        const colors = Grid.getNonZeroColors(input);
+        if (colors.length >= 1) {
+          return Grid.floodFillEnclosed(input, colors[0], 4);
+        }
+        return Grid.copy(input);
+      }
+      case 'drawCrossAround': {
+        const colors = Grid.getNonZeroColors(input);
+        if (colors.length >= 1) {
+          // Learn cross color from analysis
+          const crossColor = analysis.learnedColorMapping[colors[0]] || 4;
+          return Grid.drawCrossAround(input, colors[0], crossColor);
+        }
+        return Grid.copy(input);
+      }
+      case 'moveObjectToAnchor': {
+        const colors = Grid.getNonZeroColors(input);
+        if (colors.length >= 2) {
+          return Grid.moveObjectToAnchor(input, colors[0], colors[1]);
+        }
+        return Grid.copy(input);
+      }
+      case 'scale2x': return Grid.scale(input, 2);
+      case 'scale3x': return Grid.scale(input, 3);
+      case 'downscale2x': return Grid.downscale(input, 2);
 
       default: return Grid.copy(input);
     }
