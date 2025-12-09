@@ -267,11 +267,17 @@ class AbstractionEngine {
   prioritizeStrategies(analysis) {
     const prioritized = [];
 
-    // Size-based hints
+    // SHAKE IT UP: Try advanced 2027 strategies FIRST for same-size
     if (analysis.sizeRelation === 'same') {
-      prioritized.push('identity', 'rotate180', 'flipHorizontal', 'flipVertical',
+      prioritized.push(
+        // 2027 strategies first!
+        'floodFillEnclosed', 'drawCrossAround', 'moveObjectToAnchor',
+        'colorSignificantComponents', 'fillLShapeCorner',
+        // Then standard
+        'identity', 'rotate180', 'flipHorizontal', 'flipVertical',
         'transpose', 'swapColors', 'learnedColorMapping', 'colorLargestComponent',
-        'colorSignificantComponents', 'fillLShapeCorner', 'replaceColorWithMarker');
+        'replaceColorWithMarker'
+      );
     }
 
     if (analysis.isDoubleWidth) {
@@ -301,6 +307,17 @@ class AbstractionEngine {
 
     if (analysis.hasSeparator) {
       prioritized.push('andHalves', 'xorHalves');
+    }
+
+    // If we have exactly 2 objects, try move/anchor strategies
+    const objCounts = analysis.objectCounts;
+    if (objCounts.length > 0 && objCounts.every(o => o.input === 2 && o.output === 2)) {
+      prioritized.push('moveObjectToAnchor');
+    }
+
+    // If size stays same but content changes, try flood fill and cross
+    if (analysis.sizeRelation === 'same') {
+      prioritized.push('floodFillEnclosed', 'drawCrossAround');
     }
 
     // Add remaining strategies

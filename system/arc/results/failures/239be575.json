@@ -4,7 +4,7 @@
   "strategy": "fallback",
   "confidence": 0.1,
   "program": null,
-  "runtime": 16,
+  "runtime": 15,
   "testCases": 2,
   "passedCases": 0,
   "allPassed": false,
