@@ -270,10 +270,10 @@ export default function Landing() {
               textShadow: '0 0 40px rgba(77,166,255,0.3)'
             }}
           >
-            0RB
+            4
           </h1>
-          <p className="text-[#4da6ff]/50 text-sm tracking-widest">
-            CLICK TO ENTER
+          <p className="text-[#4da6ff]/30 text-xs tracking-widest">
+
           </p>
         </div>
       </div>
