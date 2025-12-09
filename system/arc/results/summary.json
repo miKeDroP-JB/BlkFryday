@@ -1,21 +1,22 @@
 {
-  "timestamp": "2025-12-09T12:12:02.043Z",
-  "total": 50,
-  "passed": 9,
-  "failed": 41,
-  "passRate": 0.19230769230769232,
-  "avgRuntime": 34.72,
+  "timestamp": "2025-12-09T12:24:44.090Z",
+  "total": 53,
+  "passed": 10,
+  "failed": 43,
+  "passRate": 0.2,
+  "avgRuntime": 33.735849056603776,
   "strategyUsage": {
     "selfTile": 1,
     "floodFillEnclosed": 1,
-    "fallback": 41,
+    "fallback": 43,
     "andHalves": 1,
     "learnedColorMapping": 1,
     "extractBoundingBox": 1,
     "gravityDown": 1,
     "extractLargestObject": 1,
     "extractSmallestObject": 1,
-    "shiftDown": 1
+    "shiftDown": 1,
+    "extractThenFlip": 1
   },
   "failureClusters": {
     "size:grow|colors:few|strat:fallback|sim:medium": {
@@ -57,12 +58,13 @@
       ]
     },
     "size:same|colors:medium|strat:fallback|sim:none": {
-      "count": 4,
+      "count": 5,
       "tasks": [
         "06df4c85",
         "0e206a2e",
         "178fcbfb",
-        "1a07d186"
+        "1a07d186",
+        "72322fa7"
       ]
     },
     "size:same|colors:few|strat:fallback|sim:medium": {
@@ -84,13 +86,14 @@
       ]
     },
     "size:shrink|colors:few|strat:fallback|sim:none": {
-      "count": 5,
+      "count": 6,
       "tasks": [
         "0b148d64",
         "1190e5a7",
         "1b2d62fb",
         "1fad071e",
-        "239be575"
+        "239be575",
+        "746b3537"
       ]
     },
     "size:same|colors:many|strat:fallback|sim:low": {
