@@ -135,6 +135,12 @@ class ReasoningEngine {
       return patterns;
     }
 
+    // Check for POINT SYMMETRY (completing symmetric patterns)
+    const symmetryPattern = this.detectPointSymmetry(input, output, changes);
+    if (symmetryPattern) {
+      patterns.push(symmetryPattern);
+    }
+
     // Check for OBJECT MOVEMENT first (whole objects that moved)
     const movementPattern = this.detectObjectMovement(input, output);
     if (movementPattern) {
@@ -233,6 +239,54 @@ class ReasoningEngine {
     }
 
     return { pattern: null };
+  }
+
+  /**
+   * Detect POINT SYMMETRY - completing a pattern around a center point
+   */
+  detectPointSymmetry(input, output, changes) {
+    if (changes.length === 0) return null;
+
+    // Find the center of all non-zero cells in input
+    const nonZero = [];
+    for (let i = 0; i < input.length; i++) {
+      for (let j = 0; j < input[0].length; j++) {
+        if (input[i][j] !== 0) {
+          nonZero.push({ r: i, c: j, v: input[i][j] });
+        }
+      }
+    }
+    if (nonZero.length === 0) return null;
+
+    // Calculate center
+    const centerR = nonZero.reduce((s, p) => s + p.r, 0) / nonZero.length;
+    const centerC = nonZero.reduce((s, p) => s + p.c, 0) / nonZero.length;
+
+    // Check if changes complete point symmetry
+    let symmetricCount = 0;
+    for (const change of changes) {
+      // Find the point symmetric to this change about the center
+      const symR = Math.round(2 * centerR - change.row);
+      const symC = Math.round(2 * centerC - change.col);
+
+      // Check if there's an existing cell at the symmetric point
+      if (symR >= 0 && symR < input.length && symC >= 0 && symC < input[0].length) {
+        if (input[symR][symC] === change.to || output[symR][symC] === change.to) {
+          symmetricCount++;
+        }
+      }
+    }
+
+    if (symmetricCount >= changes.length * 0.7) {
+      return {
+        type: 'point_symmetry',
+        centerR,
+        centerC,
+        confidence: symmetricCount / changes.length
+      };
+    }
+
+    return null;
   }
 
   /**
