@@ -549,6 +549,181 @@ textarea.input {
 .animate-slideUp { animation: slideUp 0.3s ease; }
 
 /* ═══════════════════════════════════════════════════════════════ */
+/* 0R8.AI ROTATION SYSTEM ANIMATIONS                               */
+/* ═══════════════════════════════════════════════════════════════ */
+
+/* Slow rotation - for ambient elements */
+@keyframes rotate-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Reverse rotation */
+@keyframes rotate-reverse {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+
+/* Pulse scale - for breathing effects */
+@keyframes pulse-scale {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* Energy pulse - expanding rings */
+@keyframes pulse-expand {
+  0% {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2);
+    opacity: 0;
+  }
+}
+
+/* Flicker effect - for tech elements */
+@keyframes flicker {
+  0%, 90%, 100% { opacity: 1; }
+  95% { opacity: 0.8; }
+  97% { opacity: 0.9; }
+}
+
+/* Data stream - vertical scroll */
+@keyframes data-stream {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+/* Hologram shimmer */
+@keyframes hologram {
+  0%, 100% {
+    opacity: 1;
+    filter: hue-rotate(0deg);
+  }
+  50% {
+    opacity: 0.9;
+    filter: hue-rotate(10deg);
+  }
+}
+
+/* Energy charge - fill effect */
+@keyframes energy-charge {
+  0% { width: 0%; }
+  100% { width: 100%; }
+}
+
+/* Orbit animation */
+@keyframes orbit {
+  from {
+    transform: rotate(0deg) translateX(50px) rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg) translateX(50px) rotate(-360deg);
+  }
+}
+
+/* Scan line */
+@keyframes scan-line {
+  0% { top: 0; }
+  100% { top: 100%; }
+}
+
+/* Glitch effect */
+@keyframes glitch {
+  0%, 100% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+}
+
+/* Rotation utility classes */
+.animate-rotate-slow { animation: rotate-slow 20s linear infinite; }
+.animate-rotate-medium { animation: rotate-slow 10s linear infinite; }
+.animate-rotate-fast { animation: rotate-slow 5s linear infinite; }
+.animate-rotate-reverse { animation: rotate-reverse 20s linear infinite; }
+.animate-pulse-scale { animation: pulse-scale 3s ease-in-out infinite; }
+.animate-flicker { animation: flicker 3s infinite; }
+.animate-hologram { animation: hologram 4s ease-in-out infinite; }
+.animate-orbit { animation: orbit 10s linear infinite; }
+.animate-glitch { animation: glitch 0.3s infinite; }
+
+/* Hover states for rotation */
+.hover-rotate:hover { transform: rotate(15deg); transition: transform 0.3s ease; }
+.hover-scale:hover { transform: scale(1.1); transition: transform 0.3s ease; }
+.hover-glow:hover { box-shadow: var(--glow-cyan); transition: box-shadow 0.3s ease; }
+
+/* Staggered animation delays */
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+.delay-500 { animation-delay: 0.5s; }
+.delay-1000 { animation-delay: 1s; }
+
+/* Triangle symbol base styles */
+.triangle-symbol {
+  position: relative;
+  display: inline-block;
+}
+
+.triangle-symbol::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--orb-cyan-glow), transparent);
+  width: 150%;
+  height: 150%;
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+/* Cockpit mode specific styles */
+.cockpit-frame {
+  position: relative;
+  border: 1px solid #1a2a4a;
+}
+
+.cockpit-frame::before,
+.cockpit-frame::after {
+  content: '';
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border-color: var(--orb-cyan);
+  border-style: solid;
+}
+
+.cockpit-frame::before {
+  top: -1px;
+  left: -1px;
+  border-width: 3px 0 0 3px;
+}
+
+.cockpit-frame::after {
+  bottom: -1px;
+  right: -1px;
+  border-width: 0 3px 3px 0;
+}
+
+/* Energy flow lines */
+.energy-line {
+  position: absolute;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--orb-cyan), transparent);
+  animation: energy-flow 2s linear infinite;
+}
+
+@keyframes energy-flow {
+  0% { opacity: 0; transform: scaleX(0); }
+  50% { opacity: 1; transform: scaleX(1); }
+  100% { opacity: 0; transform: scaleX(0); }
+}
+
+/* ═══════════════════════════════════════════════════════════════ */
 /* UTILITIES                                                        */
 /* ═══════════════════════════════════════════════════════════════ */
 
