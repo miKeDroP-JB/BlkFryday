@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import MetricsCards from './MetricsCards';
 import UniverseView from './UniverseView';
 import BranchLog from './BranchLog';
+import CreationSandbox from './CreationSandbox';
+import TimeStream from './TimeStream';
 
 const Dashboard = () => {
     const [connected, setConnected] = useState(false);
@@ -10,6 +12,7 @@ const Dashboard = () => {
     const [events, setEvents] = useState([]);
     const [suggestion, setSuggestion] = useState(null);
     const [ws, setWs] = useState(null);
+    const [activeView, setActiveView] = useState('universe'); // universe, sandbox, timeline
 
     // Connect to WebSocket
     useEffect(() => {
@@ -253,20 +256,70 @@ const Dashboard = () => {
             {/* Metrics cards */}
             <MetricsCards data={humanData} />
 
+            {/* View Tabs */}
+            <div style={{
+                display: 'flex',
+                gap: '8px',
+                marginTop: '20px',
+                marginBottom: '16px'
+            }}>
+                {[
+                    { id: 'universe', label: '🌌 Universe', icon: '🌌' },
+                    { id: 'sandbox', label: '🎨 Sandbox', icon: '🎨' },
+                    { id: 'timeline', label: '⏱️ Timeline', icon: '⏱️' }
+                ].map(tab => (
+                    <button
+                        key={tab.id}
+                        onClick={() => setActiveView(tab.id)}
+                        style={{
+                            background: activeView === tab.id ? 'linear-gradient(135deg, #4488ff40, #6644ff40)' : '#1a1a2e',
+                            border: `1px solid ${activeView === tab.id ? '#4488ff' : '#333'}`,
+                            color: activeView === tab.id ? '#fff' : '#888',
+                            padding: '10px 20px',
+                            borderRadius: '8px',
+                            cursor: 'pointer',
+                            fontSize: '13px',
+                            fontWeight: activeView === tab.id ? 'bold' : 'normal',
+                            transition: 'all 0.2s'
+                        }}
+                    >
+                        {tab.label}
+                    </button>
+                ))}
+            </div>
+
             {/* Main content */}
             <div style={{
                 display: 'grid',
                 gridTemplateColumns: '2fr 1fr',
-                gap: '20px',
-                marginTop: '20px'
+                gap: '20px'
             }}>
-                {/* Universe view */}
-                <UniverseView
-                    humanData={humanData}
-                    universeData={universeData}
-                />
+                {/* Left panel - View based */}
+                <div>
+                    {activeView === 'universe' && (
+                        <UniverseView
+                            humanData={humanData}
+                            universeData={universeData}
+                        />
+                    )}
+                    {activeView === 'sandbox' && (
+                        <CreationSandbox
+                            ws={ws}
+                            onSpawn={(data) => addEvent({ type: 'spawn', message: `Spawned ${data.type}` })}
+                            onTweak={(data) => addEvent({ type: 'human', message: `Applied ${data.type} changes` })}
+                        />
+                    )}
+                    {activeView === 'timeline' && (
+                        <TimeStream
+                            events={events}
+                            ws={ws}
+                            onSeek={(ts) => console.log('Seek to', ts)}
+                            onSpeedChange={(s) => console.log('Speed:', s)}
+                        />
+                    )}
+                </div>
 
-                {/* Event log */}
+                {/* Right panel - Event log */}
                 <div style={{ height: '600px' }}>
                     <BranchLog events={events} />
                 </div>
