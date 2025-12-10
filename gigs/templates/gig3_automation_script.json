@@ -1,0 +1,81 @@
+{
+  "id": "gig_automation_script",
+  "name": "Custom Automation & Scripting",
+  "category": "automation",
+  "description": "Custom scripts and automation for repetitive tasks, data processing, and workflow optimization",
+  "pricing": {
+    "base": 400,
+    "hourlyRate": 60,
+    "estimatedHours": 8,
+    "packages": {
+      "basic": {
+        "price": 200,
+        "deliveryDays": 3,
+        "features": [
+          "Single-purpose script",
+          "Basic error handling",
+          "Usage documentation",
+          "1 revision"
+        ]
+      },
+      "standard": {
+        "price": 400,
+        "deliveryDays": 5,
+        "features": [
+          "Multi-step automation",
+          "Configuration file",
+          "Logging",
+          "Error handling + retries",
+          "2 revisions"
+        ]
+      },
+      "premium": {
+        "price": 800,
+        "deliveryDays": 10,
+        "features": [
+          "Complex workflow automation",
+          "Multiple integrations",
+          "Scheduling support",
+          "Dashboard/reporting",
+          "Full documentation",
+          "3 revisions + support"
+        ]
+      }
+    }
+  },
+  "requirements": {
+    "input": [
+      "Detailed task description",
+      "Input/output format examples",
+      "Any API credentials needed",
+      "Frequency/trigger requirements"
+    ],
+    "skills": ["python", "javascript", "automation", "scripting"]
+  },
+  "deliverables": [
+    "Source code",
+    "Configuration template",
+    "Setup instructions",
+    "Usage documentation"
+  ],
+  "useCases": [
+    "Data scraping and processing",
+    "Report generation",
+    "File organization",
+    "API integrations",
+    "Scheduled tasks",
+    "Workflow automation"
+  ],
+  "platforms": ["upwork", "fiverr", "freelancer"],
+  "tags": ["automation", "script", "python", "bot", "workflow"],
+  "faqs": [
+    {
+      "q": "What languages do you use?",
+      "a": "Primarily Python and Node.js, but can work with Bash, PowerShell, or other languages as needed."
+    },
+    {
+      "q": "Can you integrate with my existing tools?",
+      "a": "Yes, I can integrate with most APIs and services. Let me know what tools you're using."
+    }
+  ]
+}

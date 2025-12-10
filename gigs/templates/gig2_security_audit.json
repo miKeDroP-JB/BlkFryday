@@ -1,0 +1,82 @@
+{
+  "id": "gig_security_audit",
+  "name": "Security Audit & Penetration Testing",
+  "category": "security",
+  "description": "Comprehensive security assessment of web applications, APIs, and infrastructure",
+  "pricing": {
+    "base": 1500,
+    "hourlyRate": 125,
+    "estimatedHours": 20,
+    "packages": {
+      "basic": {
+        "price": 800,
+        "deliveryDays": 5,
+        "features": [
+          "Automated vulnerability scan",
+          "OWASP Top 10 check",
+          "Basic report",
+          "1 target application"
+        ]
+      },
+      "standard": {
+        "price": 1500,
+        "deliveryDays": 10,
+        "features": [
+          "Manual + automated testing",
+          "OWASP Top 10 + business logic",
+          "Detailed report with CVSS",
+          "Remediation guidance",
+          "Up to 3 targets"
+        ]
+      },
+      "premium": {
+        "price": 3500,
+        "deliveryDays": 21,
+        "features": [
+          "Full penetration test",
+          "All vulnerability classes",
+          "Executive + technical report",
+          "Proof of concepts",
+          "Remediation support",
+          "Re-test after fixes",
+          "Unlimited targets"
+        ]
+      }
+    }
+  },
+  "requirements": {
+    "input": [
+      "Written authorization (mandatory)",
+      "Scope definition",
+      "Target URLs/IPs",
+      "Test credentials (if auth testing)",
+      "Out-of-scope items"
+    ],
+    "skills": ["security", "pentest", "owasp", "burp"]
+  },
+  "deliverables": [
+    "Executive summary",
+    "Technical findings report",
+    "CVSS-scored vulnerabilities",
+    "Proof of concepts",
+    "Remediation recommendations",
+    "Re-test verification (premium)"
+  ],
+  "platforms": ["upwork", "toptal", "bugcrowd", "hackerone"],
+  "tags": ["security", "pentest", "audit", "owasp", "vulnerability"],
+  "legal": {
+    "requiresAuthorization": true,
+    "authorizationTemplate": "security_test_authorization",
+    "liabilityWaiver": true
+  },
+  "faqs": [
+    {
+      "q": "Do I need to provide written authorization?",
+      "a": "Yes, written authorization is mandatory before any testing begins. This protects both parties legally."
+    },
+    {
+      "q": "What methodologies do you follow?",
+      "a": "OWASP Testing Guide, PTES, and OSSTMM methodologies depending on scope."
+    }
+  ]
+}
