@@ -54,39 +54,8 @@ const nextConfig = {
     NEXT_PUBLIC_APP_CODENAME: 'THE_AWAKENING',
   },
 
-  // Headers for security
-  async headers() {
-    return [
-      {
-        source: '/:path*',
-        headers: [
-          {
-            key: 'X-Frame-Options',
-            value: 'DENY',
-          },
-          {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff',
-          },
-          {
-            key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin',
-          },
-        ],
-      },
-    ];
-  },
-
-  // Redirects
-  async redirects() {
-    return [
-      {
-        source: '/home',
-        destination: '/',
-        permanent: true,
-      },
-    ];
-  },
+  // Note: Headers and redirects are handled by Cloudflare Pages
+  // Configure in _headers and _redirects files if needed
 };
 
 module.exports = nextConfig;
