@@ -124,7 +124,7 @@ Contractor agrees to provide the following services:
 
 2. COMPENSATION
 Client agrees to pay Contractor:
-- Total Amount: ${{totalAmount}}
+- Total Amount: \${{totalAmount}}
 - Payment Schedule: {{paymentSchedule}}
 - Payment Method: {{paymentMethod}}
 
@@ -212,7 +212,7 @@ REQUESTED CHANGES:
 
 IMPACT ASSESSMENT:
 - Timeline Impact: {{timelineImpact}}
-- Cost Impact: ${{costImpact}}
+- Cost Impact: \${{costImpact}}
 - Resource Impact: {{resourceImpact}}
 
 RECOMMENDATION:

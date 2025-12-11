@@ -345,6 +345,17 @@ class Sentinel {
     getHistory() {
         return this.scanHistory;
     }
+
+    /**
+     * Get stats
+     */
+    getStats() {
+        return {
+            scansCompleted: this.scanHistory.length,
+            findingsReported: this.findings.length,
+            activeScans: this.activeScans.size
+        };
+    }
 }
 
 module.exports = Sentinel;
