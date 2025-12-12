@@ -13,6 +13,9 @@
     "web:build": "cd web && next build",
     "web:start": "cd web && next start",
     "boot": "node boot/init.js",
+    "brain": "node run_infinite.js",
+    "brain:voice": "node system/voice_brain.js",
+    "brain:benchmark": "node run_infinite.js benchmark",
     "test": "jest",
     "lint": "eslint ."
   },
@@ -34,6 +37,7 @@
     "react-dom": "^18.2.0",
     "socket.io": "^4.7.0",
     "socket.io-client": "^4.7.0",
+    "ws": "^8.14.0",
     "tailwindcss": "^3.4.0",
     "three": "^0.159.0",
     "typescript": "^5.3.0",
