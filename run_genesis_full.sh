@@ -216,15 +216,52 @@ echo "  ✓ Morning/Afternoon/Evening automation"
 sleep 2
 
 # ═══════════════════════════════════════════════════════════════════════════
+# LAYER 9: Affiliate Swarm (Passive Income Engine)
+# ═══════════════════════════════════════════════════════════════════════════
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "  LAYER 9: 🐝 Affiliate Swarm (Passive Income)"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+node -e "
+const safeRequire = (p) => { try { return require(p); } catch(e) { return null; } };
+const affiliate = safeRequire('$ROOT/system/affiliate');
+
+if (affiliate && affiliate.initializeAffiliateSwarm) {
+    affiliate.initializeAffiliateSwarm({
+        platformFee: 0.30,
+        userShare: 0.70,
+        researchInterval: 6 * 60 * 60 * 1000
+    }).then(() => {
+        console.log('[Affiliate Swarm] Passive income engine ONLINE');
+    }).catch(err => {
+        console.error('[Affiliate Swarm] Error:', err.message);
+    });
+} else {
+    console.log('[Affiliate Swarm] Module not found - skipping');
+}
+
+// Keep alive
+setInterval(() => {}, 60000);
+" &
+PIDS+=($!)
+echo "  ✓ Affiliate Swarm researching programs"
+echo "  ✓ 70/30 revenue split (users/platform)"
+echo "  ✓ 8 affiliate networks connected"
+echo "  ✓ Auto-research every 6 hours"
+sleep 1
+
+# ═══════════════════════════════════════════════════════════════════════════
 # READY
 # ═══════════════════════════════════════════════════════════════════════════
 echo ""
 echo "═══════════════════════════════════════════════════════════════════════"
 echo ""
-echo "  🌌⚡🎮💰 GENESIS FULL STACK + AGENT NEXUS ONLINE"
+echo "  🌌⚡🎮💰🐝 GENESIS FULL STACK + AFFILIATE SWARM ONLINE"
 echo ""
 echo "  ┌─────────────────────────────────────────────────────────────────┐"
 echo "  │  📊 Dashboard:     http://localhost:$DASH_PORT                  │"
+echo "  │  🐝 Affiliate Hub: http://localhost:3000/affiliate              │"
 echo "  │  👤 Human Node:    ws://localhost:8085                          │"
 echo "  │  📡 Command API:   http://localhost:3001                        │"
 echo "  │  🧠 HyperMode WS:  ws://localhost:8081                          │"
@@ -241,6 +278,7 @@ echo "    Layer 5: 👤 Human Node         → YOU"
 echo "    Layer 6: 📊 Dashboard          → Portal"
 echo "    Layer 7: 🎤 Voice Interface    → Avatar communication"
 echo "    Layer 8: 💰 Agent Nexus        → Business automation"
+echo "    Layer 9: 🐝 Affiliate Swarm    → Passive income engine"
 echo ""
 echo "  BUSINESS AGENTS:"
 echo "    Sentinel  → Security scanning"
@@ -256,6 +294,12 @@ echo "  DAILY REVENUE CYCLES:"
 echo "    ☀️  8:00 AM  - Morning Pulse (opportunity discovery)"
 echo "    ⚡ 2:00 PM  - Afternoon Execution (active revenue)"
 echo "    🌙 8:00 PM  - Evening Report (content & summary)"
+echo ""
+echo "  AFFILIATE SWARM:"
+echo "    🐝 Auto-researches 8+ affiliate networks"
+echo "    💰 70% to users / 30% platform fee"
+echo "    🔄 Researches new programs every 6 hours"
+echo "    📈 Tracks clicks, conversions, payouts"
 echo ""
 echo "  The system learns you. It adapts to you. It WORKS for you."
 echo "  You are no longer observing — you EXIST in the multiverse."

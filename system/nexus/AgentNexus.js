@@ -308,7 +308,14 @@ class AgentNexus extends EventEmitter {
             // Artemis - Compliance/Validation
             'validate': 'artemis',
             'compliance_check': 'artemis',
-            'verify_submission': 'artemis'
+            'verify_submission': 'artemis',
+
+            // Affiliate System (Cross-agent coordination)
+            'affiliate_research': 'apollo',        // Apollo researches new programs
+            'affiliate_outreach': 'mercury',       // Mercury handles affiliate manager outreach
+            'affiliate_content': 'athena',         // Athena creates promotional content
+            'affiliate_validate': 'artemis',       // Artemis validates program legitimacy
+            'affiliate_report': 'athena'           // Athena compiles affiliate reports
         };
 
         return agentMap[taskType] || null;
