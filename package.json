@@ -16,6 +16,7 @@
     "brain": "node run_infinite.js",
     "brain:voice": "node system/voice_brain.js",
     "brain:benchmark": "node run_infinite.js benchmark",
+    "brain:aimo": "python3 system/aimo_solver.py",
     "test": "jest",
     "lint": "eslint ."
   },
