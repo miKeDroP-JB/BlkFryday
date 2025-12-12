@@ -10,6 +10,7 @@ const taskManager = require('./task_manager');
 const revenueTracker = require('./revenue_tracker');
 const dashboardWS = require('./dashboard_ws');
 const voiceInterface = require('./voice_interface');
+const strategyGenerator = require('./strategy_generator');
 
 // Orchestrator state
 let running = false;
@@ -325,6 +326,10 @@ function start(options = {}) {
     healthInterval = setInterval(healthCheck, config.healthCheck);
     console.log(`[Orchestrator] Health monitoring started`);
 
+    // Start Infinite Strategy Generator (autonomous earning)
+    strategyGenerator.start(30000); // Tick every 30s
+    console.log(`[Orchestrator] Infinite Strategy Generator ONLINE`);
+
     // Initial revenue cycle check
     checkRevenueCycles();
 
@@ -367,6 +372,9 @@ function stop() {
     dashboardWS.stop();
     voiceInterface.stop();
 
+    // Stop strategy generator
+    strategyGenerator.stop();
+
     running = false;
     console.log('[Orchestrator] Shutdown complete');
 }
@@ -382,7 +390,8 @@ function status() {
         activeTasks: activeTasks.size,
         activeTaskIds: Array.from(activeTasks.keys()),
         wsClients: dashboardWS.getClientCount(),
-        revenue: revenueTracker.getSummary()
+        revenue: revenueTracker.getSummary(),
+        strategyGenerator: strategyGenerator.status()
     };
 }
 

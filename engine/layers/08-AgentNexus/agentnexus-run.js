@@ -15,6 +15,7 @@
 const orchestrator = require('./orchestrator');
 const taskManager = require('./task_manager');
 const revenueTracker = require('./revenue_tracker');
+const strategyGenerator = require('./strategy_generator');
 const exampleTasks = require('./example_tasks.json');
 
 // Parse command line arguments
@@ -124,13 +125,15 @@ if (process.stdin.isTTY) {
 
     console.log('');
     console.log('Interactive mode enabled. Commands:');
-    console.log('  status   - Show orchestrator status');
-    console.log('  health   - Show health check');
-    console.log('  queue    - Show queue status');
-    console.log('  revenue  - Show revenue summary');
-    console.log('  cycle <name> - Trigger revenue cycle (morning/afternoon/evening)');
-    console.log('  seed     - Load seed tasks');
-    console.log('  quit     - Shutdown');
+    console.log('  status    - Show orchestrator status');
+    console.log('  health    - Show health check');
+    console.log('  queue     - Show queue status');
+    console.log('  revenue   - Show revenue summary');
+    console.log('  strategy  - Show active strategies & avatars');
+    console.log('  generate  - Generate new earning strategy');
+    console.log('  cycle <n> - Trigger revenue cycle (morning/afternoon/evening)');
+    console.log('  seed      - Load seed tasks');
+    console.log('  quit      - Shutdown');
     console.log('');
 
     rl.on('line', (line) => {
@@ -174,6 +177,29 @@ if (process.stdin.isTTY) {
                     taskManager.enqueue(task);
                 });
                 console.log(`Loaded ${exampleTasks.seed_tasks.length} seed tasks`);
+                break;
+
+            case 'strategy':
+            case 'strategies':
+                const stratStatus = strategyGenerator.status();
+                console.log('┌─────────────────────────────────────────────────────────────────┐');
+                console.log('│ INFINITE STRATEGY GENERATOR                                     │');
+                console.log('├─────────────────────────────────────────────────────────────────┤');
+                console.log(`│ Running: ${stratStatus.running ? 'YES' : 'NO'}  │  Active: ${stratStatus.activeStrategies}  │  Completed: ${stratStatus.completedStrategies}`);
+                console.log(`│ Total Revenue: $${stratStatus.totalRevenue.toFixed(2)}  │  Pitches: ${stratStatus.pitchHistory}`);
+                console.log('├─────────────────────────────────────────────────────────────────┤');
+                console.log('│ AVATARS: ' + stratStatus.avatars.join(', '));
+                console.log('│ TEMPLATES: ' + stratStatus.templates.slice(0, 4).join(', '));
+                console.log('└─────────────────────────────────────────────────────────────────┘');
+                break;
+
+            case 'generate':
+                const target = parseInt(parts[1]) || 100;
+                const newStrategy = strategyGenerator.generate({ targetRevenue: target });
+                console.log(`Generated strategy: ${newStrategy.id}`);
+                console.log(`  Avatar: ${newStrategy.avatar}`);
+                console.log(`  Template: ${newStrategy.template}`);
+                console.log(`  Target: $${newStrategy.target.revenue}`);
                 break;
 
             case 'quit':
