@@ -3,7 +3,7 @@
  * The primary interface to the simulation
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSystem } from '@/context/SystemContext';
 import { useAgents, ARCHETYPES } from '@/context/AgentContext';
 import { useCopa, VERTICALS } from '@/context/CopaContext';
@@ -96,8 +96,31 @@ export default function MainConsole() {
     }
   };
 
+  // Auto-dismiss notifications
+  useEffect(() => {
+    if (systemState.notifications.length > 0) {
+      const timer = setTimeout(() => {
+        const oldest = systemState.notifications[0];
+        if (oldest) {
+          systemActions.removeNotification(oldest.id);
+        }
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [systemState.notifications]);
+
   return (
     <div className="console">
+      {/* Notifications */}
+      <div className="notifications">
+        {systemState.notifications.map(notif => (
+          <div key={notif.id} className={`notification ${notif.type}`}>
+            <strong>{notif.title}</strong>
+            <p>{notif.message}</p>
+          </div>
+        ))}
+      </div>
+
       {/* Header */}
       <header className="console-header">
         <div className="console-logo">
@@ -300,6 +323,65 @@ export default function MainConsole() {
         @keyframes pulse {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.5; }
+        }
+
+        .notifications {
+          position: fixed;
+          top: 80px;
+          right: 20px;
+          z-index: 1000;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          max-width: 350px;
+        }
+
+        .notification {
+          background: #1a1a2e;
+          border: 1px solid #333;
+          border-radius: 12px;
+          padding: 16px 20px;
+          animation: slideIn 0.3s ease;
+          box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .notification.info {
+          border-color: #00ffff;
+          box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+        }
+
+        .notification.success {
+          border-color: #2ecc71;
+          box-shadow: 0 0 20px rgba(46, 204, 113, 0.2);
+        }
+
+        .notification.error {
+          border-color: #e74c3c;
+          box-shadow: 0 0 20px rgba(231, 76, 60, 0.2);
+        }
+
+        .notification strong {
+          display: block;
+          font-family: 'Orbitron', sans-serif;
+          font-size: 0.9rem;
+          margin-bottom: 4px;
+        }
+
+        .notification p {
+          color: #888;
+          font-size: 0.85rem;
+          margin: 0;
+        }
+
+        @keyframes slideIn {
+          from {
+            transform: translateX(100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
         }
       `}</style>
     </div>
