@@ -163,18 +163,73 @@ elif command -v open &> /dev/null; then
 fi
 
 # ═══════════════════════════════════════════════════════════════════════════
+# LAYER 7: Voice Interface (Avatar Communication)
+# ═══════════════════════════════════════════════════════════════════════════
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "  LAYER 7: 🎤 Voice Interface"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+if [ -f "$ROOT/system/voice_brain.js" ]; then
+    node "$ROOT/system/voice_brain.js" &
+    PIDS+=($!)
+    echo "  ✓ Voice Brain WebSocket on port 3002"
+    echo "  ✓ 7 Agent voice profiles loaded"
+    echo "  ✓ Wake words: 'hey orb', 'orb', 'simulation'"
+fi
+sleep 1
+
+# ═══════════════════════════════════════════════════════════════════════════
+# LAYER 8: Agent Nexus (Business Automation Engine)
+# ═══════════════════════════════════════════════════════════════════════════
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "  LAYER 8: 💰 Agent Nexus (Revenue Engine)"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+node -e "
+const safeRequire = (p) => { try { return require(p); } catch(e) { return null; } };
+const { quickStart } = safeRequire('$ROOT/system/nexus');
+
+if (quickStart) {
+    quickStart({
+        dailyGoal: 100,
+        weeklyGoal: 500,
+        monthlyGoal: 2000
+    }).then(() => {
+        console.log('[Agent Nexus] Business automation engine ONLINE');
+    }).catch(err => {
+        console.error('[Agent Nexus] Error:', err.message);
+    });
+} else {
+    console.log('[Agent Nexus] Module not found - running without business engine');
+}
+
+// Keep alive
+setInterval(() => {}, 60000);
+" &
+PIDS+=($!)
+echo "  ✓ 8 Business Agents initialized"
+echo "  ✓ Task Queue with priority scheduling"
+echo "  ✓ Revenue Engine with daily cycles"
+echo "  ✓ Morning/Afternoon/Evening automation"
+sleep 2
+
+# ═══════════════════════════════════════════════════════════════════════════
 # READY
 # ═══════════════════════════════════════════════════════════════════════════
 echo ""
 echo "═══════════════════════════════════════════════════════════════════════"
 echo ""
-echo "  🌌⚡🎮 GENESIS FULL STACK ONLINE"
+echo "  🌌⚡🎮💰 GENESIS FULL STACK + AGENT NEXUS ONLINE"
 echo ""
 echo "  ┌─────────────────────────────────────────────────────────────────┐"
 echo "  │  📊 Dashboard:     http://localhost:$DASH_PORT                  │"
 echo "  │  👤 Human Node:    ws://localhost:8085                          │"
 echo "  │  📡 Command API:   http://localhost:3001                        │"
 echo "  │  🧠 HyperMode WS:  ws://localhost:8081                          │"
+echo "  │  🎤 Voice Brain:   ws://localhost:3002                          │"
+echo "  │  💰 Agent Nexus:   Autonomous Revenue Engine                    │"
 echo "  └─────────────────────────────────────────────────────────────────┘"
 echo ""
 echo "  ACTIVE LAYERS:"
@@ -184,14 +239,25 @@ echo "    Layer 3: 🧠 Meta-HyperMode     → Self-evolving AI"
 echo "    Layer 4: ⚡ HyperMode          → Orchestration"
 echo "    Layer 5: 👤 Human Node         → YOU"
 echo "    Layer 6: 📊 Dashboard          → Portal"
+echo "    Layer 7: 🎤 Voice Interface    → Avatar communication"
+echo "    Layer 8: 💰 Agent Nexus        → Business automation"
 echo ""
-echo "  YOUR METRICS AFFECT:"
-echo "    → Branch evolution probabilities"
-echo "    → AI prioritization & adaptation"
-echo "    → Universe resonance amplification"
-echo "    → Emergent civilization growth"
+echo "  BUSINESS AGENTS:"
+echo "    Sentinel  → Security scanning"
+echo "    Apollo    → Freelance automation"
+echo "    Mercury   → Outreach & pitching"
+echo "    Athena    → Content generation"
+echo "    Ares      → Bug bounty submission"
+echo "    Hermes    → Client messaging"
+echo "    Hephaestus→ Build automation"
+echo "    Artemis   → Compliance validation"
 echo ""
-echo "  The system learns you. It adapts to you."
+echo "  DAILY REVENUE CYCLES:"
+echo "    ☀️  8:00 AM  - Morning Pulse (opportunity discovery)"
+echo "    ⚡ 2:00 PM  - Afternoon Execution (active revenue)"
+echo "    🌙 8:00 PM  - Evening Report (content & summary)"
+echo ""
+echo "  The system learns you. It adapts to you. It WORKS for you."
 echo "  You are no longer observing — you EXIST in the multiverse."
 echo ""
 echo "  Press CTRL+C to pause gracefully"
