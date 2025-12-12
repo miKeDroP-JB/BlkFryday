@@ -42,19 +42,49 @@ const NAV_ITEMS = [
 
 export default function MainConsole() {
   const [activeNav, setActiveNav] = useState('games');
-  const { state: systemState } = useSystem();
+  const { state: systemState, actions: systemActions } = useSystem();
   const { state: agentState, actions: agentActions } = useAgents();
   const { state: copaState, actions: copaActions } = useCopa();
   const { state: cryptoState, actions: cryptoActions } = useCrypto();
 
+  const handlePlayGame = (game) => {
+    console.log(`[ORB] Launching ${game.name}...`);
+    systemActions.setActiveGame(game.id);
+    systemActions.addNotification({
+      type: 'info',
+      title: `Launching ${game.name}`,
+      message: game.desc
+    });
+  };
+
+  const handleSummonAgent = (agentId) => {
+    console.log(`[ORB] Summoning agent: ${agentId}`);
+    agentActions.spawnAgent(agentId);
+    systemActions.addNotification({
+      type: 'success',
+      title: 'Agent Summoned',
+      message: `${agentId} is now active`
+    });
+  };
+
+  const handleActivateCopa = (verticalId) => {
+    console.log(`[ORB] Activating Copa: ${verticalId}`);
+    copaActions.initCopa(verticalId);
+    systemActions.addNotification({
+      type: 'success',
+      title: 'Copa Activated',
+      message: `${verticalId} sidekick is ready`
+    });
+  };
+
   const renderContent = () => {
     switch (activeNav) {
       case 'games':
-        return <GamesPanel />;
+        return <GamesPanel onPlay={handlePlayGame} />;
       case 'agents':
-        return <AgentsPanel agents={agentState} actions={agentActions} />;
+        return <AgentsPanel agents={agentState} actions={{ ...agentActions, summon: handleSummonAgent }} />;
       case 'copa':
-        return <CopaPanel copa={copaState} actions={copaActions} />;
+        return <CopaPanel copa={copaState} actions={{ ...copaActions, activate: handleActivateCopa }} />;
       case 'crypto':
         return <CryptoPanel crypto={cryptoState} actions={cryptoActions} />;
       case 'community':
@@ -62,7 +92,7 @@ export default function MainConsole() {
       case 'settings':
         return <SettingsPanel />;
       default:
-        return <GamesPanel />;
+        return <GamesPanel onPlay={handlePlayGame} />;
     }
   };
 
@@ -280,7 +310,7 @@ export default function MainConsole() {
 // PANELS
 // ═══════════════════════════════════════════════════════════════
 
-function GamesPanel() {
+function GamesPanel({ onPlay }) {
   return (
     <div className="panel">
       <h2 className="panel-title">GAME LIBRARY</h2>
@@ -293,7 +323,7 @@ function GamesPanel() {
             <h3 className="game-name">{game.name}</h3>
             <p className="game-tagline">{game.tagline}</p>
             <p className="game-desc">{game.desc}</p>
-            <button className="game-play-btn">PLAY</button>
+            <button className="game-play-btn" onClick={() => onPlay(game)}>PLAY</button>
           </div>
         ))}
       </div>
@@ -412,7 +442,7 @@ function AgentsPanel({ agents, actions }) {
             <p className="agent-domain">{agent.domain}</p>
             <button
               className="agent-summon-btn"
-              onClick={() => actions.spawnAgent(agent.id)}
+              onClick={() => actions.summon(agent.id)}
             >
               SUMMON
             </button>
@@ -524,7 +554,7 @@ function CopaPanel({ copa, actions }) {
             </div>
             <button
               className="copa-activate-btn"
-              onClick={() => actions.initCopa(vertical.id)}
+              onClick={() => actions.activate(vertical.id)}
             >
               ACTIVATE
             </button>
