@@ -187,7 +187,20 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 echo "  LAYER 8: 💰 Agent Nexus (Revenue Engine)"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-node -e "
+NEXUS_PATH="$ROOT/engine/layers/08-AgentNexus"
+if [ -f "$NEXUS_PATH/agentnexus-run.js" ]; then
+    cd "$NEXUS_PATH"
+    node agentnexus-run.js &
+    PIDS+=($!)
+    cd "$ROOT"
+    echo "  ✓ Orchestrator: ws://localhost:8890 (dashboard), http://localhost:8777 (voice)"
+    echo "  ✓ 8 Business Agents initialized"
+    echo "  ✓ Task Queue with priority scheduling"
+    echo "  ✓ Revenue Engine with daily cycles"
+    echo "  ✓ Morning/Afternoon/Evening automation"
+else
+    # Fallback to system/nexus if engine path doesn't exist
+    node -e "
 const safeRequire = (p) => { try { return require(p); } catch(e) { return null; } };
 const { quickStart } = safeRequire('$ROOT/system/nexus');
 
@@ -208,11 +221,9 @@ if (quickStart) {
 // Keep alive
 setInterval(() => {}, 60000);
 " &
-PIDS+=($!)
-echo "  ✓ 8 Business Agents initialized"
-echo "  ✓ Task Queue with priority scheduling"
-echo "  ✓ Revenue Engine with daily cycles"
-echo "  ✓ Morning/Afternoon/Evening automation"
+    PIDS+=($!)
+    echo "  ✓ 8 Business Agents initialized (fallback mode)"
+fi
 sleep 2
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -266,7 +277,8 @@ echo "  │  👤 Human Node:    ws://localhost:8085                          �
 echo "  │  📡 Command API:   http://localhost:3001                        │"
 echo "  │  🧠 HyperMode WS:  ws://localhost:8081                          │"
 echo "  │  🎤 Voice Brain:   ws://localhost:3002                          │"
-echo "  │  💰 Agent Nexus:   Autonomous Revenue Engine                    │"
+echo "  │  💰 Agent Nexus:   ws://localhost:8890 (dashboard)               │"
+echo "  │  🎙️  Voice Cmd:     http://localhost:8777/voice-cmd             │"
 echo "  └─────────────────────────────────────────────────────────────────┘"
 echo ""
 echo "  ACTIVE LAYERS:"
