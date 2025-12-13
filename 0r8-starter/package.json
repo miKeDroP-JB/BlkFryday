@@ -24,7 +24,17 @@
     "observer:inject": "node core/observer/cli.js inject --type=random --intensity=high",
     "observer:log": "node core/observer/cli.js log --level=debug --stream",
     "observer:status": "node core/observer/cli.js status --metrics=latency,success,escalation",
-    "observer:verify": "node core/observer/cli.js verify"
+    "observer:verify": "node core/observer/cli.js verify",
+    "locks": "node core/locks/cli.js",
+    "locks:freeze": "node core/locks/cli.js freeze --scope=memory,observer,amoeba",
+    "locks:status": "node core/locks/cli.js status",
+    "deploy": "node deploy/node-deploy.js",
+    "deploy:gift": "node deploy/node-deploy.js node GiftNode --public --sandbox=hard --observer-priority=high",
+    "deploy:research": "node deploy/node-deploy.js node ResearchNode --public --sandbox=hard --observer-priority=high",
+    "memory": "node memory/fractal/cli.js",
+    "memory:ingest": "node memory/fractal/cli.js ingest --source=GiftNode --mode=shadow",
+    "memory:status": "node memory/fractal/cli.js status",
+    "memory:pending": "node memory/fractal/cli.js pending"
   },
   "engines": {
     "node": ">=18.0.0"
