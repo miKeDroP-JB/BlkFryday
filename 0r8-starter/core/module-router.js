@@ -7,9 +7,10 @@
 
 import { sigilAI } from '../nodes/sigil-ai.js';
 import { researchNode } from '../nodes/research-node.js';
+import { giftNode } from '../nodes/gift-node.js';
 
 // Registry of all AI nodes
-export const aiNodes = [sigilAI, researchNode];
+export const aiNodes = [sigilAI, researchNode, giftNode];
 
 // Node capability mapping
 const nodeCapabilities = {
@@ -24,6 +25,12 @@ const nodeCapabilities = {
         capabilities: ['research', 'discovery', 'simulation', 'science', 'strategy'],
         priority: 2,
         trustedOnly: true
+    },
+    giftnode: {
+        name: 'GiftNode',
+        capabilities: ['gift', 'reward', 'karma', 'community', 'appreciation'],
+        priority: 3,
+        trustedOnly: false
     }
 };
 
