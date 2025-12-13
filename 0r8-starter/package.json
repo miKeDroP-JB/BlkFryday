@@ -34,7 +34,15 @@
     "memory": "node memory/fractal/cli.js",
     "memory:ingest": "node memory/fractal/cli.js ingest --source=GiftNode --mode=shadow",
     "memory:status": "node memory/fractal/cli.js status",
-    "memory:pending": "node memory/fractal/cli.js pending"
+    "memory:pending": "node memory/fractal/cli.js pending",
+    "flowsync": "node core/flowsync-cli.js",
+    "flowsync:orchestrate": "node core/flowsync-cli.js orchestrate --mode=coherent --observer=dominant --memory=shadow-only",
+    "flowsync:status": "node core/flowsync-cli.js status",
+    "agents": "node agents/cli.js",
+    "agents:enable": "node agents/cli.js enable --scope=task-level --constraints=observer,amoeba --autonomy=bounded",
+    "agents:status": "node agents/cli.js status",
+    "agents:demo": "node agents/cli.js demo",
+    "omega": "npm run locks:freeze && npm run flowsync:orchestrate && npm run agents:enable"
   },
   "engines": {
     "node": ">=18.0.0"
