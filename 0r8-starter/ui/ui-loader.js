@@ -113,6 +113,34 @@ export function preloadLayouts(layoutNames) {
     return preloaded;
 }
 
+/**
+ * Update dashboard - Creates a snapshot of current state for WebSocket broadcast
+ */
+export function updateDashboard(userId, context = {}) {
+    // Import dependencies lazily to avoid circular imports
+    const dashboardData = {
+        type: 'dashboard_update',
+        userId,
+        timestamp: Date.now(),
+        layout: activeLayout?.name || 'default',
+        data: {
+            // Core state
+            context: {
+                userId,
+                ...context
+            },
+            // Layout info
+            ui: {
+                activeLayout: activeLayout?.name,
+                availableLayouts: Object.keys(layouts),
+                history: layoutHistory.slice(-5)
+            }
+        }
+    };
+
+    return dashboardData;
+}
+
 export default {
     loadUI,
     registerLayout,
@@ -120,5 +148,6 @@ export default {
     switchLayout,
     getLayoutHistory,
     preloadLayouts,
+    updateDashboard,
     layouts
 };
