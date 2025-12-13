@@ -42,3 +42,4 @@ coverage/
 *.pem
 .vercel
 cloudflared
+0r8-starter/data/giftLog.json
