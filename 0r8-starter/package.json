@@ -11,9 +11,14 @@
     "start": "node term.js",
     "term": "node term.js",
     "term:trusted": "node term.js --trusted",
+    "server": "node term.js --server",
+    "server:trusted": "node term.js --server --trusted",
     "test": "node test.js"
   },
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "description": "0r8 Starter - The ORB consciousness engine with AI-native terminal",
-  "keywords": ["orb", "ai", "terminal", "consciousness", "avatar"],
+  "keywords": ["orb", "ai", "terminal", "consciousness", "avatar", "websocket"],
   "license": "MIT"
 }
