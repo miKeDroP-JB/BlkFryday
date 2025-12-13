@@ -43,3 +43,4 @@ coverage/
 .vercel
 cloudflared
 0r8-starter/data/giftLog.json
+0r8-starter/data/ekoLedger.json

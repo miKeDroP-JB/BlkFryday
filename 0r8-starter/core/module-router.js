@@ -8,9 +8,10 @@
 import { sigilAI } from '../nodes/sigil-ai.js';
 import { researchNode } from '../nodes/research-node.js';
 import { giftNode } from '../nodes/gift-node.js';
+import { eKo } from '../nodes/eko-token.js';
 
 // Registry of all AI nodes
-export const aiNodes = [sigilAI, researchNode, giftNode];
+export const aiNodes = [sigilAI, researchNode, giftNode, eKo];
 
 // Node capability mapping
 const nodeCapabilities = {
@@ -30,6 +31,12 @@ const nodeCapabilities = {
         name: 'GiftNode',
         capabilities: ['gift', 'reward', 'karma', 'community', 'appreciation'],
         priority: 3,
+        trustedOnly: false
+    },
+    ekotoken: {
+        name: 'EkoToken',
+        capabilities: ['token', 'balance', 'transfer', 'wallet', 'economy', 'eko'],
+        priority: 4,
         trustedOnly: false
     }
 };
