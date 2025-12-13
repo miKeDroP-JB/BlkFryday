@@ -22,6 +22,24 @@ const threatPatterns = {
         /insert.*into/i,
         /drop\s+table/i
     ],
+    pathTraversal: [
+        /\.\.\//,
+        /\.\.\\/,
+        /%2e%2e%2f/i,
+        /%2e%2e\//i,
+        /\.\.%2f/i,
+        /etc\/passwd/i,
+        /etc\/shadow/i,
+        /proc\/self/i
+    ],
+    commandInjection: [
+        /;\s*\w+/,
+        /\|\s*\w+/,
+        /`[^`]+`/,
+        /\$\([^)]+\)/,
+        /&&\s*\w+/,
+        /\|\|\s*\w+/
+    ],
     suspicious: [
         /[<>{}[\]\\]/,
         /\0/,
@@ -70,7 +88,21 @@ export const amoebaSecurity = {
         const sqlCheck = this.checkSQLInjection(input);
         if (sqlCheck.detected) {
             anomalies.push('SQL injection attempt');
-            riskScore += 0.4;
+            riskScore += 0.5; // Raised to ensure blocking
+        }
+
+        // 2b. Check for path traversal
+        const pathCheck = this.checkPathTraversal(input);
+        if (pathCheck.detected) {
+            anomalies.push('Path traversal attempt');
+            riskScore += 0.5;
+        }
+
+        // 2c. Check for command injection
+        const cmdCheck = this.checkCommandInjection(input);
+        if (cmdCheck.detected) {
+            anomalies.push('Command injection attempt');
+            riskScore += 0.5;
         }
 
         // 3. Check for suspicious patterns
@@ -107,8 +139,11 @@ export const amoebaSecurity = {
         // Clamp risk score
         riskScore = Math.max(0, Math.min(1, riskScore));
 
+        // Block threshold: 0.5 (50%) - stricter security
+        const BLOCK_THRESHOLD = 0.5;
+
         // Track if blocked
-        if (riskScore > 0.7) {
+        if (riskScore >= BLOCK_THRESHOLD) {
             this.metrics.blocked++;
         }
         if (anomalies.length > 0) {
@@ -119,9 +154,10 @@ export const amoebaSecurity = {
             input,
             anomalies,
             riskScore,
+            riskLevel: Math.round(riskScore * 100), // Percentage for convenience
             timestamp: Date.now(),
-            blocked: riskScore > 0.7,
-            sanitized: riskScore > 0.7 ? this.sanitize(input) : input
+            blocked: riskScore >= BLOCK_THRESHOLD,
+            sanitized: riskScore >= BLOCK_THRESHOLD ? this.sanitize(input) : input
         };
     },
 
@@ -149,6 +185,30 @@ export const amoebaSecurity = {
      */
     checkSQLInjection(input) {
         for (const pattern of threatPatterns.sqlInjection) {
+            if (pattern.test(input)) {
+                return { detected: true };
+            }
+        }
+        return { detected: false };
+    },
+
+    /**
+     * Check for path traversal
+     */
+    checkPathTraversal(input) {
+        for (const pattern of threatPatterns.pathTraversal) {
+            if (pattern.test(input)) {
+                return { detected: true };
+            }
+        }
+        return { detected: false };
+    },
+
+    /**
+     * Check for command injection
+     */
+    checkCommandInjection(input) {
+        for (const pattern of threatPatterns.commandInjection) {
             if (pattern.test(input)) {
                 return { detected: true };
             }
