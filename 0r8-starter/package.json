@@ -1,1 +1,19 @@
-{"name": "0r8-starter", "version": "1.0.0", "type": "module", "main": "index.js"}
+{
+  "name": "0r8-starter",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "bin": {
+    "0r8": "./term.js",
+    "0r8-term": "./term.js"
+  },
+  "scripts": {
+    "start": "node term.js",
+    "term": "node term.js",
+    "term:trusted": "node term.js --trusted",
+    "test": "node test.js"
+  },
+  "description": "0r8 Starter - The ORB consciousness engine with AI-native terminal",
+  "keywords": ["orb", "ai", "terminal", "consciousness", "avatar"],
+  "license": "MIT"
+}

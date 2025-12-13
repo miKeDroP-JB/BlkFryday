@@ -26,6 +26,9 @@ import { updateSpiritAnimal, getSpiritStats, listSpirits } from './avatars/spiri
 import { flowSync } from './core/flowsync-node.js';
 import { encryptOutput, decryptInput, generateId, generateToken } from './core/crypto-utils.js';
 
+// Terminal imports (lazy loaded for CLI mode)
+let terminalCore = null;
+
 // Version
 const VERSION = '1.0.0';
 
@@ -243,11 +246,38 @@ export {
     VERSION
 };
 
+// Note: startTerminal and getTerminalCommands are exported directly below
+
+/**
+ * Start 0r8.term - The AI-Native Terminal
+ * "The terminal that thinks before you do"
+ */
+export async function startTerminal(userContext = {}) {
+    if (!terminalCore) {
+        const module = await import('./terminal/0r8-term-core.js');
+        terminalCore = module;
+    }
+    return terminalCore.start0r8Term(userContext);
+}
+
+/**
+ * Get terminal commands (for programmatic access)
+ */
+export async function getTerminalCommands() {
+    if (!terminalCore) {
+        const module = await import('./terminal/0r8-term-core.js');
+        terminalCore = module;
+    }
+    return terminalCore.COMMANDS;
+}
+
 export default {
     handleUserInput,
     quickProcess,
     invokeModule,
     getStatus,
     getDashboard,
+    startTerminal,
+    getTerminalCommands,
     VERSION
 };
