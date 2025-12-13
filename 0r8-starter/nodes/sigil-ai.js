@@ -1,222 +1,240 @@
 /**
  * ╔═══════════════════════════════════════════════════════════════════════════╗
  * ║   SIGIL AI NODE - Mystical Processing Engine                              ║
- * ║   The whisper in the machine • Secrets & transformations                  ║
+ * ║   Levels unlock patterns • Trusted users get all patterns instantly       ║
  * ╚═══════════════════════════════════════════════════════════════════════════╝
  */
 
 import { encryptOutput, generateId, simpleHash } from '../core/crypto-utils.js';
 import { userStorage } from '../core/storage-hybrid.js';
 
-// Sigil patterns - mystical transformations
-const SIGIL_PATTERNS = {
+// All Sigil patterns - unlock progressively
+const ALL_PATTERNS = ['reverse', 'mirror', 'cipher', 'runes', 'whisper', 'echo', 'veil', 'essence'];
+
+// Pattern implementations
+const PATTERN_FUNCTIONS = {
     reverse: text => text.split('').reverse().join(''),
     mirror: text => text + ' | ' + text.split('').reverse().join(''),
     cipher: text => text.split('').map(c => String.fromCharCode(c.charCodeAt(0) + 1)).join(''),
-    runes: text => text.toUpperCase().replace(/[AEIOU]/g, '*'),
+    runes: text => text.toUpperCase().replace(/[AEIOU]/g, '᛫'),
     whisper: text => text.toLowerCase().replace(/\s+/g, '...'),
-    echo: text => text.split(' ').map(w => w + '-' + w).join(' '),
-    veil: text => text.replace(/./g, c => Math.random() > 0.5 ? c : '*'),
-    essence: text => [...new Set(text.toLowerCase().replace(/[^a-z]/g, ''))].join('')
+    echo: text => text.split(' ').map(w => w + '~' + w).join(' '),
+    veil: text => text.replace(/./g, c => Math.random() > 0.3 ? c : '░'),
+    essence: text => [...new Set(text.toLowerCase().replace(/[^a-z]/g, ''))].sort().join('')
 };
 
-// Sigil moods - affect response style
-const SIGIL_MOODS = ['mystical', 'cryptic', 'enlightened', 'shadowed', 'radiant', 'dormant'];
+// Pattern descriptions for UI
+const PATTERN_INFO = {
+    reverse: { name: 'Reverse', description: 'Mirror the words backwards', level: 1 },
+    mirror: { name: 'Mirror', description: 'Reflect reality in the void', level: 1 },
+    cipher: { name: 'Cipher', description: 'Shift the alphabet veil', level: 2 },
+    runes: { name: 'Runes', description: 'Ancient symbols emerge', level: 3 },
+    whisper: { name: 'Whisper', description: 'Silence between words', level: 4 },
+    echo: { name: 'Echo', description: 'Words repeat themselves', level: 5 },
+    veil: { name: 'Veil', description: 'Partial obscuration', level: 6 },
+    essence: { name: 'Essence', description: 'Distill to core truth', level: 7 }
+};
 
-// Processing metrics
-const sigilMetrics = {
-    processed: 0,
-    secrets: 0,
-    transformations: {},
-    avgScore: 0
+// Secret patterns for trusted users only
+const TRUSTED_PATTERNS = {
+    prophecy: text => `✧ ${text.split(' ').reverse().join(' ')} ✧ The future whispers...`,
+    void: text => text.replace(/./g, '▓'),
+    genesis: text => `[GENESIS] ${text.toUpperCase()} [/GENESIS]`
 };
 
 export const sigilAI = {
     name: 'Sigil',
 
     /**
-     * Main processing method
+     * Main processing method with leveling
      */
     async process(input, userContext) {
-        sigilMetrics.processed++;
+        // Initialize sigil state
+        userContext.sigil = userContext.sigil || {
+            score: 0,
+            level: 1,
+            patternsUnlocked: ['reverse', 'mirror'],
+            totalTransformations: 0
+        };
 
-        // Determine input type
-        const inputData = typeof input === 'object' ? input.input || input.raw || '' : String(input);
+        const sigil = userContext.sigil;
+        const isTrusted = userContext.trusted === true;
 
-        // Select transformation based on input characteristics
-        const pattern = this.selectPattern(inputData, userContext);
+        // Increase score with multiplier
+        const scoreGain = isTrusted ? 2 : 1;
+        sigil.score += scoreGain;
+        sigil.totalTransformations++;
+
+        // Level up every 5 points
+        let levelsGained = 0;
+        while (sigil.score >= sigil.level * 5 && sigil.level < 8) {
+            sigil.score -= sigil.level * 5;
+            sigil.level++;
+            levelsGained++;
+
+            // Unlock new pattern
+            if (sigil.level - 1 < ALL_PATTERNS.length) {
+                const newPattern = ALL_PATTERNS[sigil.level - 1];
+                if (!sigil.patternsUnlocked.includes(newPattern)) {
+                    sigil.patternsUnlocked.push(newPattern);
+                }
+            }
+        }
+
+        // Trusted users get all patterns instantly
+        if (isTrusted) {
+            sigil.patternsUnlocked = [...ALL_PATTERNS];
+        }
+
+        // Get input text
+        const inputText = typeof input === 'object' ? (input.input || input.raw || '') : String(input);
+
+        // Select pattern based on level and input
+        const pattern = this.selectPattern(inputText, sigil, isTrusted);
 
         // Apply transformation
-        const transformed = SIGIL_PATTERNS[pattern](inputData);
+        const transformed = this.transform(inputText, pattern, isTrusted);
 
-        // Generate mystical response
-        const response = this.generateResponse(inputData, transformed, pattern);
-
-        // Calculate secret score
-        const secretScore = this.calculateSecretScore(inputData, response);
-
-        // Build result
-        const result = {
+        // Build response
+        const response = {
             id: generateId('sigil'),
-            text: response.text,
+            text: `Sigil (L${sigil.level}): ${transformed}`,
+            original: inputText,
             transformed,
             pattern,
-            secretScore,
-            mood: this.determineMood(secretScore),
-            whisper: this.generateWhisper(inputData),
+            patternInfo: PATTERN_INFO[pattern] || { name: pattern, level: sigil.level },
+            level: sigil.level,
+            score: sigil.score,
+            scoreToNext: sigil.level * 5,
+            patternsUnlocked: sigil.patternsUnlocked,
+            secretScore: this.calculateSecretScore(inputText),
+            trusted: isTrusted,
+            levelsGained,
             timestamp: Date.now()
         };
 
-        // Encrypt sensitive output
-        const encrypted = encryptOutput(JSON.stringify(result));
-
-        // Store in user's grimoire
-        if (userContext?.userId) {
-            userStorage.save(userContext.userId, [{
-                sigil: encrypted,
-                pattern,
-                timestamp: Date.now()
-            }], { tags: ['sigil', pattern] });
-            sigilMetrics.secrets++;
-        }
-
-        // Update metrics
-        sigilMetrics.transformations[pattern] = (sigilMetrics.transformations[pattern] || 0) + 1;
-        sigilMetrics.avgScore = (sigilMetrics.avgScore * (sigilMetrics.processed - 1) + secretScore) / sigilMetrics.processed;
+        // Encrypt and store
+        const encrypted = encryptOutput(JSON.stringify(response));
+        userStorage.save(userContext.userId || 'anon', [{
+            sigil: encrypted,
+            pattern,
+            level: sigil.level,
+            timestamp: Date.now()
+        }], { tags: ['sigil', pattern] });
 
         return encrypted;
     },
 
     /**
-     * Select appropriate transformation pattern
+     * Select appropriate pattern
      */
-    selectPattern(input, userContext) {
-        // Check user preferences
-        if (userContext?.preferences?.sigilPattern) {
-            return userContext.preferences.sigilPattern;
+    selectPattern(input, sigil, isTrusted) {
+        // Trusted users can access secret patterns
+        if (isTrusted && input.toLowerCase().includes('prophecy')) {
+            return 'prophecy';
+        }
+        if (isTrusted && input.toLowerCase().includes('void')) {
+            return 'void';
+        }
+        if (isTrusted && input.toLowerCase().includes('genesis')) {
+            return 'genesis';
         }
 
-        // Analyze input to select pattern
-        const length = input.length;
-        const hasQuestion = input.includes('?');
-        const isShort = length < 20;
-        const hasNumbers = /\d/.test(input);
+        // Check for keywords that suggest specific patterns
+        const text = input.toLowerCase();
 
-        if (hasQuestion) return 'whisper';
-        if (isShort) return 'mirror';
-        if (hasNumbers) return 'cipher';
-        if (length > 100) return 'essence';
+        if (text.includes('secret') || text.includes('hidden')) return 'cipher';
+        if (text.includes('ancient') || text.includes('old')) return 'runes';
+        if (text.includes('quiet') || text.includes('silent')) return 'whisper';
+        if (text.includes('core') || text.includes('essence')) return 'essence';
 
-        // Random selection for variety
-        const patterns = Object.keys(SIGIL_PATTERNS);
-        return patterns[Math.floor(Math.random() * patterns.length)];
+        // Use highest unlocked pattern based on input hash for variety
+        const hashIndex = simpleHash(input) % sigil.patternsUnlocked.length;
+        return sigil.patternsUnlocked[hashIndex] || 'reverse';
     },
 
     /**
-     * Generate mystical response
+     * Apply transformation
      */
-    generateResponse(original, transformed, pattern) {
-        const responses = {
-            reverse: `The sigil whispers backwards: "${transformed}"`,
-            mirror: `Reflected in the void: "${transformed}"`,
-            cipher: `Encoded in ancient runes: "${transformed}"`,
-            runes: `The vowels fade to mystery: "${transformed}"`,
-            whisper: `A quiet truth emerges: "${transformed}"`,
-            echo: `The words resound: "${transformed}"`,
-            veil: `Partially obscured by shadow: "${transformed}"`,
-            essence: `Distilled to its core: "${transformed}"`
-        };
+    transform(text, pattern, isTrusted) {
+        // Check for trusted-only patterns
+        if (TRUSTED_PATTERNS[pattern] && isTrusted) {
+            return TRUSTED_PATTERNS[pattern](text);
+        }
 
-        return {
-            text: responses[pattern] || `Transformed: "${transformed}"`,
-            pattern,
-            original
-        };
+        // Standard patterns
+        if (PATTERN_FUNCTIONS[pattern]) {
+            return PATTERN_FUNCTIONS[pattern](text);
+        }
+
+        // Fallback
+        return PATTERN_FUNCTIONS.reverse(text);
     },
 
     /**
      * Calculate mystical secret score
      */
-    calculateSecretScore(input, response) {
-        let score = Math.random() * 0.3; // Base randomness
+    calculateSecretScore(input) {
+        let score = Math.random() * 0.3;
 
-        // Longer inputs have more secrets
-        score += Math.min(input.length / 500, 0.2);
-
-        // Certain words boost the score
-        const mysticalWords = ['secret', 'hidden', 'mystery', 'truth', 'power', 'sigil', 'orb'];
+        // Mystical words boost score
+        const mysticalWords = ['secret', 'hidden', 'mystery', 'truth', 'power', 'sigil', 'orb', 'ancient'];
         const lowerInput = input.toLowerCase();
+
         for (const word of mysticalWords) {
             if (lowerInput.includes(word)) {
                 score += 0.1;
             }
         }
 
-        // Hash-based contribution for consistency
-        const hashScore = (simpleHash(input) % 100) / 500;
-        score += hashScore;
+        // Length contribution
+        score += Math.min(input.length / 500, 0.2);
 
         return Math.min(score, 1);
     },
 
     /**
-     * Determine mood based on score
+     * Get available patterns for user
      */
-    determineMood(score) {
-        if (score > 0.8) return 'radiant';
-        if (score > 0.6) return 'enlightened';
-        if (score > 0.4) return 'mystical';
-        if (score > 0.2) return 'cryptic';
-        if (score > 0.1) return 'shadowed';
-        return 'dormant';
-    },
-
-    /**
-     * Generate a whisper (secondary insight)
-     */
-    generateWhisper(input) {
-        const whispers = [
-            'The orb sees all paths...',
-            'What is hidden shall be revealed...',
-            'The pattern emerges from chaos...',
-            'Trust in the sigil\'s guidance...',
-            'The void reflects your intent...',
-            'Ancient wisdom stirs...',
-            'The flow never stops...',
-            'Between words lies truth...'
-        ];
-
-        // Select based on input hash for consistency
-        const index = simpleHash(input) % whispers.length;
-        return whispers[index];
-    },
-
-    /**
-     * Direct invocation of specific pattern
-     */
-    transform(text, pattern) {
-        if (!SIGIL_PATTERNS[pattern]) {
-            return { error: `Unknown pattern: ${pattern}` };
+    getPatterns(userContext) {
+        if (userContext.trusted) {
+            return {
+                standard: ALL_PATTERNS.map(p => ({ id: p, ...PATTERN_INFO[p] })),
+                secret: Object.keys(TRUSTED_PATTERNS).map(p => ({ id: p, name: p, trusted: true }))
+            };
         }
+
+        const sigil = userContext.sigil || { patternsUnlocked: ['reverse', 'mirror'] };
+
         return {
-            original: text,
-            transformed: SIGIL_PATTERNS[pattern](text),
-            pattern
+            unlocked: sigil.patternsUnlocked.map(p => ({ id: p, ...PATTERN_INFO[p] })),
+            locked: ALL_PATTERNS
+                .filter(p => !sigil.patternsUnlocked.includes(p))
+                .map(p => ({ id: p, ...PATTERN_INFO[p], locked: true }))
         };
     },
 
     /**
-     * Get available patterns
+     * Direct pattern access (for trusted users or testing)
      */
-    getPatterns() {
-        return Object.keys(SIGIL_PATTERNS);
+    applyPattern(text, patternName, isTrusted = false) {
+        return this.transform(text, patternName, isTrusted);
     },
 
     /**
-     * Get Sigil metrics
+     * Get sigil stats
      */
-    getMetrics() {
-        return { ...sigilMetrics };
+    getStats(userContext) {
+        const sigil = userContext?.sigil;
+        if (!sigil) return null;
+
+        return {
+            level: sigil.level,
+            score: sigil.score,
+            scoreToNext: sigil.level * 5,
+            patternsUnlocked: sigil.patternsUnlocked,
+            totalTransformations: sigil.totalTransformations
+        };
     }
 };
 

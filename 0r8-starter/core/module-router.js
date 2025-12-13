@@ -1,14 +1,15 @@
 /**
  * ╔═══════════════════════════════════════════════════════════════════════════╗
  * ║   MODULE ROUTER - Intelligent AI Node Selection                           ║
- * ║   Routes requests to optimal processing nodes                             ║
+ * ║   Routes to Sigil (all) and Research (trusted only)                       ║
  * ╚═══════════════════════════════════════════════════════════════════════════╝
  */
 
 import { sigilAI } from '../nodes/sigil-ai.js';
+import { researchNode } from '../nodes/research-node.js';
 
 // Registry of all AI nodes
-export const aiNodes = [sigilAI];
+export const aiNodes = [sigilAI, researchNode];
 
 // Node capability mapping
 const nodeCapabilities = {
@@ -16,7 +17,13 @@ const nodeCapabilities = {
         name: 'Sigil',
         capabilities: ['mystical', 'encryption', 'transformation', 'secrets'],
         priority: 1,
-        async: true
+        trustedOnly: false
+    },
+    researchnode: {
+        name: 'ResearchNode',
+        capabilities: ['research', 'discovery', 'simulation', 'science', 'strategy'],
+        priority: 2,
+        trustedOnly: true
     }
 };
 
@@ -25,7 +32,8 @@ const routingMetrics = {
     totalRoutes: 0,
     byNode: {},
     errors: 0,
-    avgLatency: 0
+    avgLatency: 0,
+    trustedRoutes: 0
 };
 
 /**
@@ -41,20 +49,28 @@ export function registerNode(node, capabilities = {}) {
         name: node.name,
         capabilities: capabilities.capabilities || [],
         priority: capabilities.priority || 5,
-        async: capabilities.async !== false
+        trustedOnly: capabilities.trustedOnly || false
     };
 
     return true;
 }
 
 /**
- * Route to all registered modules
+ * Route to all registered modules (respects trusted access)
  */
 export async function routeModules(filteredData, userContext) {
     const results = [];
     const startTime = Date.now();
+    const isTrusted = userContext.trusted === true;
 
     for (const node of aiNodes) {
+        const nodeMeta = nodeCapabilities[node.name.toLowerCase()];
+
+        // Skip trusted-only nodes for non-trusted users
+        if (nodeMeta?.trustedOnly && !isTrusted) {
+            continue;
+        }
+
         try {
             const nodeStart = Date.now();
             const res = await node.process(filteredData, userContext);
@@ -64,7 +80,8 @@ export async function routeModules(filteredData, userContext) {
                 node: node.name,
                 output: res,
                 latency: nodeLatency,
-                success: true
+                success: true,
+                trusted: nodeMeta?.trustedOnly || false
             });
 
             // Update metrics
@@ -89,6 +106,8 @@ export async function routeModules(filteredData, userContext) {
 
     // Update overall metrics
     routingMetrics.totalRoutes++;
+    if (isTrusted) routingMetrics.trustedRoutes++;
+
     const totalLatency = Date.now() - startTime;
     routingMetrics.avgLatency = (routingMetrics.avgLatency * (routingMetrics.totalRoutes - 1) + totalLatency) / routingMetrics.totalRoutes;
 
@@ -106,6 +125,18 @@ export async function routeToNode(nodeName, filteredData, userContext) {
             node: nodeName,
             output: null,
             error: `Node '${nodeName}' not found`,
+            success: false
+        };
+    }
+
+    // Check trusted access
+    const nodeMeta = nodeCapabilities[nodeName.toLowerCase()];
+    if (nodeMeta?.trustedOnly && !userContext.trusted) {
+        return {
+            node: nodeName,
+            output: null,
+            error: 'This node requires trusted access',
+            locked: true,
             success: false
         };
     }
@@ -135,8 +166,12 @@ export async function routeToNode(nodeName, filteredData, userContext) {
  */
 export async function routeByCapability(capability, filteredData, userContext) {
     const matchingNodes = [];
+    const isTrusted = userContext.trusted === true;
 
     for (const [name, meta] of Object.entries(nodeCapabilities)) {
+        // Skip trusted-only nodes for non-trusted users
+        if (meta.trustedOnly && !isTrusted) continue;
+
         if (meta.capabilities.includes(capability)) {
             const node = aiNodes.find(n => n.name.toLowerCase() === name);
             if (node) {
@@ -149,7 +184,7 @@ export async function routeByCapability(capability, filteredData, userContext) {
         return {
             capability,
             output: null,
-            error: `No node found for capability '${capability}'`,
+            error: `No accessible node found for capability '${capability}'`,
             success: false
         };
     }
@@ -208,15 +243,30 @@ export function getRoutingMetrics() {
 }
 
 /**
- * List available nodes
+ * List available nodes (filtered by trust level)
  */
-export function listNodes() {
-    return Object.entries(nodeCapabilities).map(([key, meta]) => ({
-        id: key,
-        name: meta.name,
-        capabilities: meta.capabilities,
-        priority: meta.priority
-    }));
+export function listNodes(userContext = {}) {
+    const isTrusted = userContext.trusted === true;
+
+    return Object.entries(nodeCapabilities)
+        .filter(([_, meta]) => !meta.trustedOnly || isTrusted)
+        .map(([key, meta]) => ({
+            id: key,
+            name: meta.name,
+            capabilities: meta.capabilities,
+            priority: meta.priority,
+            trustedOnly: meta.trustedOnly
+        }));
+}
+
+/**
+ * Check if user can access a node
+ */
+export function canAccess(nodeName, userContext) {
+    const meta = nodeCapabilities[nodeName.toLowerCase()];
+    if (!meta) return false;
+    if (meta.trustedOnly && !userContext.trusted) return false;
+    return true;
 }
 
 export default {
@@ -228,5 +278,6 @@ export default {
     routeChain,
     registerNode,
     getRoutingMetrics,
-    listNodes
+    listNodes,
+    canAccess
 };
