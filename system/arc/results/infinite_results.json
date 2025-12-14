@@ -81,7 +81,7 @@
     "hypothesis": "extractLargest→scale_3x3",
     "bestSimilarity": 0.8271604938271605,
     "iterations": 1471,
-    "timeMs": 344
+    "timeMs": 150
   },
   {
     "taskId": "00d62c1b",
@@ -532,7 +532,7 @@
     ],
     "hypothesis": "fillEnclosed_4",
     "iterations": 33,
-    "timeMs": 5
+    "timeMs": 4
   },
   {
     "taskId": "017c7c7b",
@@ -589,7 +589,7 @@
     "hypothesis": "cropToSize_9x3",
     "bestSimilarity": 0.5308641975308642,
     "iterations": 1482,
-    "timeMs": 35
+    "timeMs": 77
   },
   {
     "taskId": "025d127b",
@@ -718,10 +718,10 @@
         ]
       ]
     ],
-    "hypothesis": "xorHalvesV→extractSmallest→xorHalvesV→rotate270→extractBB→gravityRight",
-    "bestSimilarity": 0.873015873015873,
-    "iterations": 1574,
-    "timeMs": 80
+    "hypothesis": "identity",
+    "bestSimilarity": 0.8585858585858586,
+    "iterations": 1491,
+    "timeMs": 109
   },
   {
     "taskId": "045e512c",
@@ -1213,10 +1213,10 @@
         ]
       ]
     ],
-    "hypothesis": "identity",
-    "bestSimilarity": 0.9304610733182161,
-    "iterations": 1513,
-    "timeMs": 1867
+    "hypothesis": "rotate90→extractSmallest→gravityLeft→xorHalvesH→gravityRight→gravityUp",
+    "bestSimilarity": 0.9433106575963719,
+    "iterations": 1593,
+    "timeMs": 9305
   },
   {
     "taskId": "0520fde7",
@@ -1226,24 +1226,129 @@
         [
           0,
           0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
           0
         ],
         [
           0,
           0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
           0
         ],
         [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
           0,
           0,
           0
         ]
       ]
     ],
-    "hypothesis": "desperation_419_op5→op4→op17→op14→op5",
+    "hypothesis": "gravityUp→andHalvesV→tile_4x4→extractSmallest→xorHalvesV→tile_3x3",
     "bestSimilarity": 0.8888888888888888,
-    "iterations": 1926,
-    "timeMs": 537
+    "iterations": 1566,
+    "timeMs": 73
   },
   {
     "taskId": "05269061",
@@ -1251,14 +1356,74 @@
     "predictions": [
       [
         [
+          2,
+          1,
+          0,
+          0,
+          0,
+          1,
+          2
+        ],
+        [
+          1,
+          2,
+          0,
+          0,
+          0,
+          2,
+          1
+        ],
+        [
+          0,
+          0,
+          2,
+          0,
+          2,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          2,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          2,
+          0,
+          2,
+          0,
+          0
+        ],
+        [
+          4,
+          2,
+          0,
+          0,
+          0,
+          2,
+          4
+        ],
+        [
+          2,
+          4,
+          0,
+          0,
+          0,
+          4,
           2
         ]
       ]
     ],
-    "hypothesis": "desperation_145_op15→op16→op8→op13",
-    "bestSimilarity": 0.47959183673469385,
-    "iterations": 1670,
-    "timeMs": 87
+    "hypothesis": "desperation_425_op17→op16→op6→op15",
+    "bestSimilarity": 0.42857142857142855,
+    "iterations": 1923,
+    "timeMs": 1057
   },
   {
     "taskId": "05f2a901",
@@ -1399,10 +1564,10 @@
         ]
       ]
     ],
-    "hypothesis": "desperation_104_op14→op4→op16→op13→op17",
+    "hypothesis": "desperation_112_op14→op3→op17",
     "bestSimilarity": 0.9206349206349206,
-    "iterations": 1623,
-    "timeMs": 400
+    "iterations": 1749,
+    "timeMs": 398
   },
   {
     "taskId": "06df4c85",
@@ -2142,7 +2307,7 @@
     "hypothesis": "splitByDivider_1_xor",
     "bestSimilarity": 0.9397201291711518,
     "iterations": 1535,
-    "timeMs": 3787
+    "timeMs": 1554
   },
   {
     "taskId": "08ed6ac7",
@@ -2253,7 +2418,7 @@
     "hypothesis": "color_5→1",
     "bestSimilarity": 0.8271604938271605,
     "iterations": 1501,
-    "timeMs": 256
+    "timeMs": 120
   },
   {
     "taskId": "09629e4f",
@@ -2408,7 +2573,7 @@
     "hypothesis": "obj_2_rotate180",
     "bestSimilarity": 0.5867768595041323,
     "iterations": 1672,
-    "timeMs": 696
+    "timeMs": 365
   },
   {
     "taskId": "0962bcdd",
@@ -2588,7 +2753,7 @@
     "hypothesis": "dilate",
     "bestSimilarity": 0.8888888888888888,
     "iterations": 1491,
-    "timeMs": 147
+    "timeMs": 345
   },
   {
     "taskId": "0a938d79",
@@ -2600,315 +2765,17 @@
           0,
           0,
           0,
+          4
+        ],
+        [
           0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
           3,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          3,
-          0,
-          0,
-          0,
-          0,
-          0
-        ],
-        [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        ],
-        [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        ],
-        [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        ],
-        [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        ],
-        [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        ],
-        [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        ],
-        [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        ],
-        [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        ],
-        [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        ],
-        [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          4,
-          0,
-          0,
-          0,
-          0,
-          0,
-          4,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
           0,
           0,
           0,
@@ -2916,10 +2783,10 @@
         ]
       ]
     ],
-    "hypothesis": "makeSymmetricV",
-    "bestSimilarity": 0.6891385767790262,
-    "iterations": 1491,
-    "timeMs": 136
+    "hypothesis": "orHalvesV→identity→extractBB→xorHalvesV→rotate270→orHalvesV",
+    "bestSimilarity": 0.8020833333333334,
+    "iterations": 1519,
+    "timeMs": 327
   },
   {
     "taskId": "0b148d64",
@@ -2997,7 +2864,7 @@
     "hypothesis": "findLargestCell",
     "bestSimilarity": 1,
     "iterations": 1634,
-    "timeMs": 615
+    "timeMs": 819
   },
   {
     "taskId": "0ca9ddb6",
@@ -3108,7 +2975,7 @@
     "hypothesis": "identity",
     "bestSimilarity": 0.8683127572016461,
     "iterations": 1519,
-    "timeMs": 1861
+    "timeMs": 120
   },
   {
     "taskId": "0d3d703e",
@@ -3135,7 +3002,7 @@
     "hypothesis": "learnedColorMap",
     "bestSimilarity": 0.5,
     "iterations": 1549,
-    "timeMs": 65
+    "timeMs": 30
   },
   {
     "taskId": "0dfd9992",
@@ -3627,10 +3494,10 @@
         ]
       ]
     ],
-    "hypothesis": "desperation_224_op18→op15→op16",
+    "hypothesis": "desperation_559_op15→op16→op6",
     "bestSimilarity": 0.9138321995464853,
-    "iterations": 1821,
-    "timeMs": 5165
+    "iterations": 2156,
+    "timeMs": 1597
   },
   {
     "taskId": "0e206a2e",
@@ -3638,19 +3505,14 @@
     "predictions": [
       [
         [
-          5,
-          5
-        ],
-        [
-          0,
-          5
+          1
         ]
       ]
     ],
-    "hypothesis": "desperation_364_op12→op9→op14→op4→op18",
+    "hypothesis": "desperation_682_op10→op14→op18",
     "bestSimilarity": 0.9553571428571429,
-    "iterations": 2007,
-    "timeMs": 3305
+    "iterations": 2541,
+    "timeMs": 1040
   },
   {
     "taskId": "10fcaaa3",
@@ -3802,7 +3664,7 @@
     "hypothesis": "transpose→tile_2x2",
     "bestSimilarity": 0.75,
     "iterations": 1478,
-    "timeMs": 42
+    "timeMs": 436
   },
   {
     "taskId": "11852cab",
@@ -3934,7 +3796,7 @@
     "hypothesis": "identity",
     "bestSimilarity": 0.97,
     "iterations": 1513,
-    "timeMs": 208
+    "timeMs": 173
   },
   {
     "taskId": "1190e5a7",
@@ -3958,7 +3820,7 @@
     "hypothesis": "extract_at_0_2",
     "bestSimilarity": 1,
     "iterations": 1851,
-    "timeMs": 1717
+    "timeMs": 1005
   },
   {
     "taskId": "137eaa0f",
@@ -3970,10 +3832,10 @@
         ]
       ]
     ],
-    "hypothesis": "desperation_158_op16→op1→op4→op8",
+    "hypothesis": "desperation_207_op0→op15→op3→op8→op5",
     "bestSimilarity": 0.6666666666666666,
-    "iterations": 1767,
-    "timeMs": 243
+    "iterations": 2250,
+    "timeMs": 2916
   },
   {
     "taskId": "150deff5",
@@ -4089,7 +3951,7 @@
     "hypothesis": "color_5→8",
     "bestSimilarity": 0.9043824701195219,
     "iterations": 1486,
-    "timeMs": 104
+    "timeMs": 65
   },
   {
     "taskId": "178fcbfb",
@@ -4252,10 +4114,10 @@
         ]
       ]
     ],
-    "hypothesis": "desperation_105_op16→op15→op2→op14",
+    "hypothesis": "desperation_113_op12→op2→op14",
     "bestSimilarity": 0.691358024691358,
-    "iterations": 1618,
-    "timeMs": 255
+    "iterations": 1626,
+    "timeMs": 291
   },
   {
     "taskId": "1a07d186",
@@ -4796,10 +4658,10 @@
         ]
       ]
     ],
-    "hypothesis": "xorHalvesH→orHalvesV→gravityDown→gravityUp→extractSmallest→xorHalvesH",
+    "hypothesis": "gravityUp→extractSmallest→flipV→andHalvesH→flipH→flipH",
     "bestSimilarity": 0.9736842105263158,
-    "iterations": 1546,
-    "timeMs": 700
+    "iterations": 1595,
+    "timeMs": 699
   },
   {
     "taskId": "1b2d62fb",
@@ -4807,14 +4669,36 @@
     "predictions": [
       [
         [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
           0
         ]
       ]
     ],
-    "hypothesis": "desperation_954_op18→op8→op3→op14→op15",
+    "hypothesis": "desperation_295_op18→op2→op0→op7→op14",
     "bestSimilarity": 0.8666666666666667,
-    "iterations": 2914,
-    "timeMs": 1027
+    "iterations": 2137,
+    "timeMs": 765
   },
   {
     "taskId": "1b60fb0c",
@@ -4946,7 +4830,7 @@
     "hypothesis": "identity",
     "bestSimilarity": 0.9066666666666666,
     "iterations": 1479,
-    "timeMs": 206
+    "timeMs": 439
   },
   {
     "taskId": "1bfc4729",
@@ -4954,15 +4838,27 @@
     "predictions": [
       [
         [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
           2,
-          2,
           0,
           0,
           0,
           0,
           0,
           0,
-          2,
+          0,
+          0,
           2
         ],
         [
@@ -4979,50 +4875,50 @@
         ],
         [
           2,
-          2,
-          2,
-          2,
           0,
           0,
-          2,
-          2,
-          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
           2
         ],
         [
-          2,
-          2,
-          2,
           0,
           0,
           0,
           0,
-          2,
-          2,
-          2
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
         ],
         [
-          2,
-          2,
           0,
           0,
           0,
           0,
           0,
           0,
-          2,
-          2
+          0,
+          0,
+          0,
+          0
         ],
         [
           8,
-          8,
           0,
           0,
           0,
           0,
           0,
           0,
-          8,
+          0,
+          0,
           8
         ],
         [
@@ -5039,46 +4935,34 @@
         ],
         [
           8,
-          8,
-          8,
-          8,
           0,
           0,
-          8,
-          8,
-          8,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
           8
         ],
         [
-          8,
-          8,
-          8,
-          0,
-          0,
-          0,
-          0,
-          8,
-          8,
-          8
-        ],
-        [
-          8,
-          8,
           0,
           0,
           0,
           0,
           0,
           0,
-          8,
-          8
+          0,
+          0,
+          0,
+          0
         ]
       ]
     ],
-    "hypothesis": "desperation_688_op16→op12→op13→op13→op16",
-    "bestSimilarity": 0.64,
-    "iterations": 2523,
-    "timeMs": 255
+    "hypothesis": "desperation_996_op13→op11→op16",
+    "bestSimilarity": 0.68,
+    "iterations": 2625,
+    "timeMs": 198
   },
   {
     "taskId": "1c786137",
@@ -5150,7 +5034,7 @@
     "hypothesis": "extract_at_4_5",
     "bestSimilarity": 1,
     "iterations": 2117,
-    "timeMs": 1158
+    "timeMs": 1452
   },
   {
     "taskId": "1caeab9d",
@@ -5158,131 +5042,15 @@
     "predictions": [
       [
         [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
           2,
           2
-        ],
-        [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          2,
-          2
-        ],
-        [
-          0,
-          1,
-          1,
-          0,
-          0,
-          0,
-          0,
-          2,
-          0,
-          0
-        ],
-        [
-          0,
-          1,
-          1,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        ],
-        [
-          1,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        ],
-        [
-          0,
-          0,
-          0,
-          0,
-          4,
-          4,
-          0,
-          0,
-          0,
-          0
-        ],
-        [
-          0,
-          0,
-          0,
-          0,
-          4,
-          4,
-          0,
-          0,
-          0,
-          0
-        ],
-        [
-          0,
-          0,
-          0,
-          4,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        ],
-        [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        ],
-        [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
         ]
       ]
     ],
-    "hypothesis": "extractBB→extractSmallest→rotate270→andHalvesH→identity→extractLargest",
+    "hypothesis": "tile_3x3→extractLargest→rotate270→andHalvesH→identity→gravityDown",
     "bestSimilarity": 0.92,
-    "iterations": 1552,
-    "timeMs": 190
+    "iterations": 1607,
+    "timeMs": 99
   },
   {
     "taskId": "1cf80156",
@@ -5325,7 +5093,7 @@
     ],
     "hypothesis": "extractBB",
     "iterations": 8,
-    "timeMs": 1
+    "timeMs": 0
   },
   {
     "taskId": "1e0a9b12",
@@ -5371,7 +5139,7 @@
     ],
     "hypothesis": "gravityDown",
     "iterations": 17,
-    "timeMs": 0
+    "timeMs": 1
   },
   {
     "taskId": "1e32b0e9",
@@ -5706,7 +5474,7 @@
     "hypothesis": "splitByDivider_2_xor",
     "bestSimilarity": 0.9065743944636678,
     "iterations": 1491,
-    "timeMs": 403
+    "timeMs": 295
   },
   {
     "taskId": "1f0c79e5",
@@ -5817,7 +5585,7 @@
     "hypothesis": "color_2→4",
     "bestSimilarity": 0.7407407407407407,
     "iterations": 1487,
-    "timeMs": 155
+    "timeMs": 75
   },
   {
     "taskId": "1f642eb9",
@@ -5825,14 +5593,131 @@
     "predictions": [
       [
         [
+          0,
+          0,
+          0,
+          6,
+          0,
+          2,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          9,
+          0,
+          8,
+          8,
+          8,
+          8,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          8,
+          8,
+          8,
+          8,
+          0,
+          0,
+          0,
+          7
+        ],
+        [
+          3,
+          0,
+          8,
+          8,
+          8,
+          8,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          4,
+          0,
+          8,
+          8,
+          8,
+          8,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          6,
+          0,
+          0,
+          0,
+          0,
           0
         ]
       ]
     ],
-    "hypothesis": "makePointSymmetric→gravityUp→extractSmallest→xorHalvesH→gravityUp→xorHalvesV→extractBB",
-    "bestSimilarity": 0.97,
-    "iterations": 1643,
-    "timeMs": 380
+    "hypothesis": "identity",
+    "bestSimilarity": 0.9533333333333334,
+    "iterations": 1539,
+    "timeMs": 147
   },
   {
     "taskId": "1f85a75f",
@@ -5999,7 +5884,7 @@
     "hypothesis": "identity",
     "bestSimilarity": 0.9066666666666666,
     "iterations": 1513,
-    "timeMs": 106
+    "timeMs": 101
   },
   {
     "taskId": "1fad071e",
@@ -6007,18 +5892,18 @@
     "predictions": [
       [
         [
-          0,
+          1,
           2,
           2,
-          0,
+          2,
           0
         ]
       ]
     ],
-    "hypothesis": "extract_at_1_4",
-    "bestSimilarity": 0.5333333333333333,
-    "iterations": 1595,
-    "timeMs": 259
+    "hypothesis": "extract_at_1_4_insert_makeSymmetricH",
+    "bestSimilarity": 0.6,
+    "iterations": 1667,
+    "timeMs": 85
   },
   {
     "taskId": "2013d3e2",
@@ -6045,7 +5930,7 @@
     "hypothesis": "extract_at_1_1",
     "bestSimilarity": 0.6666666666666666,
     "iterations": 1704,
-    "timeMs": 533
+    "timeMs": 74
   },
   {
     "taskId": "2204b7a8",
@@ -6053,55 +5938,14 @@
     "predictions": [
       [
         [
-          5,
-          5,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        ],
-        [
-          5,
-          5,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
+          5
         ]
       ]
     ],
-    "hypothesis": "extractLargest→extractSmallest→andHalvesV→transpose→identity→scale_2x2",
+    "hypothesis": "extractLargest→andHalvesV→gravityDown→rotate180→rotate270→extractSmallest",
     "bestSimilarity": 0.97,
-    "iterations": 1548,
-    "timeMs": 1907
+    "iterations": 1546,
+    "timeMs": 437
   },
   {
     "taskId": "22168020",
@@ -6233,7 +6077,7 @@
     "hypothesis": "identity",
     "bestSimilarity": 0.86,
     "iterations": 1473,
-    "timeMs": 159
+    "timeMs": 113
   },
   {
     "taskId": "22233c11",
@@ -6241,14 +6085,32 @@
     "predictions": [
       [
         [
+          3,
+          3,
+          3,
+          0,
+          3
+        ],
+        [
+          3,
+          3,
+          3,
+          0,
+          3
+        ],
+        [
+          3,
+          3,
+          3,
+          0,
           3
         ]
       ]
     ],
-    "hypothesis": "extractBB→orHalvesV→andHalvesH→andHalvesH→rotate180→andHalvesV",
+    "hypothesis": "xorHalvesV→flipV→gravityDown→extractLargest→gravityUp→gravityDown→xorHalvesH",
     "bestSimilarity": 0.98,
-    "iterations": 1523,
-    "timeMs": 297
+    "iterations": 1520,
+    "timeMs": 79
   },
   {
     "taskId": "2281f1f4",
@@ -6256,299 +6118,14 @@
     "predictions": [
       [
         [
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5
-        ],
-        [
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5
-        ],
-        [
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5
-        ],
-        [
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5
-        ],
-        [
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5
-        ],
-        [
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5
-        ],
-        [
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5
-        ],
-        [
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5
-        ],
-        [
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5
-        ],
-        [
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5
-        ],
-        [
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5
-        ],
-        [
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5
-        ],
-        [
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5
-        ],
-        [
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5
-        ],
-        [
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5
-        ],
-        [
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5
+          0
         ]
       ]
     ],
-    "hypothesis": "extractLargest→transpose→gravityUp→andHalvesH→scale_4x4→scale_4x4",
+    "hypothesis": "transpose→extractBB→extractLargest→extractLargest→xorHalvesH→rotate180",
     "bestSimilarity": 0.94,
-    "iterations": 2050,
-    "timeMs": 180
+    "iterations": 1560,
+    "timeMs": 516
   },
   {
     "taskId": "228f6490",
@@ -6680,7 +6257,7 @@
     "hypothesis": "fillEnclosed_8",
     "bestSimilarity": 0.8433333333333334,
     "iterations": 1539,
-    "timeMs": 293
+    "timeMs": 142
   },
   {
     "taskId": "22eb0ac0",
@@ -6812,7 +6389,7 @@
     "hypothesis": "identity",
     "bestSimilarity": 0.92,
     "iterations": 1539,
-    "timeMs": 348
+    "timeMs": 62
   },
   {
     "taskId": "234bbc79",
@@ -6848,7 +6425,7 @@
     "hypothesis": "gravityLeft→extractBB",
     "bestSimilarity": 0.6666666666666666,
     "iterations": 1513,
-    "timeMs": 59
+    "timeMs": 873
   },
   {
     "taskId": "23581191",
@@ -6956,10 +6533,10 @@
         ]
       ]
     ],
-    "hypothesis": "desperation_625_op13→op4→op15",
+    "hypothesis": "desperation_171_op13→op15",
     "bestSimilarity": 0.7777777777777778,
-    "iterations": 2130,
-    "timeMs": 347
+    "iterations": 1899,
+    "timeMs": 168
   },
   {
     "taskId": "239be575",
@@ -7025,7 +6602,7 @@
     "hypothesis": "extractObject_color8",
     "bestSimilarity": 1,
     "iterations": 1513,
-    "timeMs": 295
+    "timeMs": 119
   },
   {
     "taskId": "23b5c85d",
@@ -7065,7 +6642,7 @@
     "hypothesis": "extractSmallest",
     "bestSimilarity": 1,
     "iterations": 1552,
-    "timeMs": 639
+    "timeMs": 1982
   },
   {
     "taskId": "253bf280",
@@ -7259,7 +6836,7 @@
     "hypothesis": "rotate90",
     "bestSimilarity": 1,
     "iterations": 1480,
-    "timeMs": 190
+    "timeMs": 132
   },
   {
     "taskId": "25d487eb",
@@ -7479,7 +7056,7 @@
     "hypothesis": "identity",
     "bestSimilarity": 0.9493670886075949,
     "iterations": 1489,
-    "timeMs": 443
+    "timeMs": 381
   },
   {
     "taskId": "25d8a9c8",
@@ -7506,7 +7083,7 @@
     "hypothesis": "learnedColorMap",
     "bestSimilarity": 0.5833333333333334,
     "iterations": 1519,
-    "timeMs": 39
+    "timeMs": 121
   },
   {
     "taskId": "25ff71a9",
@@ -7550,7 +7127,7 @@
     "hypothesis": "gravityDown",
     "bestSimilarity": 0.7777777777777778,
     "iterations": 1472,
-    "timeMs": 31
+    "timeMs": 41
   },
   {
     "taskId": "264363fd",
@@ -8522,6 +8099,6 @@
     "hypothesis": "splitByDivider_1_xor",
     "bestSimilarity": 0.9138888888888889,
     "iterations": 1535,
-    "timeMs": 4115
+    "timeMs": 2107
   }
 ]
