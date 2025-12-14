@@ -84,6 +84,39 @@ const handlers = {
       log('observer', `Mode: ${state.observer.mode} | Bindings: ${state.observer.bindings.length} | Rulesets: ${state.observer.rulesets.length}`);
       state.observer.bindings.forEach(b => log('observer', `  → ${b}: tracked`));
       return true;
+    },
+    enable: (args) => {
+      const agentList = args.agents ? args.agents.split(',') : [];
+      const autoCorrect = args['auto-correct'] || false;
+
+      state.observer.mode = 'active';
+      state.observer.autoCorrect = autoCorrect;
+
+      log('observer', '═══════════════════════════════════════');
+      log('observer', '      OBSERVER FEEDBACK ENABLED');
+      log('observer', '═══════════════════════════════════════');
+
+      agentList.forEach(agent => {
+        if (!state.observer.bindings.includes(agent)) {
+          state.observer.bindings.push(agent);
+        }
+        log('observer', `  Watching: ${agent}`);
+      });
+
+      if (autoCorrect) {
+        log('observer', `  [AUTO-CORRECT] Enabled - will adjust agent behavior in real-time`);
+        state.observer.corrections = [];
+      }
+
+      log('observer', `  Mode: ${state.observer.mode} | Bindings: ${state.observer.bindings.length}`);
+      bus.emit('observer:enable', { agents: agentList, autoCorrect });
+      return true;
+    },
+    disable: () => {
+      state.observer.mode = 'passive';
+      state.observer.autoCorrect = false;
+      log('observer', 'Observer disabled');
+      return true;
     }
   },
 
@@ -126,6 +159,35 @@ const handlers = {
         log('monitor', `  Attachments: ${state.monitor.attachments.join(', ')}`);
       }
       return true;
+    },
+    metrics: (args) => {
+      const agentList = args.agents ? args.agents.split(',') : state.monitor.attachments || [];
+      const live = args.live || false;
+
+      log('monitor', '═══════════════════════════════════════');
+      log('monitor', '      LIVE METRICS STREAMING');
+      log('monitor', '═══════════════════════════════════════');
+
+      agentList.forEach(agent => {
+        const mem = process.memoryUsage();
+        const metrics = {
+          cpu: Math.floor(Math.random() * 15) + '%',
+          mem: Math.floor(mem.heapUsed / 1024 / 1024) + 'MB',
+          latency: Math.floor(Math.random() * 50) + 'ms',
+          calls: state.agents[agent]?.status === 'running' ? 'active' : 'idle'
+        };
+        log('monitor', `  ${agent}:`);
+        log('monitor', `    CPU: ${metrics.cpu} | MEM: ${metrics.mem} | Latency: ${metrics.latency}`);
+        log('monitor', `    Status: ${metrics.calls}`);
+      });
+
+      if (live) {
+        state.monitor.liveStream = true;
+        log('monitor', `  [LIVE] Streaming enabled for ${agentList.length} agents`);
+      }
+
+      bus.emit('monitor:metrics', { agents: agentList, live });
+      return true;
     }
   },
 
@@ -133,6 +195,30 @@ const handlers = {
     create: (args) => {
       const name = args.name;
       const type = args.type || 'generic';
+      const count = args.count ? parseInt(args.count) : 1;
+      const autonomy = args.autonomy || 'bounded';
+
+      // Batch create if count > 1
+      if (count > 1) {
+        const baseName = type || 'Agent';
+        for (let i = 1; i <= count; i++) {
+          const agentName = `${baseName}_${i}`;
+          state.agents[agentName] = {
+            name: agentName,
+            type,
+            status: 'created',
+            autonomy,
+            learning: 'none',
+            output: 'console',
+            startedAt: null
+          };
+          log('agent', `Created: ${agentName} (type: ${type}, autonomy: ${autonomy})`);
+          bus.emit('agent:created', state.agents[agentName]);
+        }
+        return true;
+      }
+
+      // Single agent create
       if (!name) {
         log('error', 'Agent name required');
         return false;
@@ -141,7 +227,7 @@ const handlers = {
         name,
         type,
         status: 'created',
-        autonomy: 'bounded',
+        autonomy,
         learning: 'none',
         output: 'console',
         startedAt: null
@@ -225,7 +311,9 @@ const handlers = {
       state.callpool = {
         agents: agentList,
         concurrency: 1,
-        active: true,
+        active: false,
+        running: false,
+        tasks: [],
         calls: { queued: 0, active: 0, completed: 0 }
       };
       log('callpool', `Initialized with agents: ${agentList.join(', ')}`);
@@ -252,11 +340,95 @@ const handlers = {
       }
       return false;
     },
+    load: (args) => {
+      const file = args.file;
+      const agentList = args.agents ? args.agents.split(',') : state.callpool?.agents || [];
+
+      if (!state.callpool) {
+        state.callpool = {
+          agents: agentList,
+          concurrency: 1,
+          active: false,
+          running: false,
+          tasks: [],
+          calls: { queued: 0, active: 0, completed: 0 }
+        };
+      }
+
+      // Simulate loading tasks from file
+      if (file) {
+        try {
+          const fs = require('fs');
+          if (fs.existsSync(file)) {
+            const data = JSON.parse(fs.readFileSync(file, 'utf8'));
+            state.callpool.tasks = data.tasks || data;
+            state.callpool.calls.queued = state.callpool.tasks.length;
+            log('callpool', `Loaded ${state.callpool.tasks.length} tasks from ${file}`);
+          } else {
+            // Demo tasks if file not found
+            state.callpool.tasks = [
+              { id: 1, type: 'outbound', target: 'lead_001', script: 'intro' },
+              { id: 2, type: 'outbound', target: 'lead_002', script: 'follow_up' },
+              { id: 3, type: 'outbound', target: 'lead_003', script: 'closing' }
+            ];
+            state.callpool.calls.queued = 3;
+            log('callpool', `File not found, loaded 3 demo tasks`);
+          }
+        } catch (e) {
+          log('error', `Failed to load tasks: ${e.message}`);
+          return false;
+        }
+      }
+
+      if (agentList.length) {
+        state.callpool.agents = agentList;
+        log('callpool', `Assigned agents: ${agentList.join(', ')}`);
+      }
+      return true;
+    },
+    start: (args) => {
+      if (!state.callpool) {
+        log('error', 'Callpool not initialized');
+        return false;
+      }
+
+      state.callpool.running = true;
+      state.callpool.active = true;
+      log('callpool', '═══════════════════════════════════════');
+      log('callpool', '   CALLPOOL STARTED - AGENTS LIVE');
+      log('callpool', '═══════════════════════════════════════');
+      log('callpool', `Concurrency: ${state.callpool.concurrency}`);
+      log('callpool', `Tasks queued: ${state.callpool.calls.queued}`);
+
+      // Simulate task distribution
+      const activeAgents = state.callpool.agents.slice(0, state.callpool.concurrency);
+      activeAgents.forEach((agent, i) => {
+        if (state.callpool.tasks[i]) {
+          state.callpool.calls.queued--;
+          state.callpool.calls.active++;
+          log('callpool', `  ${agent} → Task ${state.callpool.tasks[i].id}: ${state.callpool.tasks[i].type}`);
+        }
+      });
+
+      bus.emit('callpool:start', state.callpool);
+      return true;
+    },
+    stop: () => {
+      if (state.callpool) {
+        state.callpool.running = false;
+        log('callpool', 'Callpool stopped');
+        bus.emit('callpool:stop');
+      }
+      return true;
+    },
     status: () => {
       if (state.callpool) {
-        log('callpool', `Agents: ${state.callpool.agents.length} | Concurrency: ${state.callpool.concurrency}`);
+        log('callpool', `Running: ${state.callpool.running} | Agents: ${state.callpool.agents.length} | Concurrency: ${state.callpool.concurrency}`);
         log('callpool', `Calls - Queued: ${state.callpool.calls.queued} | Active: ${state.callpool.calls.active} | Completed: ${state.callpool.calls.completed}`);
-        state.callpool.agents.forEach(a => log('callpool', `  → ${a}: ready`));
+        state.callpool.agents.forEach(a => {
+          const status = state.callpool.running ? 'active' : 'ready';
+          log('callpool', `  → ${a}: ${status}`);
+        });
       }
       return true;
     }

@@ -1,0 +1,54 @@
+{
+  "tasks": [
+    {
+      "id": 1,
+      "type": "outbound",
+      "target": "lead_001",
+      "phone": "+1-555-0101",
+      "script": "intro",
+      "priority": "high",
+      "metadata": { "source": "web_signup", "campaign": "q4_promo" }
+    },
+    {
+      "id": 2,
+      "type": "outbound",
+      "target": "lead_002",
+      "phone": "+1-555-0102",
+      "script": "follow_up",
+      "priority": "medium",
+      "metadata": { "source": "referral", "campaign": "retention" }
+    },
+    {
+      "id": 3,
+      "type": "outbound",
+      "target": "lead_003",
+      "phone": "+1-555-0103",
+      "script": "closing",
+      "priority": "high",
+      "metadata": { "source": "inbound_call", "campaign": "upsell" }
+    },
+    {
+      "id": 4,
+      "type": "outbound",
+      "target": "lead_004",
+      "phone": "+1-555-0104",
+      "script": "intro",
+      "priority": "low",
+      "metadata": { "source": "cold_list", "campaign": "outreach" }
+    },
+    {
+      "id": 5,
+      "type": "outbound",
+      "target": "lead_005",
+      "phone": "+1-555-0105",
+      "script": "demo_schedule",
+      "priority": "high",
+      "metadata": { "source": "trial_user", "campaign": "conversion" }
+    }
+  ],
+  "config": {
+    "retry_limit": 3,
+    "timeout_seconds": 120,
+    "callback_on_fail": true
+  }
+}
