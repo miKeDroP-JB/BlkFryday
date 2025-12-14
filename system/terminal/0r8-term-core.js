@@ -49,6 +49,36 @@ const handlers = {
       log('memory', `Engine: ${state.memory.engine} | Persistence: ${state.memory.persistence}`);
       bus.emit('memory:init', state.memory);
       return true;
+    },
+    optimize: (args) => {
+      const target = args.agents;
+      const agentList = target === 'all_active'
+        ? Object.keys(state.agents).filter(a => state.agents[a].status === 'running')
+        : target ? target.split(',') : Object.keys(state.agents);
+
+      log('memory', '═══════════════════════════════════════');
+      log('memory', '      MEMORY OPTIMIZATION');
+      log('memory', '═══════════════════════════════════════');
+
+      const before = process.memoryUsage().heapUsed;
+
+      // Simulate garbage collection and optimization
+      agentList.forEach(agent => {
+        if (state.agents[agent]) {
+          state.agents[agent].memOptimized = true;
+          log('memory', `  ${agent}: cache cleared, buffers released`);
+        }
+      });
+
+      // Force GC if available
+      if (global.gc) global.gc();
+
+      const after = process.memoryUsage().heapUsed;
+      const freed = Math.max(0, Math.floor((before - after) / 1024));
+
+      log('memory', `  Freed: ${freed}KB | Agents optimized: ${agentList.length}`);
+      bus.emit('memory:optimize', { agents: agentList, freed });
+      return true;
     }
   },
 
@@ -283,6 +313,96 @@ const handlers = {
     }
   },
 
+  // Plural 'agents' handler for batch operations
+  agents: {
+    create: (args) => {
+      // Delegate to agent.create
+      return handlers.agent.create(args);
+    },
+    adjust: (args) => {
+      const intensity = args.intensity || 'normal';
+      const target = args.agents || 'all_active';
+      const agentList = target === 'all_active'
+        ? Object.keys(state.agents).filter(a => state.agents[a].status === 'running')
+        : target.split(',');
+
+      log('agent', '═══════════════════════════════════════');
+      log('agent', `   ADJUSTING INTENSITY: ${intensity.toUpperCase()}`);
+      log('agent', '═══════════════════════════════════════');
+
+      const intensityConfig = {
+        low: { throttle: 0.5, priority: 'background', concurrency: 1 },
+        normal: { throttle: 1.0, priority: 'normal', concurrency: 2 },
+        high: { throttle: 2.0, priority: 'foreground', concurrency: 3 }
+      }[intensity] || { throttle: 1.0, priority: 'normal', concurrency: 2 };
+
+      agentList.forEach(name => {
+        if (state.agents[name]) {
+          state.agents[name].intensity = intensity;
+          state.agents[name].throttle = intensityConfig.throttle;
+          state.agents[name].priority = intensityConfig.priority;
+          log('agent', `  ${name}: intensity=${intensity} throttle=${intensityConfig.throttle}x`);
+        }
+      });
+
+      if (state.callpool) {
+        state.callpool.concurrency = intensityConfig.concurrency;
+        log('callpool', `  Concurrency adjusted to ${intensityConfig.concurrency}`);
+      }
+
+      bus.emit('agents:adjust', { intensity, agents: agentList });
+      return true;
+    },
+    rotate: (args) => {
+      const trainedToBg = args.trained_to_background || false;
+      const bgToActive = args.background_to_active || false;
+
+      log('agent', '═══════════════════════════════════════');
+      log('agent', '      AGENT ROTATION');
+      log('agent', '═══════════════════════════════════════');
+
+      const allAgents = Object.values(state.agents);
+      const running = allAgents.filter(a => a.status === 'running');
+      const background = allAgents.filter(a => a.status === 'background');
+      const trained = allAgents.filter(a => a.trained);
+
+      if (trainedToBg && trained.length) {
+        trained.forEach(agent => {
+          agent.status = 'background';
+          log('agent', `  ${agent.name}: trained → background`);
+        });
+      }
+
+      if (bgToActive && background.length) {
+        background.forEach(agent => {
+          agent.status = 'running';
+          agent.startedAt = Date.now();
+          log('agent', `  ${agent.name}: background → active`);
+        });
+      }
+
+      // Default rotation: cycle through agents
+      if (!trainedToBg && !bgToActive && running.length > 1) {
+        const first = running[0];
+        first.status = 'background';
+        if (background.length) {
+          background[0].status = 'running';
+          background[0].startedAt = Date.now();
+          log('agent', `  Rotated: ${first.name} → bg, ${background[0].name} → active`);
+        }
+      }
+
+      log('agent', `  Active: ${Object.values(state.agents).filter(a => a.status === 'running').length}`);
+      log('agent', `  Background: ${Object.values(state.agents).filter(a => a.status === 'background').length}`);
+
+      bus.emit('agents:rotate', { trainedToBg, bgToActive });
+      return true;
+    },
+    status: () => {
+      return handlers.agent.status({});
+    }
+  },
+
   training: {
     pool: (args) => {
       if (args.init) {
@@ -355,7 +475,7 @@ const handlers = {
         };
       }
 
-      // Simulate loading tasks from file
+      // Load tasks from file
       if (file) {
         try {
           const fs = require('fs');
@@ -384,6 +504,72 @@ const handlers = {
         state.callpool.agents = agentList;
         log('callpool', `Assigned agents: ${agentList.join(', ')}`);
       }
+      return true;
+    },
+    fetch: (args) => {
+      const file = args.file;
+      const target = args.agents;
+      const agentList = target === 'all_active'
+        ? Object.keys(state.agents).filter(a => state.agents[a].status === 'running')
+        : target ? target.split(',') : state.callpool?.agents || [];
+
+      if (!state.callpool) {
+        state.callpool = {
+          agents: agentList,
+          concurrency: 3,
+          active: false,
+          running: false,
+          tasks: [],
+          calls: { queued: 0, active: 0, completed: 0 }
+        };
+      }
+
+      log('callpool', '═══════════════════════════════════════');
+      log('callpool', '      FETCHING TASKS FROM POOL');
+      log('callpool', '═══════════════════════════════════════');
+
+      // Fetch tasks from file or generate batch
+      if (file) {
+        try {
+          const fs = require('fs');
+          if (fs.existsSync(file)) {
+            const data = JSON.parse(fs.readFileSync(file, 'utf8'));
+            const newTasks = data.tasks || data;
+            state.callpool.tasks.push(...newTasks);
+            state.callpool.calls.queued += newTasks.length;
+            log('callpool', `  Fetched ${newTasks.length} tasks from ${file}`);
+          } else {
+            log('callpool', `  File not found: ${file}`);
+          }
+        } catch (e) {
+          log('error', `Failed to fetch tasks: ${e.message}`);
+          return false;
+        }
+      } else {
+        // Generate dynamic batch
+        const batchSize = 3;
+        const batch = [];
+        for (let i = 0; i < batchSize; i++) {
+          batch.push({
+            id: Date.now() + i,
+            type: 'outbound',
+            target: `lead_${Math.random().toString(36).slice(2, 8)}`,
+            script: ['intro', 'follow_up', 'closing'][i % 3]
+          });
+        }
+        state.callpool.tasks.push(...batch);
+        state.callpool.calls.queued += batch.length;
+        log('callpool', `  Generated ${batch.length} dynamic tasks`);
+      }
+
+      // Assign to agents
+      if (agentList.length) {
+        state.callpool.agents = [...new Set([...state.callpool.agents, ...agentList])];
+        log('callpool', `  Assigned to: ${agentList.join(', ')}`);
+      }
+
+      log('callpool', `  Total queued: ${state.callpool.calls.queued}`);
+      bus.emit('callpool:fetch', { file, agents: agentList });
       return true;
     },
     start: (args) => {
