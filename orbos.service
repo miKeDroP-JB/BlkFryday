@@ -1,0 +1,19 @@
+[Unit]
+Description=ORBOS - Orbital Operations System
+After=network.target local-fs.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/home/user/BlkFryday
+ExecStart=/usr/bin/node /home/user/BlkFryday/system/terminal/0r8-term-core.js
+ExecStartPre=/bin/bash -c 'echo "system init --mode production" | /usr/bin/node /home/user/BlkFryday/system/terminal/0r8-term-core.js'
+Restart=on-failure
+RestartSec=5
+StandardOutput=append:/home/user/BlkFryday/orbos.log
+StandardError=append:/home/user/BlkFryday/orbos.log
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target
