@@ -17,9 +17,10 @@ const state = {
   system: { mode: null, initialized: false },
   memory: { engine: null, persistence: null, mounted: false },
   observer: { level: 'passive', mode: 'passive', bindings: [], rulesets: [] },
-  monitor: { metrics: [], active: false },
+  monitor: { metrics: [], active: false, attachments: [] },
   agents: {},
-  training: { pool: null, rules: {} }
+  training: { pool: null, rules: {} },
+  callpool: null
 };
 
 const bus = new EventEmitter();
@@ -90,12 +91,40 @@ const handlers = {
     init: (args) => {
       state.monitor.metrics = (args.metrics || 'cpu,mem').split(',');
       state.monitor.active = true;
+      state.monitor.attachments = state.monitor.attachments || [];
       log('monitor', `Metrics: ${state.monitor.metrics.join(', ')} | Status: streaming`);
       return true;
+    },
+    attach: (args) => {
+      const target = args._positional?.[0] || args.agent;
+      if (!state.monitor.attachments) state.monitor.attachments = [];
+      if (target) {
+        state.monitor.attachments.push(target);
+        log('monitor', `Attached to: ${target}`);
+        if (state.agents[target]) {
+          state.agents[target].monitored = true;
+        }
+        bus.emit('monitor:attach', { target });
+        return true;
+      }
+      log('error', 'No target specified for monitor attach');
+      return false;
+    },
+    detach: (args) => {
+      const target = args._positional?.[0];
+      if (target && state.monitor.attachments) {
+        state.monitor.attachments = state.monitor.attachments.filter(a => a !== target);
+        log('monitor', `Detached from: ${target}`);
+        return true;
+      }
+      return false;
     },
     status: () => {
       log('monitor', `Active: ${state.monitor.active} | Metrics: ${state.monitor.metrics.join(', ')}`);
       log('monitor', `  CPU: idle | MEM: ${Math.floor(process.memoryUsage().heapUsed / 1024 / 1024)}MB | Anomalies: 0`);
+      if (state.monitor.attachments?.length) {
+        log('monitor', `  Attachments: ${state.monitor.attachments.join(', ')}`);
+      }
       return true;
     }
   },
@@ -188,6 +217,49 @@ const handlers = {
       }
       return true;
     }
+  },
+
+  callpool: {
+    init: (args) => {
+      const agentList = args.agents ? args.agents.split(',') : [];
+      state.callpool = {
+        agents: agentList,
+        concurrency: 1,
+        active: true,
+        calls: { queued: 0, active: 0, completed: 0 }
+      };
+      log('callpool', `Initialized with agents: ${agentList.join(', ')}`);
+      bus.emit('callpool:init', state.callpool);
+      return true;
+    },
+    set: (args) => {
+      const key = args._positional?.[0];
+      const value = args._positional?.[1];
+      if (key && value && state.callpool) {
+        state.callpool[key] = isNaN(value) ? value : parseInt(value);
+        log('callpool', `${key} = ${value}`);
+        return true;
+      }
+      log('error', 'Callpool not initialized or invalid params');
+      return false;
+    },
+    add: (args) => {
+      const agent = args._positional?.[0] || args.agent;
+      if (agent && state.callpool) {
+        state.callpool.agents.push(agent);
+        log('callpool', `Added agent: ${agent}`);
+        return true;
+      }
+      return false;
+    },
+    status: () => {
+      if (state.callpool) {
+        log('callpool', `Agents: ${state.callpool.agents.length} | Concurrency: ${state.callpool.concurrency}`);
+        log('callpool', `Calls - Queued: ${state.callpool.calls.queued} | Active: ${state.callpool.calls.active} | Completed: ${state.callpool.calls.completed}`);
+        state.callpool.agents.forEach(a => log('callpool', `  → ${a}: ready`));
+      }
+      return true;
+    }
   }
 };
 
@@ -253,6 +325,7 @@ function log(domain, msg) {
     monitor: '\x1b[32m[MON]\x1b[0m',
     agent: '\x1b[34m[AGT]\x1b[0m',
     training: '\x1b[95m[TRN]\x1b[0m',
+    callpool: '\x1b[96m[CPL]\x1b[0m',
     error: '\x1b[31m[ERR]\x1b[0m'
   }[domain] || `[${domain.toUpperCase()}]`;
 
