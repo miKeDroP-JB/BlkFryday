@@ -1,14 +1,17 @@
 /**
- * INFINITE REASONING ENGINE v4.0 - TRUE UNLIMITED MODE
+ * INFINITE REASONING ENGINE v4.4 - WITH PROGRAM SYNTHESIS
  *
  * THE PARADIGM: DON'T QUIT UNTIL 100% SOLVED.
  * Training data = answer key. Iterate FOREVER until you pass.
  * NO TIMEOUT. NO CAPS. NO GIVING UP.
  *
- * FLOWSYNC: Agents debate, question, hypothesize until PERFECT.
+ * PHASE 0: Program Synthesis (DSL-based)
+ * PHASE 1: Transform Search
+ * PHASE 2+: Infinite Hypothesis Generation
  */
 
 const Grid = require('./Primitives');
+const ProgramSynthesis = require('./ProgramSynthesis');
 const fs = require('fs');
 
 // Helper functions to bridge API differences
@@ -74,6 +77,7 @@ class InfiniteReasoner {
     this.solveMode = options.solveMode || 'unlimited'; // 'unlimited' or 'benchmark'
     this.hypothesesTried = new Set();
     this.learnedPatterns = [];
+    this.synthesizer = new ProgramSynthesis();
   }
 
   /**
@@ -98,7 +102,45 @@ class InfiniteReasoner {
       console.log(`  Objects: ${analysis.numObjects} | New colors: ${analysis.newColors.join(',') || 'none'}`);
     }
 
-    // Strategy pool - grows over time
+    // ═══════════════════════════════════════════════════════════
+    // PHASE 0: PROGRAM SYNTHESIS (DSL)
+    // ═══════════════════════════════════════════════════════════
+    if (this.debug) console.log(`  Phase 0: Program Synthesis...`);
+
+    const synthResult = this.synthesizer.synthesize(task, analysis);
+    if (synthResult.success) {
+      const elapsed = Date.now() - startTime;
+      if (this.debug) {
+        console.log(`  ✓ SOLVED BY SYNTHESIS in ${elapsed}ms`);
+        console.log(`    Program: ${synthResult.program}`);
+      }
+
+      const predictions = task.test.map(t => synthResult.apply(t.input));
+      return {
+        success: true,
+        predictions,
+        hypothesis: `SYNTH:${synthResult.program}`,
+        iterations: 0,
+        timeMs: elapsed
+      };
+    }
+
+    if (this.debug) {
+      console.log(`    Best synthesis: ${(synthResult.score * 100).toFixed(1)}% (${synthResult.program})`);
+    }
+
+    // Add synthesis result as a hypothesis to try
+    if (synthResult.score > 0) {
+      bestSimilarity = synthResult.score;
+      bestHypothesis = {
+        name: `synth_${synthResult.program}`,
+        ops: [(g) => synthResult.apply(g)]
+      };
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // PHASE 1: TRANSFORM SEARCH
+    // ═══════════════════════════════════════════════════════════
     let strategies = this.generateAllStrategies(task, analysis);
     let strategyIndex = 0;
 

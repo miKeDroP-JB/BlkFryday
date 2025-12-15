@@ -2,82 +2,82 @@
   {
     "taskId": "007bbfb7",
     "success": false,
-    "hypothesis": "tile3x3",
+    "hypothesis": "synth_replicatePattern",
     "similarity": 0.7777777777777777,
     "iterations": 185432,
-    "timeMs": 1154
+    "timeMs": 1180
   },
   {
     "taskId": "00d62c1b",
-    "success": false,
-    "hypothesis": "identity",
-    "similarity": 0.9413888888888889,
-    "iterations": 161615,
-    "timeMs": 2074
+    "success": true,
+    "hypothesis": "SYNTH:fillEnclosed",
+    "similarity": 1,
+    "iterations": 0,
+    "timeMs": 4
   },
   {
     "taskId": "017c7c7b",
     "success": false,
-    "hypothesis": "none",
-    "similarity": 1,
-    "iterations": 48015,
-    "timeMs": 511
+    "hypothesis": "swap_1_2_then_synth_replicatePattern",
+    "similarity": 0.9753086419753086,
+    "iterations": 164166,
+    "timeMs": 1051
   },
   {
     "taskId": "025d127b",
     "success": false,
-    "hypothesis": "identity",
+    "hypothesis": "synth_extractUnique",
     "similarity": 0.8531746031746033,
-    "iterations": 173023,
-    "timeMs": 1129
+    "iterations": 172423,
+    "timeMs": 1089
   },
   {
     "taskId": "045e512c",
     "success": false,
-    "hypothesis": "identity",
+    "hypothesis": "synth_replicatePattern",
     "similarity": 0.9304610733182161,
-    "iterations": 252871,
-    "timeMs": 2537
+    "iterations": 251671,
+    "timeMs": 2676
   },
   {
     "taskId": "0520fde7",
     "success": false,
-    "hypothesis": "swap_1_2_then_gravRight_then_extractTopLeft",
-    "similarity": 0.7777777777777778,
-    "iterations": 182633,
-    "timeMs": 993
+    "hypothesis": "swap_1_2_then_synth_objectArrange",
+    "similarity": 0.7037037037037037,
+    "iterations": 179594,
+    "timeMs": 1021
   },
   {
     "taskId": "05269061",
     "success": false,
     "hypothesis": "color_0→2",
     "similarity": 0.4217687074829932,
-    "iterations": 209643,
-    "timeMs": 1168
+    "iterations": 206043,
+    "timeMs": 1323
   },
   {
     "taskId": "05f2a901",
     "success": false,
     "hypothesis": "color_2→0",
     "similarity": 0.9204906204906206,
-    "iterations": 166416,
-    "timeMs": 1210
+    "iterations": 163416,
+    "timeMs": 1332
   },
   {
     "taskId": "06df4c85",
     "success": false,
-    "hypothesis": "identity",
+    "hypothesis": "synth_objectTransform",
     "similarity": 0.9379647132955261,
-    "iterations": 231256,
-    "timeMs": 2912
+    "iterations": 228856,
+    "timeMs": 3143
   },
   {
     "taskId": "08ed6ac7",
     "success": false,
     "hypothesis": "color_5→1",
     "similarity": 0.8271604938271604,
-    "iterations": 209639,
-    "timeMs": 1223
+    "iterations": 207239,
+    "timeMs": 1194
   },
   {
     "taskId": "09629e4f",
@@ -85,39 +85,39 @@
     "hypothesis": "learned_swap_4_8_then_color_8→0_then_flipH_combo",
     "similarity": 0.6363636363636364,
     "iterations": 337784,
-    "timeMs": 3189
+    "timeMs": 3316
   },
   {
     "taskId": "0962bcdd",
     "success": false,
-    "hypothesis": "identity",
+    "hypothesis": "synth_fillEnclosed",
     "similarity": 0.8333333333333334,
-    "iterations": 191632,
-    "timeMs": 1181
+    "iterations": 192232,
+    "timeMs": 1272
   },
   {
     "taskId": "0a938d79",
     "success": false,
-    "hypothesis": "identity",
-    "similarity": 0.6906615573436226,
-    "iterations": 209643,
-    "timeMs": 1950
+    "hypothesis": "synth_patternComplete",
+    "similarity": 0.6988965665976535,
+    "iterations": 210243,
+    "timeMs": 2051
   },
   {
     "taskId": "0b148d64",
     "success": false,
-    "hypothesis": "extractBottomLeft",
+    "hypothesis": "synth_objectTransform",
     "similarity": 0.3333333333333333,
-    "iterations": 324055,
-    "timeMs": 3079
+    "iterations": 324655,
+    "timeMs": 3078
   },
   {
     "taskId": "0ca9ddb6",
     "success": false,
-    "hypothesis": "identity",
+    "hypothesis": "synth_fillEnclosed",
     "similarity": 0.8683127572016461,
-    "iterations": 231254,
-    "timeMs": 1489
+    "iterations": 231854,
+    "timeMs": 1454
   },
   {
     "taskId": "0d3d703e",
@@ -125,15 +125,15 @@
     "hypothesis": "learnedColorMap",
     "similarity": 1,
     "iterations": 68,
-    "timeMs": 0
+    "timeMs": 1
   },
   {
     "taskId": "0dfd9992",
     "success": false,
-    "hypothesis": "color_0→2",
-    "similarity": 0.8979591836734695,
-    "iterations": 256471,
-    "timeMs": 3356
+    "hypothesis": "synth_patternComplete",
+    "similarity": 0.9024943310657596,
+    "iterations": 257071,
+    "timeMs": 3290
   },
   {
     "taskId": "0e206a2e",
@@ -141,7 +141,7 @@
     "hypothesis": "learned_color_3→0_combo",
     "similarity": 0.9480820105820106,
     "iterations": 253652,
-    "timeMs": 2163
+    "timeMs": 2362
   },
   {
     "taskId": "10fcaaa3",
@@ -149,15 +149,15 @@
     "hypothesis": "tile2x2",
     "similarity": 0.6708333333333334,
     "iterations": 208842,
-    "timeMs": 1066
+    "timeMs": 1067
   },
   {
     "taskId": "11852cab",
     "success": false,
-    "hypothesis": "identity",
+    "hypothesis": "synth_extractUnique",
     "similarity": 0.9700000000000001,
-    "iterations": 209643,
-    "timeMs": 1478
+    "iterations": 210243,
+    "timeMs": 1574
   },
   {
     "taskId": "1190e5a7",
@@ -165,15 +165,15 @@
     "hypothesis": "extract_0_2_2x4",
     "similarity": 0.3333333333333333,
     "iterations": 321264,
-    "timeMs": 2646
+    "timeMs": 2948
   },
   {
     "taskId": "137eaa0f",
     "success": false,
-    "hypothesis": "swap_5_7_then_gravLeft_then_swap_0_7_then_flipV_then_extractBottomLeft_then_transpose",
-    "similarity": 0.2962962962962963,
-    "iterations": 357586,
-    "timeMs": 2096
+    "hypothesis": "swap_1_2_then_synth_objectArrange",
+    "similarity": 0.2592592592592593,
+    "iterations": 353386,
+    "timeMs": 2119
   },
   {
     "taskId": "150deff5",
@@ -181,47 +181,47 @@
     "hypothesis": "color_5→8",
     "similarity": 0.9044191919191918,
     "iterations": 177221,
-    "timeMs": 1274
+    "timeMs": 1242
   },
   {
     "taskId": "178fcbfb",
     "success": false,
-    "hypothesis": "identity",
-    "similarity": 0.6696922933034045,
-    "iterations": 177223,
-    "timeMs": 1289
+    "hypothesis": "synth_patternComplete",
+    "similarity": 0.6851711560044893,
+    "iterations": 177823,
+    "timeMs": 1260
   },
   {
     "taskId": "1a07d186",
     "success": false,
-    "hypothesis": "identity",
+    "hypothesis": "synth_fillEnclosed",
     "similarity": 0.96265664160401,
-    "iterations": 209643,
-    "timeMs": 1957
+    "iterations": 210243,
+    "timeMs": 2211
   },
   {
     "taskId": "1b2d62fb",
     "success": false,
-    "hypothesis": "dedup_then_swap_0_9_then_swap_9_8_then_rot180_then_gravLeft_then_dedup_then_rot180_then_gravRight_then_extractTopLeft",
-    "similarity": 0.8533333333333333,
-    "iterations": 188591,
-    "timeMs": 1474
+    "hypothesis": "swap_9_8_then_synth_objectArrange_then_rot180",
+    "similarity": 0.7200000000000001,
+    "iterations": 184433,
+    "timeMs": 1479
   },
   {
     "taskId": "1b60fb0c",
     "success": false,
-    "hypothesis": "identity",
+    "hypothesis": "synth_objectArrange",
     "similarity": 0.9066666666666666,
-    "iterations": 166415,
-    "timeMs": 1296
+    "iterations": 167015,
+    "timeMs": 1442
   },
   {
     "taskId": "1bfc4729",
     "success": false,
-    "hypothesis": "identity",
-    "similarity": 0.5,
-    "iterations": 191632,
-    "timeMs": 1127
+    "hypothesis": "synth_patternComplete",
+    "similarity": 0.52,
+    "iterations": 192232,
+    "timeMs": 1303
   },
   {
     "taskId": "1c786137",
@@ -229,7 +229,7 @@
     "hypothesis": "extract_4_5_6x8",
     "similarity": 0.3333333333333333,
     "iterations": 508738,
-    "timeMs": 4003
+    "timeMs": 3902
   },
   {
     "taskId": "1caeab9d",
@@ -237,15 +237,15 @@
     "hypothesis": "color_2→0",
     "similarity": 0.86,
     "iterations": 177223,
-    "timeMs": 1151
+    "timeMs": 1158
   },
   {
     "taskId": "1cf80156",
     "success": true,
-    "hypothesis": "extractSmallest",
+    "hypothesis": "SYNTH:objectTransform",
     "similarity": 1,
-    "iterations": 45,
-    "timeMs": 1
+    "iterations": 0,
+    "timeMs": 0
   },
   {
     "taskId": "1e0a9b12",
@@ -253,15 +253,15 @@
     "hypothesis": "gravityDown",
     "similarity": 1,
     "iterations": 9,
-    "timeMs": 0
+    "timeMs": 1
   },
   {
     "taskId": "1e32b0e9",
     "success": false,
-    "hypothesis": "identity",
+    "hypothesis": "synth_objectTransform",
     "similarity": 0.8650519031141868,
-    "iterations": 191632,
-    "timeMs": 2048
+    "iterations": 192232,
+    "timeMs": 2231
   },
   {
     "taskId": "1f0c79e5",
@@ -269,39 +269,39 @@
     "hypothesis": "color_2→7",
     "similarity": 0.7469135802469136,
     "iterations": 209643,
-    "timeMs": 1549
+    "timeMs": 1594
   },
   {
     "taskId": "1f642eb9",
     "success": false,
-    "hypothesis": "identity",
+    "hypothesis": "synth_fillEnclosed",
     "similarity": 0.9533333333333333,
-    "iterations": 285288,
-    "timeMs": 1730
+    "iterations": 285888,
+    "timeMs": 1796
   },
   {
     "taskId": "1f85a75f",
     "success": true,
-    "hypothesis": "extractLargest",
+    "hypothesis": "SYNTH:objectTransform",
     "similarity": 1,
-    "iterations": 66,
-    "timeMs": 5
+    "iterations": 0,
+    "timeMs": 1
   },
   {
     "taskId": "1f876c06",
     "success": false,
-    "hypothesis": "identity",
+    "hypothesis": "synth_fillEnclosed",
     "similarity": 0.9066666666666667,
-    "iterations": 256471,
-    "timeMs": 1672
+    "iterations": 257071,
+    "timeMs": 1714
   },
   {
     "taskId": "1fad071e",
     "success": false,
-    "hypothesis": "gravLeft_then_extractBottomLeft",
-    "similarity": 0.6666666666666666,
-    "iterations": 201664,
-    "timeMs": 1505
+    "hypothesis": "learned_color_2→0_combo",
+    "similarity": 0.8666666666666667,
+    "iterations": 240069,
+    "timeMs": 1785
   },
   {
     "taskId": "2013d3e2",
@@ -309,7 +309,7 @@
     "hypothesis": "extract_1_1_3x3",
     "similarity": 0.6666666666666666,
     "iterations": 362272,
-    "timeMs": 1831
+    "timeMs": 2000
   },
   {
     "taskId": "2204b7a8",
@@ -317,63 +317,63 @@
     "hypothesis": "color_3→4",
     "similarity": 0.9633333333333333,
     "iterations": 256471,
-    "timeMs": 1594
+    "timeMs": 1718
   },
   {
     "taskId": "22168020",
     "success": false,
-    "hypothesis": "identity",
+    "hypothesis": "synth_fillEnclosed",
     "similarity": 0.86,
-    "iterations": 209643,
-    "timeMs": 1371
+    "iterations": 210243,
+    "timeMs": 1520
   },
   {
     "taskId": "22233c11",
     "success": false,
-    "hypothesis": "identity",
+    "hypothesis": "synth_fillEnclosed",
     "similarity": 0.96,
-    "iterations": 166415,
-    "timeMs": 1173
+    "iterations": 167015,
+    "timeMs": 1260
   },
   {
     "taskId": "2281f1f4",
     "success": false,
-    "hypothesis": "identity",
+    "hypothesis": "synth_fillEnclosed",
     "similarity": 0.8733333333333334,
-    "iterations": 166415,
-    "timeMs": 1108
+    "iterations": 167015,
+    "timeMs": 1269
   },
   {
     "taskId": "228f6490",
     "success": false,
-    "hypothesis": "learned_learned_color_2→0_combo_combo",
-    "similarity": 0.8866666666666667,
-    "iterations": 427957,
-    "timeMs": 3343
+    "hypothesis": "swap_2_9_then_learned_color_2→0_combo",
+    "similarity": 0.87,
+    "iterations": 358664,
+    "timeMs": 2505
   },
   {
     "taskId": "22eb0ac0",
     "success": false,
-    "hypothesis": "identity",
+    "hypothesis": "synth_patternComplete",
     "similarity": 0.9199999999999999,
-    "iterations": 285288,
-    "timeMs": 1633
+    "iterations": 285888,
+    "timeMs": 1576
   },
   {
     "taskId": "234bbc79",
     "success": false,
-    "hypothesis": "random_d6_transpose_dedup_transpose_erode",
+    "hypothesis": "random_d6_dilate_rot90_flipH_fill_dedup_transpose",
     "similarity": 0.19791666666666666,
-    "iterations": 313118,
-    "timeMs": 2092
+    "iterations": 329343,
+    "timeMs": 2516
   },
   {
     "taskId": "23581191",
     "success": false,
-    "hypothesis": "identity",
-    "similarity": 0.6296296296296297,
-    "iterations": 177222,
-    "timeMs": 1026
+    "hypothesis": "synth_patternComplete_then_gravLeft",
+    "similarity": 0.654320987654321,
+    "iterations": 177261,
+    "timeMs": 1038
   },
   {
     "taskId": "239be575",
@@ -381,31 +381,31 @@
     "hypothesis": "extract_2_2_1x1",
     "similarity": 0.8333333333333334,
     "iterations": 194701,
-    "timeMs": 1527
+    "timeMs": 1611
   },
   {
     "taskId": "23b5c85d",
     "success": false,
-    "hypothesis": "extractSmallest",
-    "similarity": 0.4,
-    "iterations": 306885,
-    "timeMs": 2818
+    "hypothesis": "learned_color_2→0_combo",
+    "similarity": 0.8,
+    "iterations": 379209,
+    "timeMs": 3662
   },
   {
     "taskId": "253bf280",
     "success": false,
-    "hypothesis": "identity",
+    "hypothesis": "synth_fillEnclosed",
     "similarity": 0.9393021330521331,
-    "iterations": 166415,
-    "timeMs": 1773
+    "iterations": 167015,
+    "timeMs": 1984
   },
   {
     "taskId": "25d487eb",
     "success": false,
-    "hypothesis": "identity",
+    "hypothesis": "synth_objectArrange",
     "similarity": 0.9499074074074073,
-    "iterations": 191632,
-    "timeMs": 1485
+    "iterations": 192232,
+    "timeMs": 1509
   },
   {
     "taskId": "25d8a9c8",
@@ -413,7 +413,7 @@
     "hypothesis": "learnedColorMap",
     "similarity": 0.9166666666666666,
     "iterations": 285286,
-    "timeMs": 1306
+    "timeMs": 1422
   },
   {
     "taskId": "25ff71a9",
@@ -421,7 +421,7 @@
     "hypothesis": "gravityDown",
     "similarity": 0.7777777777777777,
     "iterations": 166416,
-    "timeMs": 908
+    "timeMs": 902
   },
   {
     "taskId": "264363fd",
@@ -429,6 +429,6 @@
     "hypothesis": "learned_color_5→8_combo",
     "similarity": 0.9151851851851852,
     "iterations": 282489,
-    "timeMs": 4994
+    "timeMs": 5217
   }
 ]
