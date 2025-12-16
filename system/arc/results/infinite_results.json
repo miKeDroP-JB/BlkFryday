@@ -5,7 +5,7 @@
     "hypothesis": "synth_replicatePattern",
     "similarity": 0.7777777777777777,
     "iterations": 185432,
-    "timeMs": 1180
+    "timeMs": 1196
   },
   {
     "taskId": "00d62c1b",
@@ -13,7 +13,7 @@
     "hypothesis": "SYNTH:fillEnclosed",
     "similarity": 1,
     "iterations": 0,
-    "timeMs": 4
+    "timeMs": 5
   },
   {
     "taskId": "017c7c7b",
@@ -21,7 +21,7 @@
     "hypothesis": "swap_1_2_then_synth_replicatePattern",
     "similarity": 0.9753086419753086,
     "iterations": 164166,
-    "timeMs": 1051
+    "timeMs": 1013
   },
   {
     "taskId": "025d127b",
@@ -29,7 +29,7 @@
     "hypothesis": "synth_extractUnique",
     "similarity": 0.8531746031746033,
     "iterations": 172423,
-    "timeMs": 1089
+    "timeMs": 1090
   },
   {
     "taskId": "045e512c",
@@ -37,7 +37,7 @@
     "hypothesis": "synth_replicatePattern",
     "similarity": 0.9304610733182161,
     "iterations": 251671,
-    "timeMs": 2676
+    "timeMs": 2563
   },
   {
     "taskId": "0520fde7",
@@ -45,7 +45,7 @@
     "hypothesis": "swap_1_2_then_synth_objectArrange",
     "similarity": 0.7037037037037037,
     "iterations": 179594,
-    "timeMs": 1021
+    "timeMs": 989
   },
   {
     "taskId": "05269061",
@@ -53,7 +53,7 @@
     "hypothesis": "color_0→2",
     "similarity": 0.4217687074829932,
     "iterations": 206043,
-    "timeMs": 1323
+    "timeMs": 1204
   },
   {
     "taskId": "05f2a901",
@@ -61,7 +61,7 @@
     "hypothesis": "color_2→0",
     "similarity": 0.9204906204906206,
     "iterations": 163416,
-    "timeMs": 1332
+    "timeMs": 1300
   },
   {
     "taskId": "06df4c85",
@@ -69,7 +69,7 @@
     "hypothesis": "synth_objectTransform",
     "similarity": 0.9379647132955261,
     "iterations": 228856,
-    "timeMs": 3143
+    "timeMs": 2894
   },
   {
     "taskId": "08ed6ac7",
@@ -77,7 +77,7 @@
     "hypothesis": "color_5→1",
     "similarity": 0.8271604938271604,
     "iterations": 207239,
-    "timeMs": 1194
+    "timeMs": 1099
   },
   {
     "taskId": "09629e4f",
@@ -85,7 +85,7 @@
     "hypothesis": "learned_swap_4_8_then_color_8→0_then_flipH_combo",
     "similarity": 0.6363636363636364,
     "iterations": 337784,
-    "timeMs": 3316
+    "timeMs": 3079
   },
   {
     "taskId": "0962bcdd",
@@ -93,7 +93,7 @@
     "hypothesis": "synth_fillEnclosed",
     "similarity": 0.8333333333333334,
     "iterations": 192232,
-    "timeMs": 1272
+    "timeMs": 1171
   },
   {
     "taskId": "0a938d79",
@@ -101,7 +101,7 @@
     "hypothesis": "synth_patternComplete",
     "similarity": 0.6988965665976535,
     "iterations": 210243,
-    "timeMs": 2051
+    "timeMs": 1948
   },
   {
     "taskId": "0b148d64",
@@ -109,7 +109,7 @@
     "hypothesis": "synth_objectTransform",
     "similarity": 0.3333333333333333,
     "iterations": 324655,
-    "timeMs": 3078
+    "timeMs": 3038
   },
   {
     "taskId": "0ca9ddb6",
@@ -117,7 +117,7 @@
     "hypothesis": "synth_fillEnclosed",
     "similarity": 0.8683127572016461,
     "iterations": 231854,
-    "timeMs": 1454
+    "timeMs": 1422
   },
   {
     "taskId": "0d3d703e",
@@ -133,7 +133,7 @@
     "hypothesis": "synth_patternComplete",
     "similarity": 0.9024943310657596,
     "iterations": 257071,
-    "timeMs": 3290
+    "timeMs": 3210
   },
   {
     "taskId": "0e206a2e",
@@ -141,7 +141,7 @@
     "hypothesis": "learned_color_3→0_combo",
     "similarity": 0.9480820105820106,
     "iterations": 253652,
-    "timeMs": 2362
+    "timeMs": 2407
   },
   {
     "taskId": "10fcaaa3",
@@ -149,7 +149,7 @@
     "hypothesis": "tile2x2",
     "similarity": 0.6708333333333334,
     "iterations": 208842,
-    "timeMs": 1067
+    "timeMs": 1104
   },
   {
     "taskId": "11852cab",
@@ -157,7 +157,7 @@
     "hypothesis": "synth_extractUnique",
     "similarity": 0.9700000000000001,
     "iterations": 210243,
-    "timeMs": 1574
+    "timeMs": 1397
   },
   {
     "taskId": "1190e5a7",
@@ -165,7 +165,7 @@
     "hypothesis": "extract_0_2_2x4",
     "similarity": 0.3333333333333333,
     "iterations": 321264,
-    "timeMs": 2948
+    "timeMs": 2523
   },
   {
     "taskId": "137eaa0f",
@@ -173,7 +173,7 @@
     "hypothesis": "swap_1_2_then_synth_objectArrange",
     "similarity": 0.2592592592592593,
     "iterations": 353386,
-    "timeMs": 2119
+    "timeMs": 1936
   },
   {
     "taskId": "150deff5",
@@ -181,7 +181,7 @@
     "hypothesis": "color_5→8",
     "similarity": 0.9044191919191918,
     "iterations": 177221,
-    "timeMs": 1242
+    "timeMs": 1240
   },
   {
     "taskId": "178fcbfb",
@@ -189,7 +189,7 @@
     "hypothesis": "synth_patternComplete",
     "similarity": 0.6851711560044893,
     "iterations": 177823,
-    "timeMs": 1260
+    "timeMs": 1168
   },
   {
     "taskId": "1a07d186",
@@ -197,7 +197,7 @@
     "hypothesis": "synth_fillEnclosed",
     "similarity": 0.96265664160401,
     "iterations": 210243,
-    "timeMs": 2211
+    "timeMs": 1913
   },
   {
     "taskId": "1b2d62fb",
@@ -205,7 +205,7 @@
     "hypothesis": "swap_9_8_then_synth_objectArrange_then_rot180",
     "similarity": 0.7200000000000001,
     "iterations": 184433,
-    "timeMs": 1479
+    "timeMs": 1317
   },
   {
     "taskId": "1b60fb0c",
@@ -213,7 +213,7 @@
     "hypothesis": "synth_objectArrange",
     "similarity": 0.9066666666666666,
     "iterations": 167015,
-    "timeMs": 1442
+    "timeMs": 1218
   },
   {
     "taskId": "1bfc4729",
@@ -221,7 +221,7 @@
     "hypothesis": "synth_patternComplete",
     "similarity": 0.52,
     "iterations": 192232,
-    "timeMs": 1303
+    "timeMs": 1049
   },
   {
     "taskId": "1c786137",
@@ -229,7 +229,7 @@
     "hypothesis": "extract_4_5_6x8",
     "similarity": 0.3333333333333333,
     "iterations": 508738,
-    "timeMs": 3902
+    "timeMs": 3816
   },
   {
     "taskId": "1caeab9d",
@@ -237,7 +237,7 @@
     "hypothesis": "color_2→0",
     "similarity": 0.86,
     "iterations": 177223,
-    "timeMs": 1158
+    "timeMs": 1118
   },
   {
     "taskId": "1cf80156",
@@ -261,7 +261,7 @@
     "hypothesis": "synth_objectTransform",
     "similarity": 0.8650519031141868,
     "iterations": 192232,
-    "timeMs": 2231
+    "timeMs": 2216
   },
   {
     "taskId": "1f0c79e5",
@@ -269,7 +269,7 @@
     "hypothesis": "color_2→7",
     "similarity": 0.7469135802469136,
     "iterations": 209643,
-    "timeMs": 1594
+    "timeMs": 1496
   },
   {
     "taskId": "1f642eb9",
@@ -277,7 +277,7 @@
     "hypothesis": "synth_fillEnclosed",
     "similarity": 0.9533333333333333,
     "iterations": 285888,
-    "timeMs": 1796
+    "timeMs": 1884
   },
   {
     "taskId": "1f85a75f",
@@ -293,7 +293,7 @@
     "hypothesis": "synth_fillEnclosed",
     "similarity": 0.9066666666666667,
     "iterations": 257071,
-    "timeMs": 1714
+    "timeMs": 1585
   },
   {
     "taskId": "1fad071e",
@@ -301,7 +301,7 @@
     "hypothesis": "learned_color_2→0_combo",
     "similarity": 0.8666666666666667,
     "iterations": 240069,
-    "timeMs": 1785
+    "timeMs": 1758
   },
   {
     "taskId": "2013d3e2",
@@ -309,7 +309,7 @@
     "hypothesis": "extract_1_1_3x3",
     "similarity": 0.6666666666666666,
     "iterations": 362272,
-    "timeMs": 2000
+    "timeMs": 2075
   },
   {
     "taskId": "2204b7a8",
@@ -317,7 +317,7 @@
     "hypothesis": "color_3→4",
     "similarity": 0.9633333333333333,
     "iterations": 256471,
-    "timeMs": 1718
+    "timeMs": 1693
   },
   {
     "taskId": "22168020",
@@ -325,7 +325,7 @@
     "hypothesis": "synth_fillEnclosed",
     "similarity": 0.86,
     "iterations": 210243,
-    "timeMs": 1520
+    "timeMs": 1468
   },
   {
     "taskId": "22233c11",
@@ -333,7 +333,7 @@
     "hypothesis": "synth_fillEnclosed",
     "similarity": 0.96,
     "iterations": 167015,
-    "timeMs": 1260
+    "timeMs": 1281
   },
   {
     "taskId": "2281f1f4",
@@ -341,7 +341,7 @@
     "hypothesis": "synth_fillEnclosed",
     "similarity": 0.8733333333333334,
     "iterations": 167015,
-    "timeMs": 1269
+    "timeMs": 1251
   },
   {
     "taskId": "228f6490",
@@ -349,7 +349,7 @@
     "hypothesis": "swap_2_9_then_learned_color_2→0_combo",
     "similarity": 0.87,
     "iterations": 358664,
-    "timeMs": 2505
+    "timeMs": 2663
   },
   {
     "taskId": "22eb0ac0",
@@ -357,15 +357,15 @@
     "hypothesis": "synth_patternComplete",
     "similarity": 0.9199999999999999,
     "iterations": 285888,
-    "timeMs": 1576
+    "timeMs": 1528
   },
   {
     "taskId": "234bbc79",
     "success": false,
-    "hypothesis": "random_d6_dilate_rot90_flipH_fill_dedup_transpose",
+    "hypothesis": "random_d6_outline_rot90_erode_dedup_rot270_erode",
     "similarity": 0.19791666666666666,
-    "iterations": 329343,
-    "timeMs": 2516
+    "iterations": 309578,
+    "timeMs": 2249
   },
   {
     "taskId": "23581191",
@@ -373,7 +373,7 @@
     "hypothesis": "synth_patternComplete_then_gravLeft",
     "similarity": 0.654320987654321,
     "iterations": 177261,
-    "timeMs": 1038
+    "timeMs": 1044
   },
   {
     "taskId": "239be575",
@@ -381,7 +381,7 @@
     "hypothesis": "extract_2_2_1x1",
     "similarity": 0.8333333333333334,
     "iterations": 194701,
-    "timeMs": 1611
+    "timeMs": 1591
   },
   {
     "taskId": "23b5c85d",
@@ -389,7 +389,7 @@
     "hypothesis": "learned_color_2→0_combo",
     "similarity": 0.8,
     "iterations": 379209,
-    "timeMs": 3662
+    "timeMs": 3456
   },
   {
     "taskId": "253bf280",
@@ -397,7 +397,7 @@
     "hypothesis": "synth_fillEnclosed",
     "similarity": 0.9393021330521331,
     "iterations": 167015,
-    "timeMs": 1984
+    "timeMs": 1810
   },
   {
     "taskId": "25d487eb",
@@ -405,7 +405,7 @@
     "hypothesis": "synth_objectArrange",
     "similarity": 0.9499074074074073,
     "iterations": 192232,
-    "timeMs": 1509
+    "timeMs": 1507
   },
   {
     "taskId": "25d8a9c8",
@@ -413,7 +413,7 @@
     "hypothesis": "learnedColorMap",
     "similarity": 0.9166666666666666,
     "iterations": 285286,
-    "timeMs": 1422
+    "timeMs": 1354
   },
   {
     "taskId": "25ff71a9",
@@ -421,7 +421,7 @@
     "hypothesis": "gravityDown",
     "similarity": 0.7777777777777777,
     "iterations": 166416,
-    "timeMs": 902
+    "timeMs": 946
   },
   {
     "taskId": "264363fd",
@@ -429,6 +429,6 @@
     "hypothesis": "learned_color_5→8_combo",
     "similarity": 0.9151851851851852,
     "iterations": 282489,
-    "timeMs": 5217
+    "timeMs": 5091
   }
 ]

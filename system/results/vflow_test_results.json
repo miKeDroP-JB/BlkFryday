@@ -1,0 +1,238 @@
+{
+  "startTime": 1765895115325,
+  "tests": [
+    {
+      "name": "VoiceCommandParser: parse direct commands",
+      "status": "PASS",
+      "elapsed": 0
+    },
+    {
+      "name": "VoiceCommandParser: parse natural language",
+      "status": "PASS",
+      "elapsed": 1
+    },
+    {
+      "name": "VoiceCommandParser: get help returns all commands",
+      "status": "PASS",
+      "elapsed": 0
+    },
+    {
+      "name": "AtlasPosition: initial position is centered",
+      "status": "PASS",
+      "elapsed": 0
+    },
+    {
+      "name": "AtlasPosition: move clamps values",
+      "status": "PASS",
+      "elapsed": 0
+    },
+    {
+      "name": "AtlasPosition: trajectory records history",
+      "status": "PASS",
+      "elapsed": 0
+    },
+    {
+      "name": "HUDState: feed panels work",
+      "status": "PASS",
+      "elapsed": 0
+    },
+    {
+      "name": "VoiceCockpit: process voice commands",
+      "status": "PASS",
+      "elapsed": 1
+    },
+    {
+      "name": "VoiceCockpit: show position",
+      "status": "PASS",
+      "elapsed": 0
+    },
+    {
+      "name": "AmoebaExecutor: select strategy",
+      "status": "PASS",
+      "elapsed": 0
+    },
+    {
+      "name": "AmoebaExecutor: avoid failed strategies",
+      "status": "PASS",
+      "elapsed": 0
+    },
+    {
+      "name": "AmoebaExecutor: record attempts",
+      "status": "PASS",
+      "elapsed": 0
+    },
+    {
+      "name": "AmoebaExecutor: adapt depth",
+      "status": "PASS",
+      "elapsed": 0
+    },
+    {
+      "name": "VerificationGate: run check",
+      "status": "PASS",
+      "elapsed": 0
+    },
+    {
+      "name": "SolveLoop: creates with default gates",
+      "status": "PASS",
+      "elapsed": 0
+    },
+    {
+      "name": "SolveLoop: add custom gate",
+      "status": "PASS",
+      "elapsed": 0
+    },
+    {
+      "name": "CognitiveNode: creation and properties",
+      "status": "PASS",
+      "elapsed": 0
+    },
+    {
+      "name": "CognitiveNode: visit tracking",
+      "status": "PASS",
+      "elapsed": 0
+    },
+    {
+      "name": "CognitiveNode: distance calculation",
+      "status": "FAIL",
+      "elapsed": 0,
+      "error": "Expected 1, got 0.5"
+    },
+    {
+      "name": "CognitiveEdge: traverse tracking",
+      "status": "PASS",
+      "elapsed": 0
+    },
+    {
+      "name": "CognitiveEdge: identify shortcuts and dead-ends",
+      "status": "PASS",
+      "elapsed": 1
+    },
+    {
+      "name": "ThreeIAtlas: add nodes and edges",
+      "status": "PASS",
+      "elapsed": 0
+    },
+    {
+      "name": "ThreeIAtlas: find nearest nodes",
+      "status": "PASS",
+      "elapsed": 0
+    },
+    {
+      "name": "ThreeIAtlas: move and trajectory",
+      "status": "PASS",
+      "elapsed": 0
+    },
+    {
+      "name": "ThreeIAtlas: record solution path",
+      "status": "PASS",
+      "elapsed": 0
+    },
+    {
+      "name": "ThreeIAtlas: recommend strategy",
+      "status": "PASS",
+      "elapsed": 1
+    },
+    {
+      "name": "ThreeIAtlas: get statistics",
+      "status": "PASS",
+      "elapsed": 0
+    },
+    {
+      "name": "VFlowConfig: default values",
+      "status": "PASS",
+      "elapsed": 0
+    },
+    {
+      "name": "VFlowConfig: custom values",
+      "status": "PASS",
+      "elapsed": 0
+    },
+    {
+      "name": "VFlowStateMachine: initial state is IDLE",
+      "status": "PASS",
+      "elapsed": 0
+    },
+    {
+      "name": "VFlowStateMachine: valid transitions",
+      "status": "PASS",
+      "elapsed": 0
+    },
+    {
+      "name": "VFlowStateMachine: transition changes state",
+      "status": "PASS",
+      "elapsed": 1
+    },
+    {
+      "name": "VFlowStateMachine: pause and resume",
+      "status": "PASS",
+      "elapsed": 0
+    },
+    {
+      "name": "VFlowStateMachine: reset clears state",
+      "status": "PASS",
+      "elapsed": 0
+    },
+    {
+      "name": "VFlowStateMachine: telemetry records events",
+      "status": "PASS",
+      "elapsed": 0
+    },
+    {
+      "name": "VFlowStateMachine: position updates",
+      "status": "PASS",
+      "elapsed": 0
+    },
+    {
+      "name": "VFlowSystem: creates with all components",
+      "status": "PASS",
+      "elapsed": 1
+    },
+    {
+      "name": "VFlowSystem: voice command integration",
+      "status": "PASS",
+      "elapsed": 1
+    },
+    {
+      "name": "VFlowSystem: get HUD state",
+      "status": "PASS",
+      "elapsed": 0
+    },
+    {
+      "name": "VFlowSystem: get atlas visualization",
+      "status": "PASS",
+      "elapsed": 1
+    },
+    {
+      "name": "VFlowSystem: configure updates settings",
+      "status": "PASS",
+      "elapsed": 0
+    },
+    {
+      "name": "VFlowSystem: presets apply correctly",
+      "status": "PASS",
+      "elapsed": 1
+    }
+  ],
+  "passed": 41,
+  "failed": 1,
+  "benchmarks": {
+    "Voice command parsing": {
+      "min": 0.000319,
+      "max": 1.146837,
+      "avg": 0.0014246132999999985,
+      "p50": 0.000393,
+      "p95": 0.002507,
+      "p99": 0.004554,
+      "iterations": 10000
+    },
+    "Atlas: find nearest nodes": {
+      "min": 0.008867,
+      "max": 0.536064,
+      "avg": 0.016028571999999984,
+      "p50": 0.009266,
+      "p95": 0.037169,
+      "p99": 0.104131,
+      "iterations": 1000
+    }
+  }
+}
