@@ -50,9 +50,30 @@ class BrainServer {
     // Load ARC solver
     try {
       this.arcSolver = require('../system/arc/InfiniteReasoner');
-      console.log('ARC Solver loaded');
+      console.log('✓ ARC Solver loaded');
     } catch (e) {
-      console.log('ARC Solver not available');
+      console.log('⚠ ARC Solver not available');
+    }
+
+    // Initialize VFlow Voice-First System
+    try {
+      const { createVFlowSystem, PRESETS } = require('../system/VFlowSystem');
+      this.vflow = createVFlowSystem(PRESETS.balanced);
+
+      // Wire VFlow events to WebSocket broadcasts
+      this.vflow.on('hud:update', (snapshot) => {
+        this.broadcast('vflow:hud', snapshot);
+      });
+      this.vflow.on('state:change', (change) => {
+        this.broadcast('vflow:state', change);
+      });
+      this.vflow.on('verified', (result) => {
+        this.broadcast('vflow:verified', result);
+      });
+
+      console.log('✓ VFlow Voice-First System loaded');
+    } catch (e) {
+      console.log('⚠ VFlow not available:', e.message);
     }
 
     // Start servers
@@ -172,7 +193,9 @@ class BrainServer {
           quantum: !!this.systems.quantum,
           nexus: !!this.systems.nexus,
           genesis: !!this.systems.genesis,
-          governance: !!this.systems.governance
+          governance: !!this.systems.governance,
+          vflow: !!this.vflow,
+          arc: !!this.arcSolver
         }
       };
     }
@@ -212,7 +235,84 @@ class BrainServer {
       return this.handleCopaRequest(path, method, body);
     }
 
+    // VFlow Voice-First endpoints
+    if (path.startsWith('/vflow')) {
+      return this.handleVFlowRequest(path, method, body);
+    }
+
     return { error: 'Unknown endpoint', path };
+  }
+
+  async handleVFlowRequest(path, method, body) {
+    if (!this.vflow) {
+      return { error: 'VFlow system not initialized' };
+    }
+
+    // Voice input - primary interface
+    if (path === '/vflow/voice' && method === 'POST') {
+      const { input } = body;
+      const result = this.vflow.voice(input);
+      return { success: true, result, hud: this.vflow.getHUD() };
+    }
+
+    // Get current HUD state
+    if (path === '/vflow/hud' && method === 'GET') {
+      return { hud: this.vflow.getHUD() };
+    }
+
+    // Get Atlas visualization
+    if (path === '/vflow/atlas' && method === 'GET') {
+      return { atlas: this.vflow.getAtlasVisualization() };
+    }
+
+    // Get full system snapshot
+    if (path === '/vflow/snapshot' && method === 'GET') {
+      return { snapshot: this.vflow.getSnapshot() };
+    }
+
+    // Solve a problem
+    if (path === '/vflow/solve' && method === 'POST') {
+      const result = await this.vflow.solve(body.problem);
+      return { success: true, result };
+    }
+
+    // Control endpoints
+    if (path === '/vflow/pause' && method === 'POST') {
+      const result = this.vflow.pause();
+      return { success: true, paused: result };
+    }
+
+    if (path === '/vflow/resume' && method === 'POST') {
+      const result = this.vflow.resume();
+      return { success: true, resumed: result };
+    }
+
+    if (path === '/vflow/stop' && method === 'POST') {
+      const result = this.vflow.stop();
+      return { success: true, stopped: result };
+    }
+
+    if (path === '/vflow/reset' && method === 'POST') {
+      const result = this.vflow.reset();
+      return { success: true, reset: result };
+    }
+
+    // Configuration
+    if (path === '/vflow/configure' && method === 'POST') {
+      const config = this.vflow.configure(body);
+      return { success: true, config };
+    }
+
+    // Metrics/telemetry
+    if (path === '/vflow/metrics' && method === 'GET') {
+      return { metrics: this.vflow.getMetrics() };
+    }
+
+    if (path === '/vflow/timeline' && method === 'GET') {
+      return { timeline: this.vflow.getTimeline(body?.limit || 100) };
+    }
+
+    return { error: 'Unknown VFlow endpoint', path };
   }
 
   async handleAgentRequest(path, method, body) {

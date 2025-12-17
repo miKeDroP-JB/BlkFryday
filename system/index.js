@@ -113,6 +113,22 @@ const {
   VOTE_TYPES
 } = require('./governance/HiveGovernance');
 
+// VFlow - Verified Cognition System
+const {
+  VFlowSystem,
+  createVFlowSystem,
+  PRESETS: VFLOW_PRESETS
+} = require('./VFlowSystem');
+
+// VFlow Components
+const { VoiceCockpit } = require('./cockpit/VoiceCockpit');
+const { SolveLoop } = require('./core/SolveLoop');
+const { ThreeIAtlas } = require('./atlas/ThreeIAtlas');
+const { VFlowStateMachine, VFlowConfig } = require('./core/VFlowStateMachine');
+
+// ARC Solver
+const InfiniteReasoner = require('./arc/InfiniteReasoner');
+
 // ═══════════════════════════════════════════════════════════════════
 // SYSTEM INITIALIZATION
 // ═══════════════════════════════════════════════════════════════════
@@ -229,6 +245,18 @@ async function initializeSystem(config = {}) {
   if (config.governance !== false) {
     systems.governance = new HiveGovernance(config.governanceConfig);
     console.log('✓ Hive Governance initialized');
+  }
+
+  // Initialize VFlow System (Voice-First Cognition)
+  if (config.vflow !== false) {
+    systems.vflow = createVFlowSystem(config.vflowConfig || VFLOW_PRESETS.balanced);
+    console.log('✓ VFlow Voice-First System initialized');
+  }
+
+  // Initialize ARC Solver
+  if (config.arc !== false) {
+    systems.arc = InfiniteReasoner;
+    console.log('✓ ARC Infinite Reasoner initialized');
   }
 
   console.log('\n🌟 0RB System fully operational\n');
@@ -380,5 +408,22 @@ module.exports = {
     PROPOSAL_CATEGORIES,
     PROPOSAL_STATES,
     VOTE_TYPES
+  },
+
+  // VFlow - Voice-First Verified Cognition
+  VFlow: {
+    VFlowSystem,
+    createVFlowSystem,
+    PRESETS: VFLOW_PRESETS,
+    VoiceCockpit,
+    SolveLoop,
+    ThreeIAtlas,
+    VFlowStateMachine,
+    VFlowConfig
+  },
+
+  // ARC Solver
+  ARC: {
+    InfiniteReasoner
   }
 };
