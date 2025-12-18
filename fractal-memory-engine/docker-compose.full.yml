@@ -1,0 +1,257 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# FRACTAL MEMORY ENGINE - FULL NUCLEAR STACK
+# ═══════════════════════════════════════════════════════════════════════════
+#
+# THE COMPLETE SYSTEM:
+# - Edge Layer (Cloudflare Workers - external)
+# - Python Services (Core)
+# - Node.js Connectors (Adapters)
+# - Event Bus
+# - Unified Gateway
+#
+# Launch: docker-compose -f docker-compose.full.yml up
+#
+# ═══════════════════════════════════════════════════════════════════════════
+
+version: '3.8'
+
+services:
+  # ─────────────────────────────────────────────────────────────────────────
+  # INFRASTRUCTURE
+  # ─────────────────────────────────────────────────────────────────────────
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # PYTHON CORE SERVICES (P9-P16)
+  # ─────────────────────────────────────────────────────────────────────────
+
+  orchestrator:
+    build:
+      context: ./services/orchestrator
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - ENVIRONMENT=production
+    depends_on:
+      - redis
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  capture:
+    build:
+      context: ./services/capture
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8001"
+    environment:
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - redis
+
+  process:
+    build:
+      context: ./services/process
+      dockerfile: Dockerfile
+    ports:
+      - "8002:8002"
+    environment:
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - redis
+
+  surface:
+    build:
+      context: ./services/surface
+      dockerfile: Dockerfile
+    ports:
+      - "8003:8003"
+    environment:
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - redis
+
+  auth:
+    build:
+      context: ./services/auth
+      dockerfile: Dockerfile
+    ports:
+      - "8004:8004"
+    environment:
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - redis
+
+  ritual-engine:
+    build:
+      context: ./services/ritual-engine
+      dockerfile: Dockerfile
+    ports:
+      - "8020:8020"
+    environment:
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - redis
+      - orchestrator
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8020/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  external-tether:
+    build:
+      context: ./services/external-tether
+      dockerfile: Dockerfile
+    ports:
+      - "8021:8021"
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - SLACK_CLIENT_ID=${SLACK_CLIENT_ID}
+      - SLACK_CLIENT_SECRET=${SLACK_CLIENT_SECRET}
+      - DISCORD_CLIENT_ID=${DISCORD_CLIENT_ID}
+      - DISCORD_CLIENT_SECRET=${DISCORD_CLIENT_SECRET}
+    depends_on:
+      - redis
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # NODE.JS CONNECTOR SERVICES (P18, P19, P22, P23)
+  # ─────────────────────────────────────────────────────────────────────────
+
+  intent-grid:
+    build:
+      context: .
+      dockerfile: connectors/Dockerfile.node
+      args:
+        SERVICE: intent-grid
+    ports:
+      - "8030:8030"
+    environment:
+      - NODE_ENV=production
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - redis
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8030/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  lexicon-engine:
+    build:
+      context: .
+      dockerfile: connectors/Dockerfile.node
+      args:
+        SERVICE: lexicon-engine
+    ports:
+      - "8031:8031"
+    environment:
+      - NODE_ENV=production
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - redis
+
+  voice-loop:
+    build:
+      context: .
+      dockerfile: connectors/Dockerfile.node
+      args:
+        SERVICE: voice-loop
+    ports:
+      - "8032:8032"
+    environment:
+      - NODE_ENV=production
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - redis
+
+  supervisor:
+    build:
+      context: .
+      dockerfile: connectors/Dockerfile.node
+      args:
+        SERVICE: supervisor
+    ports:
+      - "8033:8033"
+    environment:
+      - NODE_ENV=production
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - redis
+      - intent-grid
+      - lexicon-engine
+      - voice-loop
+
+  event-bus:
+    build:
+      context: .
+      dockerfile: connectors/Dockerfile.node
+      args:
+        SERVICE: event-bus
+    ports:
+      - "8040:8040"
+    environment:
+      - NODE_ENV=production
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - redis
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8040/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # UNIFIED GATEWAY - THE NEXUS
+  # ─────────────────────────────────────────────────────────────────────────
+
+  gateway:
+    build:
+      context: .
+      dockerfile: connectors/Dockerfile.node
+      args:
+        SERVICE: gateway
+    ports:
+      - "8888:8888"
+    environment:
+      - NODE_ENV=production
+      - GATEWAY_PORT=8888
+    depends_on:
+      - orchestrator
+      - ritual-engine
+      - external-tether
+      - intent-grid
+      - lexicon-engine
+      - voice-loop
+      - supervisor
+      - event-bus
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8888/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  redis_data:
+
+networks:
+  default:
+    name: fractal-memory-network

@@ -1,0 +1,7 @@
+{
+  "name": "sample-agent",
+  "version": "0.0.1",
+  "entry": "./dist/index.js",
+  "permissions": [],
+  "sandbox": true
+}

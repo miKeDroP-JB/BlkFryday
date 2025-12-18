@@ -1,0 +1,394 @@
+/* ══════════════════════════════════════════════════════════════════════
+   VYRA: GENESIS SECTOR - GTK3 THEME
+   Neon Ritual Dark Theme
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* === GLOBAL COLOR DEFINITIONS === */
+@define-color bg_color #1a1b26;
+@define-color fg_color #c0caf5;
+@define-color base_color #15161e;
+@define-color text_color #c0caf5;
+@define-color selected_bg_color #bb9af7;
+@define-color selected_fg_color #1a1b26;
+@define-color tooltip_bg_color #24283b;
+@define-color tooltip_fg_color #c0caf5;
+@define-color link_color #7dcfff;
+@define-color error_color #f7768e;
+@define-color warning_color #e0af68;
+@define-color success_color #9ece6a;
+@define-color info_color #7dcfff;
+
+@define-color insensitive_fg_color alpha(@fg_color, 0.45);
+@define-color insensitive_bg_color @bg_color;
+
+@define-color borders #414868;
+@define-color unfocused_borders #24283b;
+
+@define-color header_bar_bg #1a1b26;
+@define-color header_bar_fg #c0caf5;
+
+@define-color sidebar_bg #15161e;
+@define-color sidebar_fg #c0caf5;
+
+@define-color menu_bg #24283b;
+@define-color menu_fg #c0caf5;
+
+/* === WINDOW === */
+window {
+    background-color: @bg_color;
+    color: @fg_color;
+}
+
+/* === HEADERBAR === */
+headerbar {
+    background: linear-gradient(to bottom, #24283b, #1a1b26);
+    border-bottom: 1px solid @borders;
+    padding: 6px;
+    min-height: 42px;
+}
+
+headerbar .title {
+    color: @fg_color;
+    font-weight: bold;
+}
+
+headerbar .subtitle {
+    color: alpha(@fg_color, 0.7);
+    font-size: 0.9em;
+}
+
+/* === BUTTONS === */
+button {
+    background: linear-gradient(to bottom, #33385a, #24283b);
+    border: 1px solid @borders;
+    border-radius: 6px;
+    padding: 6px 16px;
+    color: @fg_color;
+    transition: all 200ms ease;
+}
+
+button:hover {
+    background: linear-gradient(to bottom, #414868, #33385a);
+    border-color: @selected_bg_color;
+}
+
+button:active,
+button:checked {
+    background: @selected_bg_color;
+    color: @selected_fg_color;
+}
+
+button:disabled {
+    background: @insensitive_bg_color;
+    color: @insensitive_fg_color;
+}
+
+button.suggested-action {
+    background: linear-gradient(to bottom, #bb9af7, #9d7cd8);
+    color: #1a1b26;
+    border-color: #bb9af7;
+}
+
+button.destructive-action {
+    background: linear-gradient(to bottom, #f7768e, #db4b4b);
+    color: #1a1b26;
+    border-color: #f7768e;
+}
+
+/* === ENTRY === */
+entry {
+    background-color: @base_color;
+    border: 1px solid @borders;
+    border-radius: 6px;
+    padding: 8px 12px;
+    color: @fg_color;
+    caret-color: @selected_bg_color;
+}
+
+entry:focus {
+    border-color: @selected_bg_color;
+    box-shadow: 0 0 0 2px alpha(@selected_bg_color, 0.3);
+}
+
+entry:disabled {
+    background-color: @insensitive_bg_color;
+    color: @insensitive_fg_color;
+}
+
+/* === LABELS === */
+label {
+    color: @fg_color;
+}
+
+label:disabled {
+    color: @insensitive_fg_color;
+}
+
+label.dim-label {
+    color: alpha(@fg_color, 0.6);
+}
+
+/* === SELECTION === */
+selection {
+    background-color: @selected_bg_color;
+    color: @selected_fg_color;
+}
+
+/* === LISTS === */
+list {
+    background-color: @base_color;
+    border-radius: 6px;
+}
+
+list row {
+    padding: 8px 12px;
+    border-radius: 4px;
+}
+
+list row:hover {
+    background-color: alpha(@selected_bg_color, 0.1);
+}
+
+list row:selected {
+    background-color: @selected_bg_color;
+    color: @selected_fg_color;
+}
+
+/* === SIDEBAR === */
+.sidebar {
+    background-color: @sidebar_bg;
+    border-right: 1px solid @borders;
+}
+
+.sidebar list row:selected {
+    background-color: alpha(@selected_bg_color, 0.3);
+}
+
+/* === MENUS === */
+menu,
+.menu,
+.context-menu {
+    background-color: @menu_bg;
+    border: 1px solid @borders;
+    border-radius: 8px;
+    padding: 6px;
+    box-shadow: 0 4px 16px alpha(black, 0.3);
+}
+
+menuitem {
+    padding: 8px 16px;
+    border-radius: 4px;
+    color: @menu_fg;
+}
+
+menuitem:hover {
+    background-color: @selected_bg_color;
+    color: @selected_fg_color;
+}
+
+/* === CHECKBOXES & RADIOS === */
+check,
+radio {
+    min-width: 18px;
+    min-height: 18px;
+    border: 2px solid @borders;
+    border-radius: 4px;
+    background-color: @base_color;
+}
+
+check:checked,
+radio:checked {
+    background-color: @selected_bg_color;
+    border-color: @selected_bg_color;
+}
+
+radio {
+    border-radius: 50%;
+}
+
+/* === SWITCHES === */
+switch {
+    min-width: 48px;
+    min-height: 24px;
+    border-radius: 12px;
+    background-color: @borders;
+    border: none;
+}
+
+switch:checked {
+    background-color: @selected_bg_color;
+}
+
+switch slider {
+    min-width: 20px;
+    min-height: 20px;
+    border-radius: 50%;
+    background-color: @fg_color;
+    margin: 2px;
+}
+
+/* === SCROLLBARS === */
+scrollbar {
+    background-color: transparent;
+}
+
+scrollbar slider {
+    min-width: 8px;
+    min-height: 8px;
+    border-radius: 4px;
+    background-color: alpha(@fg_color, 0.3);
+}
+
+scrollbar slider:hover {
+    background-color: alpha(@fg_color, 0.5);
+}
+
+scrollbar slider:active {
+    background-color: @selected_bg_color;
+}
+
+/* === PROGRESSBARS === */
+progressbar {
+    border-radius: 4px;
+}
+
+progressbar trough {
+    background-color: @borders;
+    border-radius: 4px;
+    min-height: 8px;
+}
+
+progressbar progress {
+    background: linear-gradient(to right, #7aa2f7, #bb9af7);
+    border-radius: 4px;
+}
+
+/* === SCALES/SLIDERS === */
+scale {
+    padding: 12px 0;
+}
+
+scale trough {
+    background-color: @borders;
+    border-radius: 4px;
+    min-height: 6px;
+}
+
+scale highlight {
+    background: linear-gradient(to right, #7aa2f7, #bb9af7);
+    border-radius: 4px;
+}
+
+scale slider {
+    min-width: 20px;
+    min-height: 20px;
+    border-radius: 50%;
+    background: @selected_bg_color;
+    border: 2px solid @base_color;
+    box-shadow: 0 2px 4px alpha(black, 0.2);
+}
+
+/* === TOOLTIPS === */
+tooltip {
+    background-color: @tooltip_bg_color;
+    border: 1px solid @borders;
+    border-radius: 6px;
+    padding: 8px 12px;
+    color: @tooltip_fg_color;
+    box-shadow: 0 4px 12px alpha(black, 0.3);
+}
+
+/* === NOTIFICATIONS === */
+.notification {
+    background-color: @menu_bg;
+    border-radius: 8px;
+    border: 1px solid @borders;
+}
+
+/* === POPOVERS === */
+popover {
+    background-color: @menu_bg;
+    border: 1px solid @borders;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px alpha(black, 0.3);
+}
+
+/* === TABS === */
+notebook > header {
+    background-color: @bg_color;
+    border-bottom: 1px solid @borders;
+}
+
+notebook > header tab {
+    padding: 8px 16px;
+    border-radius: 6px 6px 0 0;
+    color: alpha(@fg_color, 0.7);
+}
+
+notebook > header tab:checked {
+    background-color: @base_color;
+    color: @fg_color;
+    border-bottom: 2px solid @selected_bg_color;
+}
+
+notebook > header tab:hover:not(:checked) {
+    background-color: alpha(@fg_color, 0.05);
+}
+
+/* === SPINNER === */
+spinner {
+    color: @selected_bg_color;
+}
+
+/* === INFOBAR === */
+infobar {
+    border-radius: 6px;
+    padding: 8px 16px;
+}
+
+infobar.info {
+    background-color: alpha(@info_color, 0.2);
+    border: 1px solid @info_color;
+}
+
+infobar.warning {
+    background-color: alpha(@warning_color, 0.2);
+    border: 1px solid @warning_color;
+}
+
+infobar.error {
+    background-color: alpha(@error_color, 0.2);
+    border: 1px solid @error_color;
+}
+
+/* === TERMINAL COLORS FOR GTK APPS === */
+.terminal-window {
+    background-color: #1a1b26;
+}
+
+/* === VYRA SPECIFIC STYLES === */
+.vyra-sigil {
+    color: @selected_bg_color;
+    font-size: 1.5em;
+}
+
+.vyra-glow {
+    box-shadow: 0 0 20px alpha(@selected_bg_color, 0.5);
+}
+
+.vyra-panel {
+    background: linear-gradient(135deg, #1a1b26 0%, #24283b 100%);
+    border: 1px solid alpha(@selected_bg_color, 0.3);
+    border-radius: 12px;
+}
+
+/* === ANIMATIONS === */
+@keyframes vyra-pulse {
+    0% { box-shadow: 0 0 5px alpha(@selected_bg_color, 0.5); }
+    50% { box-shadow: 0 0 20px alpha(@selected_bg_color, 0.8); }
+    100% { box-shadow: 0 0 5px alpha(@selected_bg_color, 0.5); }
+}
+
+.vyra-active {
+    animation: vyra-pulse 2s infinite;
+}

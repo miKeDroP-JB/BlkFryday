@@ -1,0 +1,42 @@
+name = "fractal-edge"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+node_compat = true
+
+[vars]
+ENVIRONMENT = "production"
+CORE_API_URL = "https://api.0r8.ai"
+
+[[kv_namespaces]]
+binding = "MEMORY_HOT"
+id = "fractal_memory_hot"
+preview_id = "fractal_memory_hot_preview"
+
+[[kv_namespaces]]
+binding = "AVATAR_STATE"
+id = "fractal_avatar_state"
+preview_id = "fractal_avatar_state_preview"
+
+[[kv_namespaces]]
+binding = "CONTEXT_CACHE"
+id = "fractal_context_cache"
+preview_id = "fractal_context_cache_preview"
+
+[[kv_namespaces]]
+binding = "RATE_LIMIT"
+id = "fractal_rate_limit"
+preview_id = "fractal_rate_limit_preview"
+
+[triggers]
+crons = ["*/5 * * * *"]
+
+[[routes]]
+pattern = "edge.0r8.ai/*"
+zone_name = "0r8.ai"
+
+[build]
+command = "npm run build"
+
+[dev]
+port = 8787
+local_protocol = "http"

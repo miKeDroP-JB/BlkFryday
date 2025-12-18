@@ -41,3 +41,8 @@ coverage/
 # Misc
 *.pem
 .vercel
+
+# Runtime data
+.orb-data/
+backups/
+logs/

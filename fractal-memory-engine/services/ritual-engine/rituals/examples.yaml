@@ -1,0 +1,321 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# RITUAL DEFINITIONS - YAML Format
+# ═══════════════════════════════════════════════════════════════════════════
+#
+# Rituals are scheduled multi-agent orchestration sequences.
+# They run automatically based on triggers and adapt over time.
+#
+# Format:
+#   ritual_id: unique identifier
+#   name: human-readable name
+#   trigger: cron | event | manual | chain | adaptive
+#   steps: ordered list of agent actions
+#
+# ═══════════════════════════════════════════════════════════════════════════
+
+rituals:
+  # ─────────────────────────────────────────────────────────────────────────
+  # USER RITUALS - Personal productivity and wellness
+  # ─────────────────────────────────────────────────────────────────────────
+
+  - ritual_id: morning-sync
+    name: Morning Sync
+    description: Start the day with context alignment and goal review
+    trigger: cron
+    trigger_config:
+      cron: "0 8 * * *"  # 8 AM daily
+    priority: high
+    tags: [user, daily, productivity]
+    steps:
+      - name: Load Yesterday's Context
+        agent: surface
+        action: recall_recent
+        params:
+          hours: 24
+          types: [goals, decisions, insights]
+
+      - name: Summarize Overnight Activity
+        agent: process
+        action: summarize
+        params:
+          mode: overnight
+
+      - name: Review Active Goals
+        agent: surface
+        action: get_goals
+        params:
+          status: active
+
+      - name: Generate Day Plan
+        agent: orchestrator
+        action: generate_plan
+        params:
+          horizon: today
+          style: focused
+
+      - name: Notify User
+        agent: external
+        action: notify
+        params:
+          channel: preferred
+          template: morning_sync
+
+  - ritual_id: weekly-reflection
+    name: Weekly Reflection
+    description: Deep reflection on the week's progress and patterns
+    trigger: cron
+    trigger_config:
+      cron: "0 18 * * 0"  # Sunday 6 PM
+    priority: normal
+    tags: [user, weekly, reflection]
+    steps:
+      - name: Compile Week Summary
+        agent: process
+        action: compile_summary
+        params:
+          days: 7
+          include_metrics: true
+
+      - name: Identify Patterns
+        agent: evolve
+        action: detect_patterns
+        params:
+          window: week
+          min_occurrences: 3
+
+      - name: Generate Insights
+        agent: process
+        action: generate_insights
+        params:
+          focus: [productivity, wellbeing, growth]
+
+      - name: Update Long-term Goals
+        agent: evolve
+        action: adjust_goals
+        params:
+          based_on: week_performance
+
+      - name: Archive Week Memory
+        agent: evolve
+        action: archive_period
+        params:
+          period: week
+
+  - ritual_id: emotional-checkin
+    name: Emotional Check-in
+    description: Periodic emotional state assessment and adjustment
+    trigger: adaptive
+    trigger_config:
+      min_interval_hours: 4
+      max_interval_hours: 12
+      trigger_on: [stress_detected, mood_shift, long_silence]
+    priority: high
+    tags: [user, wellness, emotional]
+    steps:
+      - name: Assess Current State
+        agent: capture
+        action: assess_emotional_state
+        params:
+          method: contextual
+
+      - name: Compare to Baseline
+        agent: process
+        action: compare_baseline
+        params:
+          metric: emotional_state
+
+      - name: Generate Support Response
+        agent: surface
+        action: generate_response
+        params:
+          mode: supportive
+          personalized: true
+
+      - name: Log State
+        agent: capture
+        action: log_emotional_state
+        params:
+          persist: true
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # SYSTEM RITUALS - Maintenance and optimization
+  # ─────────────────────────────────────────────────────────────────────────
+
+  - ritual_id: memory-hygiene
+    name: Memory Hygiene
+    description: Clean, compress, and optimize memory stores
+    trigger: cron
+    trigger_config:
+      cron: "0 4 * * *"  # 4 AM daily
+    priority: low
+    tags: [system, maintenance, memory]
+    steps:
+      - name: Identify Stale Data
+        agent: evolve
+        action: scan_stale
+        params:
+          threshold_days: 30
+          min_decay: 0.1
+
+      - name: Archive Cold Data
+        agent: evolve
+        action: archive
+        params:
+          destination: cold_storage
+          compress: true
+
+      - name: Deduplicate Insights
+        agent: process
+        action: deduplicate
+        params:
+          similarity_threshold: 0.95
+
+      - name: Rebuild Indices
+        agent: process
+        action: rebuild_indices
+        params:
+          types: [semantic, temporal, relational]
+
+      - name: Report Results
+        agent: observability
+        action: log_maintenance
+        params:
+          category: memory_hygiene
+
+  - ritual_id: security-audit
+    name: Security Audit
+    description: Automated security checks and anomaly detection
+    trigger: cron
+    trigger_config:
+      cron: "0 */4 * * *"  # Every 4 hours
+    priority: critical
+    tags: [system, security, audit]
+    steps:
+      - name: Scan Access Patterns
+        agent: auth
+        action: scan_access
+        params:
+          window_hours: 4
+          detect_anomalies: true
+
+      - name: Check Rate Limit Violations
+        agent: auth
+        action: check_violations
+        params:
+          threshold: 10
+
+      - name: Verify Token Integrity
+        agent: auth
+        action: verify_tokens
+        params:
+          sample_size: 100
+
+      - name: Report Findings
+        agent: observability
+        action: security_report
+        params:
+          alert_on_critical: true
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # CREATIVE RITUALS - Content and idea generation
+  # ─────────────────────────────────────────────────────────────────────────
+
+  - ritual_id: idea-incubation
+    name: Idea Incubation
+    description: Let the swarm brainstorm while user is away
+    trigger: event
+    trigger_config:
+      event: user_idle
+      idle_minutes: 30
+    priority: background
+    tags: [creative, background, ideas]
+    steps:
+      - name: Gather Open Threads
+        agent: surface
+        action: get_open_threads
+        params:
+          types: [questions, problems, ideas]
+
+      - name: Swarm Brainstorm
+        agent: swarm
+        action: brainstorm
+        params:
+          mode: council
+          duration_minutes: 10
+          agents: [apollo, athena, hermes]
+
+      - name: Filter Best Ideas
+        agent: process
+        action: rank_ideas
+        params:
+          criteria: [novelty, feasibility, relevance]
+          top_n: 5
+
+      - name: Store for Review
+        agent: capture
+        action: store_ideas
+        params:
+          category: incubated
+          notify_on_next_session: true
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # BUSINESS RITUALS - Professional and business focus
+  # ─────────────────────────────────────────────────────────────────────────
+
+  - ritual_id: market-pulse
+    name: Market Pulse
+    description: Gather and analyze market intelligence
+    trigger: cron
+    trigger_config:
+      cron: "0 6 * * 1-5"  # 6 AM weekdays
+    priority: normal
+    tags: [business, market, intelligence]
+    steps:
+      - name: Fetch Market Data
+        agent: external
+        action: fetch_market_data
+        params:
+          sources: [news, social, financial]
+
+      - name: Extract Signals
+        agent: process
+        action: extract_signals
+        params:
+          relevance_filter: user_interests
+
+      - name: Generate Brief
+        agent: surface
+        action: generate_brief
+        params:
+          format: executive_summary
+          max_items: 10
+
+      - name: Update Watchlist
+        agent: capture
+        action: update_watchlist
+        params:
+          auto_add_trending: true
+
+# ═══════════════════════════════════════════════════════════════════════════
+# RITUAL TEMPLATES
+# ═══════════════════════════════════════════════════════════════════════════
+# Reusable patterns that can be customized per user
+
+templates:
+  daily_productivity:
+    base: morning-sync
+    customizable:
+      - trigger_config.cron
+      - steps.generate_plan.params.style
+
+  weekly_review:
+    base: weekly-reflection
+    customizable:
+      - trigger_config.cron
+      - steps.generate_insights.params.focus
+
+  wellness_check:
+    base: emotional-checkin
+    customizable:
+      - trigger_config.min_interval_hours
+      - trigger_config.trigger_on

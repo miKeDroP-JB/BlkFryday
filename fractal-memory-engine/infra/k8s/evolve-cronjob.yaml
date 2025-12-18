@@ -1,0 +1,63 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: evolve
+  namespace: fractal-memory
+spec:
+  schedule: "0 * * * *"  # Every hour
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: evolve
+              image: fractal-memory/evolve:latest
+              command: ["python", "main.py"]
+              envFrom:
+                - configMapRef:
+                    name: fractal-memory-config
+                - secretRef:
+                    name: fractal-memory-secrets
+              resources:
+                requests:
+                  memory: "512Mi"
+                  cpu: "250m"
+                limits:
+                  memory: "1Gi"
+                  cpu: "500m"
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: calibration
+  namespace: fractal-memory
+spec:
+  schedule: "30 */6 * * *"  # Every 6 hours at :30
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: calibration
+              image: fractal-memory/calibration:latest
+              command: ["python", "main.py"]
+              envFrom:
+                - configMapRef:
+                    name: fractal-memory-config
+                - secretRef:
+                    name: fractal-memory-secrets
+              resources:
+                requests:
+                  memory: "512Mi"
+                  cpu: "250m"
+                limits:
+                  memory: "1Gi"
+                  cpu: "500m"
