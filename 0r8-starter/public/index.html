@@ -119,15 +119,23 @@
         </div>
 
         <div class="endpoints">
-            <h3>API Endpoints</h3>
+            <h3>Core API</h3>
             <div class="endpoint">
                 <span class="method">GET</span>
                 <a href="/api/health">/api/health</a> — System health check
             </div>
             <div class="endpoint">
+                <span class="method">GET</span>
+                <a href="/api/system">/api/system</a> — Full system status
+            </div>
+            <div class="endpoint">
                 <span class="method post">POST</span>
                 <span>/api/process</span> — Process input through ORB engine
             </div>
+        </div>
+
+        <div class="endpoints">
+            <h3>Phase Omega</h3>
             <div class="endpoint">
                 <span class="method">GET</span>
                 <a href="/api/observer">/api/observer</a> — Observer status
@@ -135,6 +143,18 @@
             <div class="endpoint">
                 <span class="method">GET</span>
                 <a href="/api/agents">/api/agents</a> — Bounded agents status
+            </div>
+        </div>
+
+        <div class="endpoints">
+            <h3>Intelligence</h3>
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <span>/api/solve</span> — ARC-AGI solver (UnlimitedSolver)
+            </div>
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <span>/api/voice</span> — Voice command processor
             </div>
         </div>
 
