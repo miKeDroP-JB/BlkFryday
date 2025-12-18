@@ -1,10 +1,14 @@
 {
   "name": "orb-system",
-  "version": "2.0.0",
-  "description": "THE 0RB SYSTEM - The builder that builds the future.",
-  "main": "core/index.js",
+  "version": "11.5.0",
+  "description": "0RB SYSTEM - ORBITAL FORGE + BRAIN NETWORK V11.5 - GODMODE ULTIMATE",
+  "main": "system/core/MasterBrain.js",
   "scripts": {
-    "start": "node scripts/start.js",
+    "start": "node boot/MasterBoot.js",
+    "master": "node boot/MasterBoot.js",
+    "boot": "node boot/MasterBoot.js",
+    "boot:legacy": "node boot/init.js",
+    "dev": "electron . --dev",
     "core": "node -e \"require('./core').createORB().then(o => console.log(o.getStatus()))\"",
     "factory": "node scripts/factory.js",
     "sentinel": "node -e \"require('./core').HydraSentinel && new (require('./core').HydraSentinel)().initialize()\"",
@@ -36,7 +40,6 @@
     "web": "cd web && next dev",
     "web:build": "cd web && next build",
     "web:start": "cd web && next start",
-    "boot": "node boot/init.js",
     "contracts:compile": "cd contracts && npx hardhat compile",
     "contracts:test": "cd contracts && npx hardhat test",
     "contracts:deploy": "cd contracts && npx hardhat run scripts/deploy.js",
@@ -44,7 +47,17 @@
     "setup": "bash setup/os-setup.sh",
     "test": "jest",
     "lint": "eslint .",
-    "benchmark": "node scripts/benchmark.js"
+    "sync": "./scripts/sync-latest.sh",
+    "train": "node --max-old-space-size=4096 scripts/train-forge.js",
+    "train:forge": "node --max-old-space-size=4096 scripts/train-forge.js",
+    "train:extended": "node --max-old-space-size=8192 scripts/train-forge.js --cycles=2000",
+    "train:resume": "node --max-old-space-size=4096 scripts/train-forge.js --resume",
+    "train:deep": "node --max-old-space-size=8192 scripts/train-forge.js --cycles=369 --resume",
+    "reset": "node scripts/reset-memory.js --force",
+    "reset:preview": "node scripts/reset-memory.js --dry-run",
+    "train:fresh": "npm run reset && npm run train",
+    "train:auto": "npm run train && npm run train:resume",
+    "benchmark": "node --max-old-space-size=4096 benchmark/run.js"
   },
   "dependencies": {
     "electron": "^28.0.0",
@@ -94,7 +107,7 @@
       "target": ["dmg", "zip"]
     }
   },
-  "keywords": ["orb", "ai", "agents", "copa", "simulation", "gaming"],
+  "keywords": ["orb", "ai", "agents", "copa", "simulation", "gaming", "orbital-forge", "brain-network"],
   "author": "0RB",
   "license": "MIT"
 }

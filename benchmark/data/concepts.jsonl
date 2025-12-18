@@ -1,0 +1,20 @@
+{"id":"c0001","concept":"electrochemical gradient","domain":"biology","payload":"The difference in ion concentration and electrical charge across a membrane, driving processes like ATP synthesis"}
+{"id":"c0002","concept":"market equilibrium","domain":"economics","payload":"The point where supply equals demand, determining price and quantity in a market"}
+{"id":"c0003","concept":"recursive function","domain":"computer_science","payload":"A function that calls itself to solve smaller instances of the same problem"}
+{"id":"c0004","concept":"quantum superposition","domain":"physics","payload":"A quantum system existing in multiple states simultaneously until measured"}
+{"id":"c0005","concept":"cognitive dissonance","domain":"psychology","payload":"Mental discomfort from holding contradictory beliefs, attitudes, or values"}
+{"id":"c0006","concept":"supply chain optimization","domain":"business","payload":"Improving efficiency, cost, and speed across the entire product delivery network"}
+{"id":"c0007","concept":"neural plasticity","domain":"neuroscience","payload":"The brain's ability to reorganize by forming new neural connections"}
+{"id":"c0008","concept":"distributed consensus","domain":"distributed_systems","payload":"Agreement among networked nodes on a single data value or system state"}
+{"id":"c0009","concept":"moral relativism","domain":"philosophy","payload":"The view that moral judgments are not universally true but relative to culture"}
+{"id":"c0010","concept":"semantic similarity","domain":"nlp","payload":"Measure of likeness between text meanings, not just surface forms"}
+{"id":"c0011","concept":"entropy","domain":"thermodynamics","payload":"Measure of disorder or randomness in a system, always increasing in isolated systems"}
+{"id":"c0012","concept":"opportunity cost","domain":"economics","payload":"The value of the next best alternative foregone when making a choice"}
+{"id":"c0013","concept":"polymorphism","domain":"programming","payload":"Ability of different classes to respond to the same method call differently"}
+{"id":"c0014","concept":"natural selection","domain":"biology","payload":"Process where organisms better adapted to environment survive and reproduce"}
+{"id":"c0015","concept":"confirmation bias","domain":"psychology","payload":"Tendency to search for information that confirms existing beliefs"}
+{"id":"c0016","concept":"gradient descent","domain":"machine_learning","payload":"Optimization algorithm that iteratively moves toward minimum of a function"}
+{"id":"c0017","concept":"tragedy of the commons","domain":"economics","payload":"Depletion of shared resources due to individual self-interest"}
+{"id":"c0018","concept":"hash function","domain":"cryptography","payload":"Function that maps data of arbitrary size to fixed-size values"}
+{"id":"c0019","concept":"homeostasis","domain":"biology","payload":"Self-regulating process to maintain stable internal conditions"}
+{"id":"c0020","concept":"network effect","domain":"economics","payload":"Value of a service increases as more people use it"}

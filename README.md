@@ -104,42 +104,60 @@ Layer 5: AUTONOMOUS CREATION
     └── Staking Tiers
 ```
 
-## Installation
+## Quick Start (External Drive / Windows)
+
+### Prerequisites
+- **Node.js 18+** installed: https://nodejs.org
+- Windows 10/11
+
+### First Time Setup
+1. Copy this entire folder to your external drive
+2. Double-click `START.bat` - it auto-runs setup on first launch
+3. Wait for dependencies to install (2-5 minutes)
+4. Browser opens automatically to http://localhost:3000
+
+### Running After Setup
+- **START.bat** - One-click launch (auto-detects prod/dev)
+- **boot/BOOT.bat** - Production mode
+- **boot/DEV.bat** - Development mode with hot reload
+- **boot/LAUNCH.ps1** - PowerShell version (right-click > Run with PowerShell)
+
+### Manual Installation
 
 ```bash
-# Clone the repository
-git clone https://github.com/your-repo/orb-system.git
+# Navigate to project root
+cd /d E:\BlkFryday  # Replace E: with your drive letter
 
 # Install dependencies
 npm install
+cd web && npm install
 
-# Start development
-npm run dev
-
-# Build for production
+# Build for production (optional)
 npm run build
 
-# Create USB bootable
-npm run build:usb
-
-# Create ISO image
-npm run build:iso
+# Start the server
+npm start          # Production
+npm run dev        # Development
 ```
 
-## USB Bootable
+## Running from External Drive
 
-The 0RB SYSTEM can be deployed as a USB bootable image:
+Perfect for portable setups on Intel Mac running Windows:
 
-```bash
-# Build the USB structure
-npm run build:usb
-
-# Create ISO (Linux)
-npm run build:iso
-
-# Write to USB
-sudo dd if=dist/iso/orb-system.iso of=/dev/sdX bs=4M status=progress
 ```
+EXTERNAL DRIVE
+└── BlkFryday/
+    ├── START.bat       <-- Double-click to launch!
+    ├── boot/
+    │   ├── SETUP.bat   <-- Run once for first-time setup
+    │   ├── BOOT.bat    <-- Production launcher
+    │   ├── DEV.bat     <-- Development launcher
+    │   └── LAUNCH.ps1  <-- PowerShell launcher
+    ├── web/            <-- Frontend (Next.js)
+    └── system/         <-- Backend (Brain Network)
+```
+
+**Tip:** Pin START.bat to taskbar for quick access!
 
 ## The Games
 
@@ -200,6 +218,7 @@ that was always there.
 
 ```
 BlkFryday/
+├── START.bat            # One-click launcher
 ├── forge/               # ORBITAL FORGE - Reality Compiler
 │   ├── BLUEPRINT.md     # The Reality Execution Blueprint
 │   ├── index.js         # Unified Forge export
@@ -210,46 +229,76 @@ BlkFryday/
 │       ├── multiplication.js # Layer 3: Multiplication
 │       ├── evolution.js # Layer 4: Evolution
 │       └── autonomous.js # Layer 5: Autonomous Creation
-├── boot/                # Boot sequence
-│   └── init.js          # Bootloader
-├── system/              # 0RB Core systems (powered by Forge)
-│   ├── index.js         # Unified system export
-│   ├── agents/          # Agent manager + Swarm
-│   ├── copa/            # Copa sidekick
-│   ├── crypto/          # Crypto engine
-│   ├── games/           # Game engines
-│   └── ...              # Other systems
-├── web/                 # Web interface
-│   ├── public/          # Static files
-│   └── src/             # React source
-│       ├── components/  # UI components
-│       ├── context/     # State management
-│       ├── pages/       # Next.js pages
-│       └── styles/      # CSS
-├── scripts/             # Build scripts
+├── boot/                # Boot scripts
+│   ├── SETUP.bat        # First-time setup
+│   ├── BOOT.bat         # Production launcher
+│   ├── DEV.bat          # Development launcher
+│   ├── LAUNCH.ps1       # PowerShell launcher
+│   ├── MasterBoot.js    # Master bootloader
+│   └── init.js          # Legacy bootloader
+├── system/              # Backend - Brain Network V11.5
+│   ├── core/            # MasterBrain, Core Systems
+│   ├── brain/           # 10 Core Brain Systems
+│   │   ├── BrainNetworkV11.js
+│   │   ├── ImmersiveAudio.js
+│   │   ├── VoiceFirst.js
+│   │   ├── ProjectForge.js
+│   │   └── ...
+│   ├── agents/          # 1007 Agent Definitions + Swarm
+│   ├── copa/            # Copa Sidekick (10 Verticals)
+│   ├── crypto/          # $0RB Economy
+│   └── games/           # Game engines
+├── web/                 # Frontend (Next.js)
+│   ├── src/
+│   │   ├── app/         # App Router
+│   │   │   └── api/v11/ # Brain Network API
+│   │   └── components/  # UI Components
+│   │       ├── CockpitV11.jsx
+│   │       ├── VoiceOrb.jsx
+│   │       ├── GrimoireUI.jsx
+│   │       └── GamificationHUD.jsx
+│   └── public/          # Static assets
 ├── contracts/           # Solidity smart contracts
-└── config/              # Configuration
+├── scripts/             # Build scripts
+├── data/                # Runtime data (created on setup)
+└── logs/                # System logs (created on setup)
 ```
 
 ## Commands
 
+**Windows (External Drive):**
+```batch
+START.bat          :: One-click launch (recommended)
+boot\SETUP.bat     :: First-time installation
+boot\BOOT.bat      :: Production mode
+boot\DEV.bat       :: Development mode
+```
+
+**Terminal (from web/ directory):**
 ```bash
-npm start          # Run Electron app
-npm run dev        # Development mode
+npm start          # Production server
+npm run dev        # Development with hot reload
 npm run build      # Build for production
-npm run build:usb  # Build USB bootable
-npm run build:iso  # Create ISO image
-npm run web        # Start web server
-npm run boot       # Run boot sequence
+npm run lint       # Check code quality
+```
+
+**Training & Benchmarks:**
+```bash
+npm run train      # Train the forge
+npm run benchmark  # Run performance tests
 ```
 
 ---
 
 ```
 ═══════════════════════════════════════════════════════════════
-    0RB as the interface between the code and the conscious
-                      EVERYBODY EATS
+   BRAIN NETWORK V11.5 - GODMODE ULTIMATE
+   10 SYSTEMS | 1007 AGENTS | 50+ STRATEGIES | INFINITE POWER
+
+   POWERED BY ORBITAL FORGE - THE REALITY COMPILER
+
+   "First and best of its kind in the world"
 ═══════════════════════════════════════════════════════════════
 ```
 
-Version: 3.0.0 | Codename: ORBITAL | Powered by ORBITAL FORGE 🜂
+Version: 11.5.0 | Codename: ORBITAL_GODMODE | Powered by ORBITAL FORGE 🜂

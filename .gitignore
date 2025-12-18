@@ -41,6 +41,7 @@ coverage/
 # Misc
 *.pem
 .vercel
+*.zip
 
 # Runtime data
 .orb-data/
@@ -49,5 +50,6 @@ logs/
 __pycache__/
 data/
 
-# Benchmark results
+# Benchmark
 benchmark_results*.json
+benchmark/benchmark/
