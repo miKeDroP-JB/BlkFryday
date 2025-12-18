@@ -46,3 +46,8 @@ coverage/
 .orb-data/
 backups/
 logs/
+__pycache__/
+data/
+
+# Benchmark results
+benchmark_results*.json
