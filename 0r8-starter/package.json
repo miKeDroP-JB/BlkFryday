@@ -42,7 +42,13 @@
     "agents:enable": "node agents/cli.js enable --scope=task-level --constraints=observer,amoeba --autonomy=bounded",
     "agents:status": "node agents/cli.js status",
     "agents:demo": "node agents/cli.js demo",
-    "omega": "npm run locks:freeze && npm run flowsync:orchestrate && npm run agents:enable"
+    "omega": "npm run locks:freeze && npm run flowsync:orchestrate && npm run agents:enable",
+    "dev": "node term.js --server",
+    "build": "echo 'No build step required'",
+    "vercel:dev": "vercel dev",
+    "vercel:deploy": "vercel --prod",
+    "local:boot": "npm run locks:freeze && npm run server",
+    "local:full": "sudo ./deploy/orbos-boot.sh --foreground"
   },
   "engines": {
     "node": ">=18.0.0"

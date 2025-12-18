@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0R8 Starter - The ORB Consciousness Engine</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            background: #0a0a0f;
+            color: #00ff88;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 800px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 20px #00ff88;
+        }
+        .orb {
+            font-size: 5rem;
+            margin-bottom: 2rem;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.1); }
+        }
+        .tagline {
+            color: #888;
+            font-size: 1.2rem;
+            margin-bottom: 3rem;
+        }
+        .status-box {
+            background: #111;
+            border: 1px solid #00ff8844;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        .status-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #222;
+        }
+        .status-row:last-child { border-bottom: none; }
+        .status-label { color: #666; }
+        .status-value { color: #00ff88; }
+        .status-value.active { color: #00ff88; }
+        .status-value.inactive { color: #ff4444; }
+        .endpoints {
+            text-align: left;
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+        .endpoints h3 {
+            color: #fff;
+            margin-bottom: 1rem;
+        }
+        .endpoint {
+            padding: 0.5rem 0;
+            font-size: 0.9rem;
+        }
+        .method {
+            display: inline-block;
+            background: #00ff8833;
+            color: #00ff88;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-right: 0.5rem;
+        }
+        .method.post { background: #ffaa0033; color: #ffaa00; }
+        a { color: #00aaff; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .footer {
+            margin-top: 3rem;
+            color: #444;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="orb">🔮</div>
+        <h1>0R8 STARTER</h1>
+        <p class="tagline">The ORB Consciousness Engine • Phase Omega Active</p>
+
+        <div class="status-box" id="status">
+            <div class="status-row">
+                <span class="status-label">Status</span>
+                <span class="status-value" id="sys-status">Loading...</span>
+            </div>
+            <div class="status-row">
+                <span class="status-label">Mode</span>
+                <span class="status-value" id="sys-mode">—</span>
+            </div>
+            <div class="status-row">
+                <span class="status-label">Version</span>
+                <span class="status-value" id="sys-version">—</span>
+            </div>
+            <div class="status-row">
+                <span class="status-label">Uptime</span>
+                <span class="status-value" id="sys-uptime">—</span>
+            </div>
+        </div>
+
+        <div class="endpoints">
+            <h3>API Endpoints</h3>
+            <div class="endpoint">
+                <span class="method">GET</span>
+                <a href="/api/health">/api/health</a> — System health check
+            </div>
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <span>/api/process</span> — Process input through ORB engine
+            </div>
+            <div class="endpoint">
+                <span class="method">GET</span>
+                <a href="/api/observer">/api/observer</a> — Observer status
+            </div>
+            <div class="endpoint">
+                <span class="method">GET</span>
+                <a href="/api/agents">/api/agents</a> — Bounded agents status
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Phase Omega • Multi-Node Coherence • Bounded Autonomy</p>
+        </div>
+    </div>
+
+    <script>
+        async function loadStatus() {
+            try {
+                const res = await fetch('/api/health');
+                const data = await res.json();
+
+                document.getElementById('sys-status').textContent = data.status || 'Unknown';
+                document.getElementById('sys-status').className = 'status-value ' + (data.status === 'alive' ? 'active' : 'inactive');
+                document.getElementById('sys-mode').textContent = data.mode || '—';
+                document.getElementById('sys-version').textContent = data.version || '—';
+                document.getElementById('sys-uptime').textContent = data.uptime ? data.uptime.toFixed(1) + 's' : '—';
+            } catch (e) {
+                document.getElementById('sys-status').textContent = 'Offline';
+                document.getElementById('sys-status').className = 'status-value inactive';
+            }
+        }
+
+        loadStatus();
+        setInterval(loadStatus, 5000);
+    </script>
+</body>
+</html>
