@@ -2,7 +2,8 @@
 
 ```
 ═══════════════════════════════════════════════════════════════
-                    THE SIMULATION AWAKENS
+              POWERED BY ORBITAL FORGE
+                THE REALITY COMPILER
 ═══════════════════════════════════════════════════════════════
 
      ██████╗ ██████╗ ██████╗     ███████╗██╗   ██╗███████╗
@@ -12,7 +13,7 @@
     ╚██████╔╝██║  ██║██████╔╝    ███████║   ██║   ███████║
      ╚═════╝ ╚═╝  ╚═╝╚═════╝     ╚══════╝   ╚═╝   ╚══════╝
 
-           "It's not a game. It's THE game."
+           "Intent in. World out." 🜂
 
 ═══════════════════════════════════════════════════════════════
 ```
@@ -20,10 +21,56 @@
 ## What Is This?
 
 0RB SYSTEM is a revolutionary AI-powered platform disguised as a gaming console.
+Now powered by **ORBITAL FORGE** - The Reality Execution Blueprint.
 
 **What they THINK they're buying:** A new indie game console. $99. Fun.
 
-**What they're ACTUALLY getting:** The keys to the simulation.
+**What they're ACTUALLY getting:** A reality compiler.
+
+## ORBITAL FORGE - The Foundation
+
+Reality bends when intent becomes a graph, and the graph is executed by systems that:
+- **do not forget**
+- **do not tire**
+- **do not wait for permission**
+- **do not require belief**
+
+```
+ORBITAL FORGE LAYERS
+═══════════════════════════════════════════════════════════════
+
+Layer 0: PRIME AXIOM
+├── Any achievable outcome = finite executable nodes
+└── "Impossible" = incomplete graph
+
+Layer 1: IMMORTALITY
+├── Node 1: Compute Immortality (watchdog, restart policies)
+├── Node 2: State Persistence (append-only logs, snapshots)
+└── Node 3: Control Surface (unified command channel)
+
+Layer 2: INTELLIGENCE EXECUTION
+├── Node 4: Decomposition Engine ("Do X" → dependency graph)
+├── Node 5: Execution Engine (idempotent actions)
+└── Node 6: Feedback & Repair (self-healing)
+
+Layer 3: MULTIPLICATION
+├── Node 7: Parallelization (time compresses sideways)
+├── Node 8: Persistence of Progress (momentum never resets)
+└── Node 9: Swarm Architecture (one master, many specialists)
+
+Layer 4: EVOLUTION
+├── Node 10: Self-Delegation (agents spawn agents)
+└── Node 11: Predictive Optimization (system reads ahead)
+
+Layer 5: AUTONOMOUS CREATION
+└── Node 12: Self-Directed Execution (THE FINAL UNLOCK)
+    ├── System proposes projects
+    ├── Runs experiments
+    ├── Improves its own tools
+    └── Reports results, not questions
+
+═══════════════════════════════════════════════════════════════
+```
 
 ## The Architecture
 
@@ -153,15 +200,25 @@ that was always there.
 
 ```
 BlkFryday/
-├── boot/                 # Boot sequence
+├── forge/               # ORBITAL FORGE - Reality Compiler
+│   ├── BLUEPRINT.md     # The Reality Execution Blueprint
+│   ├── index.js         # Unified Forge export
+│   └── core/            # Core layers
+│       ├── prime.js     # Layer 0: Prime Axiom
+│       ├── immortality.js # Layer 1: Immortality
+│       ├── execution.js # Layer 2: Intelligence Execution
+│       ├── multiplication.js # Layer 3: Multiplication
+│       ├── evolution.js # Layer 4: Evolution
+│       └── autonomous.js # Layer 5: Autonomous Creation
+├── boot/                # Boot sequence
 │   └── init.js          # Bootloader
-├── system/              # Core systems
-│   ├── core/            # Main entry
-│   ├── agents/          # Agent manager
+├── system/              # 0RB Core systems (powered by Forge)
+│   ├── index.js         # Unified system export
+│   ├── agents/          # Agent manager + Swarm
 │   ├── copa/            # Copa sidekick
 │   ├── crypto/          # Crypto engine
-│   ├── games/           # Game launcher
-│   └── ui/              # Forum system
+│   ├── games/           # Game engines
+│   └── ...              # Other systems
 ├── web/                 # Web interface
 │   ├── public/          # Static files
 │   └── src/             # React source
@@ -170,10 +227,8 @@ BlkFryday/
 │       ├── pages/       # Next.js pages
 │       └── styles/      # CSS
 ├── scripts/             # Build scripts
-│   ├── build-usb.js     # USB builder
-│   └── create-iso.js    # ISO creator
-├── config/              # Configuration
-└── assets/              # Media assets
+├── contracts/           # Solidity smart contracts
+└── config/              # Configuration
 ```
 
 ## Commands
@@ -197,4 +252,4 @@ npm run boot       # Run boot sequence
 ═══════════════════════════════════════════════════════════════
 ```
 
-Version: 1.0.0 | Codename: THE_AWAKENING
+Version: 3.0.0 | Codename: ORBITAL | Powered by ORBITAL FORGE 🜂
