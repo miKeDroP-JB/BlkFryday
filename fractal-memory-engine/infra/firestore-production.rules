@@ -1,0 +1,209 @@
+// ═══════════════════════════════════════════════════════════════
+// Firestore Security Rules - THE SHIELDS
+// Phase 13: Production-ready security + data governance
+// ═══════════════════════════════════════════════════════════════
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ─────────────────────────────────────────────────────────────
+    // Helper Functions
+    // ─────────────────────────────────────────────────────────────
+
+    // Check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Check if user owns this document
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Check if request is from service account
+    function isServiceAccount() {
+      return isAuthenticated() &&
+        request.auth.token.service_account == true;
+    }
+
+    // Check if user is admin
+    function isAdmin() {
+      return isAuthenticated() &&
+        request.auth.token.admin == true;
+    }
+
+    // Check if request is from specific service
+    function isService(serviceName) {
+      return isServiceAccount() &&
+        request.auth.token.service_name == serviceName;
+    }
+
+    // Check timestamp is valid
+    function hasValidTimestamp() {
+      return request.resource.data.timestamp == request.time ||
+        request.resource.data._meta.timestamp == request.time;
+    }
+
+    // Prevent mass exports (limit document reads)
+    function withinReadLimit() {
+      return request.query.limit <= 100;
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // User Documents
+    // /users/{userId}
+    // ─────────────────────────────────────────────────────────────
+
+    match /users/{userId} {
+      // Users can read/write their own root document
+      allow read: if isOwner(userId) || isServiceAccount() || isAdmin();
+      allow write: if isOwner(userId) || isServiceAccount();
+
+      // ───────────────────────────────────────────────────────────
+      // Subcollections - Standard Memory
+      // ───────────────────────────────────────────────────────────
+
+      // Patterns collection - Engine writes only
+      match /patterns/{patternId} {
+        allow read: if isOwner(userId) || isServiceAccount();
+        allow create: if isService('pattern-engine') || isService('process-engine');
+        allow update: if isService('pattern-engine') || isService('evolve-engine');
+        allow delete: if isService('evolve-engine') || isAdmin();
+      }
+
+      // Knowledge collection
+      match /knowledge/{knowledgeId} {
+        allow read: if isOwner(userId) || isServiceAccount();
+        allow write: if isOwner(userId) || isServiceAccount();
+      }
+
+      // Lexicon collection
+      match /lexicon/{lexiconId} {
+        allow read: if isOwner(userId) || isServiceAccount();
+        allow write: if isServiceAccount();
+      }
+
+      // Goals collection
+      match /goals/{goalId} {
+        allow read: if isOwner(userId) || isServiceAccount();
+        allow write: if isOwner(userId) || isServiceAccount();
+      }
+
+      // Operating style
+      match /operating_style/{styleId} {
+        allow read: if isOwner(userId) || isServiceAccount();
+        allow write: if isServiceAccount();
+      }
+
+      // Preferences
+      match /preferences/{prefId} {
+        allow read: if isOwner(userId) || isServiceAccount();
+        allow write: if isOwner(userId) || isServiceAccount();
+      }
+
+      // ───────────────────────────────────────────────────────────
+      // Subcollections - Sensitive (High-Sensitivity)
+      // No client download, service only
+      // ───────────────────────────────────────────────────────────
+
+      // Narrative logs - SENSITIVE
+      match /narrative/{narrativeId} {
+        // Can only be read by service accounts, never by client
+        allow read: if isServiceAccount();
+        allow create: if isServiceAccount();
+        allow update: if false; // Immutable
+        allow delete: if isAdmin();
+      }
+
+      // Resonance signals - SENSITIVE
+      match /resonance/{resonanceId} {
+        allow read: if isServiceAccount();
+        allow write: if isServiceAccount();
+      }
+
+      // Calibration data - SENSITIVE
+      match /calibration/{calibrationId} {
+        allow read: if isServiceAccount();
+        allow write: if isService('calibration-engine');
+      }
+
+      // Raw signals - SENSITIVE, append-only
+      match /raw_signals/{signalId} {
+        allow read: if isServiceAccount();
+        allow create: if isService('capture-engine');
+        allow update, delete: if false; // Immutable
+      }
+
+      // ───────────────────────────────────────────────────────────
+      // Avatars - Read by owner, write controlled
+      // ───────────────────────────────────────────────────────────
+
+      match /avatars/{avatarId} {
+        // User can read their avatars
+        allow read: if isOwner(userId) || isServiceAccount();
+
+        // User can create/update their avatars (with limits)
+        allow create: if isOwner(userId) &&
+          request.resource.data.keys().hasOnly([
+            'name', 'avatar_type', 'persona_profile', 'filter_profile',
+            'tone_map', 'preferences', 'relationship_state',
+            'resonance_thresholds', 'created_at', 'updated_at'
+          ]);
+        allow update: if isOwner(userId) || isServiceAccount();
+        allow delete: if isOwner(userId);
+
+        // Avatar overlay - service only
+        match /overlay/{overlayId} {
+          allow read: if isServiceAccount();
+          allow write: if isService('transfer-engine');
+        }
+      }
+
+      // ───────────────────────────────────────────────────────────
+      // Meta/Config - System managed
+      // ───────────────────────────────────────────────────────────
+
+      match /_meta/{metaId} {
+        allow read: if isServiceAccount();
+        allow write: if isServiceAccount();
+      }
+
+      match /config/{configId} {
+        allow read: if isOwner(userId) || isServiceAccount();
+        allow write: if isServiceAccount();
+      }
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // System Configuration
+    // /system/{configId}
+    // ─────────────────────────────────────────────────────────────
+
+    match /system/{configId} {
+      allow read: if isServiceAccount();
+      allow write: if isAdmin();
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Audit Logs
+    // /audit/{logId}
+    // ─────────────────────────────────────────────────────────────
+
+    match /audit/{logId} {
+      // Only service accounts can write audit logs
+      allow read: if isAdmin();
+      allow create: if isServiceAccount();
+      allow update, delete: if false; // Immutable
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Default Deny
+    // ─────────────────────────────────────────────────────────────
+
+    // Deny all other paths
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

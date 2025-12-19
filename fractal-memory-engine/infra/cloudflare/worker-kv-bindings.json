@@ -1,0 +1,28 @@
+{
+  "name": "fractal-memory-cache",
+  "compatibility_date": "2024-01-01",
+  "kv_namespaces": [
+    {
+      "binding": "PROFILE_CACHE",
+      "id": "${CF_KV_NAMESPACE_PROFILE}",
+      "preview_id": "${CF_KV_NAMESPACE_PROFILE_PREVIEW}"
+    },
+    {
+      "binding": "SNIPPET_CACHE",
+      "id": "${CF_KV_NAMESPACE_SNIPPET}",
+      "preview_id": "${CF_KV_NAMESPACE_SNIPPET_PREVIEW}"
+    }
+  ],
+  "vars": {
+    "ENVIRONMENT": "production"
+  },
+  "triggers": {
+    "crons": []
+  },
+  "routes": [
+    {
+      "pattern": "memory-cache.yourdomain.com/*",
+      "zone_name": "yourdomain.com"
+    }
+  ]
+}

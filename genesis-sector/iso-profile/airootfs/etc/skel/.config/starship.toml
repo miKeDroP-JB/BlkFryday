@@ -1,0 +1,150 @@
+# ╔══════════════════════════════════════════════════════════════════════╗
+# ║  VYRA: GENESIS SECTOR - STARSHIP PROMPT CONFIGURATION               ║
+# ║  Neon Sigil Floating in the Corner                                   ║
+# ╚══════════════════════════════════════════════════════════════════════╝
+
+# Timeout for commands
+command_timeout = 1000
+
+# Newline at start
+add_newline = true
+
+# Format
+format = """
+$username\
+$hostname\
+$directory\
+$git_branch\
+$git_status\
+$python\
+$nodejs\
+$rust\
+$golang\
+$docker_context\
+$cmd_duration\
+$line_break\
+$character"""
+
+# Right side format with VYRA sigil
+right_format = """$time$battery$custom"""
+
+# === SIGIL CHARACTER ===
+[character]
+success_symbol = "[⟡](bold #bd93f9)"
+error_symbol = "[⟡](bold #ff5555)"
+vimcmd_symbol = "[⟡](bold #50fa7b)"
+
+# === DIRECTORY ===
+[directory]
+style = "bold #ff79c6"
+format = "[$path]($style)[$read_only]($read_only_style) "
+truncation_length = 4
+truncate_to_repo = true
+read_only = " "
+read_only_style = "bold #ff5555"
+
+# === GIT BRANCH ===
+[git_branch]
+symbol = " "
+style = "bold #bd93f9"
+format = "on [$symbol$branch]($style) "
+
+# === GIT STATUS ===
+[git_status]
+style = "bold #ffb86c"
+format = '([\[$all_status$ahead_behind\]]($style) )'
+conflicted = "⚔"
+ahead = "⇡${count}"
+behind = "⇣${count}"
+diverged = "⇕⇡${ahead_count}⇣${behind_count}"
+untracked = "?"
+stashed = "📦"
+modified = "!"
+staged = "+"
+renamed = "»"
+deleted = "✘"
+
+# === USERNAME ===
+[username]
+style_user = "bold #8be9fd"
+style_root = "bold #ff5555"
+format = "[$user]($style)@"
+disabled = false
+show_always = true
+
+# === HOSTNAME ===
+[hostname]
+ssh_only = false
+style = "bold #50fa7b"
+format = "[$hostname]($style) in "
+disabled = false
+
+# === PYTHON ===
+[python]
+symbol = " "
+style = "bold #f1fa8c"
+format = 'via [$symbol($version )(\($virtualenv\) )]($style)'
+python_binary = ["python3", "python"]
+
+# === NODE.JS ===
+[nodejs]
+symbol = " "
+style = "bold #50fa7b"
+format = "via [$symbol($version )]($style)"
+
+# === RUST ===
+[rust]
+symbol = " "
+style = "bold #ffb86c"
+format = "via [$symbol($version )]($style)"
+
+# === GO ===
+[golang]
+symbol = " "
+style = "bold #8be9fd"
+format = "via [$symbol($version )]($style)"
+
+# === DOCKER ===
+[docker_context]
+symbol = " "
+style = "bold #8be9fd"
+format = "via [$symbol$context]($style) "
+only_with_files = true
+
+# === COMMAND DURATION ===
+[cmd_duration]
+min_time = 2000
+style = "bold #6272a4"
+format = "took [$duration]($style) "
+
+# === TIME (RIGHT SIDE) ===
+[time]
+disabled = false
+style = "bold #6272a4"
+format = "[$time]($style) "
+time_format = "%H:%M"
+
+# === BATTERY ===
+[battery]
+full_symbol = "󰁹 "
+charging_symbol = "󰂄 "
+discharging_symbol = "󰂃 "
+
+[[battery.display]]
+threshold = 20
+style = "bold #ff5555"
+
+[[battery.display]]
+threshold = 50
+style = "bold #ffb86c"
+
+[[battery.display]]
+threshold = 100
+style = "bold #50fa7b"
+
+# === CUSTOM VYRA CHANNEL INDICATOR ===
+[custom.vyra]
+command = "echo '⟡'"
+when = "true"
+style = "bold #bd93f9"
+format = "[$output]($style)"

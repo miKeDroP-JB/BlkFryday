@@ -1,0 +1,40 @@
+{
+  "name": "@fractal-memory/connectors",
+  "version": "1.0.0",
+  "description": "Fractal Memory Engine - Connector Services (P18, P19, P22, P23)",
+  "private": true,
+  "workspaces": [
+    "intent-grid",
+    "lexicon-engine",
+    "voice-loop",
+    "supervisor",
+    "event-bus",
+    "gateway"
+  ],
+  "scripts": {
+    "start": "npm-run-all --parallel start:*",
+    "start:intent": "node intent-grid/index.js",
+    "start:lexicon": "node lexicon-engine/index.js",
+    "start:voice": "node voice-loop/index.js",
+    "start:supervisor": "node supervisor/index.js",
+    "start:events": "node event-bus/index.js",
+    "start:gateway": "node gateway/index.js",
+    "dev": "npm-run-all --parallel dev:*",
+    "dev:intent": "nodemon intent-grid/index.js",
+    "dev:lexicon": "nodemon lexicon-engine/index.js",
+    "dev:voice": "nodemon voice-loop/index.js",
+    "dev:supervisor": "nodemon supervisor/index.js",
+    "dev:events": "nodemon event-bus/index.js",
+    "dev:gateway": "nodemon gateway/index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "http-proxy-middleware": "^2.0.6",
+    "ws": "^8.16.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2",
+    "npm-run-all": "^4.1.5"
+  }
+}

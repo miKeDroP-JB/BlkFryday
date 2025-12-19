@@ -2,13 +2,30 @@
  * 0RB SYSTEM - UNIFIED EXPORT
  * ═══════════════════════════════════════════════════════════════════
  * The Complete Reality Operating System
+ * POWERED BY ORBITAL FORGE - The Reality Compiler
  *
  * "Everything you need to reshape reality, in one import."
  * ═══════════════════════════════════════════════════════════════════
  */
 
-const SYSTEM_VERSION = '2.0.0';
-const CODENAME = 'SOVEREIGN';
+const SYSTEM_VERSION = '3.0.0';
+const CODENAME = 'ORBITAL';
+
+// ═══════════════════════════════════════════════════════════════════
+// ORBITAL FORGE - FOUNDATIONAL LAYER
+// ═══════════════════════════════════════════════════════════════════
+const {
+  OrbitalForge,
+  QuickStart: ForgeQuickStart,
+  Prime,
+  Immortality: ForgeImmortality,
+  Intelligence,
+  Multiplication,
+  Evolution,
+  Autonomous,
+  PRIME_AXIOM,
+  AUTONOMOUS_MANIFESTO
+} = require('../forge');
 
 // ═══════════════════════════════════════════════════════════════════
 // CORE SYSTEMS
@@ -168,6 +185,9 @@ async function initializeSystem(config = {}) {
   `);
 
   const systems = {
+    // ORBITAL FORGE - The Foundation
+    forge: null,
+
     // Core
     agents: null,
     memory: null,
@@ -189,6 +209,13 @@ async function initializeSystem(config = {}) {
     // Solver
     solver: null
   };
+
+  // Initialize Orbital Forge FIRST - it's the foundation
+  if (config.forge !== false) {
+    systems.forge = new OrbitalForge(config.forgeConfig || {});
+    await systems.forge.initialize(config.forgeOptions || {});
+    console.log('🜂 Orbital Forge online - Reality compiler operational');
+  }
 
   // Initialize based on config
   if (config.agents !== false) {
@@ -334,6 +361,20 @@ module.exports = {
   CODENAME,
   initializeSystem,
   QuickStart,
+
+  // ═══════════════════════════════════════════════════════════════
+  // ORBITAL FORGE - THE REALITY COMPILER
+  // ═══════════════════════════════════════════════════════════════
+  OrbitalForge,
+  ForgeQuickStart,
+  Prime,
+  ForgeImmortality,
+  Intelligence,
+  Multiplication,
+  Evolution,
+  Autonomous,
+  PRIME_AXIOM,
+  AUTONOMOUS_MANIFESTO,
 
   // Core Systems
   AgentManager,

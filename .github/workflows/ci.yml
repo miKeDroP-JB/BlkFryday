@@ -1,0 +1,234 @@
+name: CI - Build, Test & Deploy
+
+on:
+  push:
+    branches: [main, develop, 'claude/*']
+  pull_request:
+    branches: [main, develop]
+
+env:
+  NODE_VERSION: '20'
+  PNPM_VERSION: '8'
+
+jobs:
+  # Original test job (preserved for legacy code)
+  test-legacy:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Run tests
+        run: npx jest --testPathIgnorePatterns=node_modules --passWithNoTests
+
+      - name: Run benchmarks
+        run: node scripts/benchmark.js || true
+
+  # Original lint job (preserved for legacy code)
+  lint-legacy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Check for syntax errors
+        run: |
+          find core -name "*.js" -exec node --check {} \; 2>/dev/null || true
+          find scripts -name "*.js" -exec node --check {} \; 2>/dev/null || true
+
+  # New pnpm workspace build for packages/
+  build-packages:
+    name: Build Packages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile || pnpm install
+
+      - name: Build shared package
+        run: pnpm --filter @blk/shared build
+
+      - name: Build all packages
+        run: pnpm -r run build
+
+  # Test with services
+  test-packages:
+    name: Test Packages
+    runs-on: ubuntu-latest
+    needs: build-packages
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: blkf
+          POSTGRES_PASSWORD: blkfpass
+          POSTGRES_DB: blkf
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile || pnpm install
+
+      - name: Build all packages
+        run: pnpm -r run build
+
+      - name: Initialize database
+        run: PGPASSWORD=blkfpass psql -h localhost -U blkf -d blkf -f packages/api/db/init.sql
+
+      - name: Run tests
+        run: pnpm -r run test --if-present
+        env:
+          DATABASE_URL: postgresql://blkf:blkfpass@localhost:5432/blkf
+          REDIS_URL: redis://localhost:6379
+
+  # Docker builds
+  docker-build:
+    name: Docker Build
+    runs-on: ubuntu-latest
+    needs: build-packages
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build API image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: packages/infra/Dockerfile.api
+          push: false
+          tags: blk/api:test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build Worker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: packages/infra/Dockerfile.worker
+          push: false
+          tags: blk/worker:test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # Integration test with full stack
+  integration:
+    name: Integration Test
+    runs-on: ubuntu-latest
+    needs: [test-packages, docker-build]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile || pnpm install
+
+      - name: Build all packages
+        run: pnpm -r run build
+
+      - name: Start stack with docker-compose
+        working-directory: packages/infra
+        run: |
+          docker-compose up -d postgres redis
+          sleep 10
+          docker-compose logs
+
+      - name: Initialize database
+        run: |
+          PGPASSWORD=blkfpass psql -h localhost -U blkf -d blkf -f packages/api/db/init.sql
+
+      - name: Start API server
+        run: |
+          cd packages/api && node dist/server.js &
+          sleep 5
+        env:
+          DATABASE_URL: postgresql://blkf:blkfpass@localhost:5432/blkf
+          REDIS_URL: redis://localhost:6379
+
+      - name: Health check
+        run: |
+          curl -f http://localhost:4000/health || exit 1
+          curl -f http://localhost:4000/api/v1/status || exit 1
+
+      - name: Run swarm demo (small)
+        run: node packages/infra/swarm-demo.js 5
+
+      - name: Cleanup
+        if: always()
+        working-directory: packages/infra
+        run: docker-compose down -v

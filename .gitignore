@@ -41,6 +41,16 @@ coverage/
 # Misc
 *.pem
 .vercel
+*.zip
+
+# Runtime data
+.orb-data/
+backups/
+logs/
+__pycache__/
+data/
+
+# Benchmark
+benchmark_results*.json
+benchmark/benchmark/
 cloudflared
-0r8-starter/data/giftLog.json
-0r8-starter/data/ekoLedger.json
