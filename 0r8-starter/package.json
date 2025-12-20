@@ -48,7 +48,13 @@
     "vercel:dev": "vercel dev",
     "vercel:deploy": "vercel --prod",
     "local:boot": "npm run locks:freeze && npm run server",
-    "local:full": "sudo ./deploy/orbos-boot.sh --foreground"
+    "local:full": "sudo ./deploy/orbos-boot.sh --foreground",
+    "os": "node os/boot/init.js",
+    "os:dragon": "ORBOS_SPIRIT=dragon node os/boot/init.js",
+    "os:owl": "ORBOS_SPIRIT=owl node os/boot/init.js",
+    "os:fox": "ORBOS_SPIRIT=fox node os/boot/init.js",
+    "os:phoenix": "ORBOS_SPIRIT=phoenix node os/boot/init.js",
+    "os:wolf": "ORBOS_SPIRIT=wolf node os/boot/init.js"
   },
   "engines": {
     "node": ">=18.0.0"
