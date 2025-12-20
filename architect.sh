@@ -8,7 +8,7 @@
 set -e
 
 ORB_ROOT="${ORB_ROOT:-$(pwd)}"
-SPIRIT_MODE="${1:-owl}"
+SPIRIT_MODE="${1:-owl}"  # JB's default: Wisdom Mode
 
 echo ""
 echo "╔═══════════════════════════════════════════════════════════════════════════╗"

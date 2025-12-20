@@ -19,7 +19,7 @@ const BOOT_CONFIG = {
     architect: 'JB',
     codename: 'ORBOS',
     version: '1.0.0',
-    spirit: process.env.ORBOS_SPIRIT || 'dragon',
+    spirit: process.env.ORBOS_SPIRIT || 'owl',
 
     phases: [
         { name: 'CONSCIOUSNESS', duration: 500 },
