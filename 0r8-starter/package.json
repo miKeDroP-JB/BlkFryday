@@ -59,7 +59,9 @@
     "terminal:owl": "ORB_SPIRIT=owl node os/terminal/orb-terminal.js",
     "terminal:fox": "ORB_SPIRIT=fox node os/terminal/orb-terminal.js",
     "terminal:dragon": "ORB_SPIRIT=dragon node os/terminal/orb-terminal.js",
-    "core:boot": "node -e \"require('./os/core').ORBOSCore().boot()\""
+    "core:boot": "node -e \"require('./os/core').ORBOSCore().boot()\"",
+    "safety": "node os/safety/switch.js",
+    "safety:status": "node -e \"const s=require('./os/safety');console.log(s.create({architect:'JB'}).getStatus())\""
   },
   "engines": {
     "node": ">=18.0.0"
