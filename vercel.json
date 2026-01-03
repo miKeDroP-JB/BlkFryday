@@ -1,0 +1,36 @@
+{
+  "version": 2,
+  "name": "orbos-eko",
+  "alias": ["eko.vision", "www.eko.vision", "0r8.ai", "www.0r8.ai"],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/0r8-starter/api/$1"
+    },
+    {
+      "src": "/terminal",
+      "dest": "/0r8-starter/public/index.html"
+    },
+    {
+      "src": "/docs",
+      "dest": "/ORBOS/README.md"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-ORBOS-Version", "value": "1.0.0" },
+        { "key": "X-Powered-By", "value": "ORBOS/eKo" }
+      ]
+    }
+  ],
+  "env": {
+    "ORBOS_MODE": "production",
+    "NODE_ENV": "production"
+  }
+}
