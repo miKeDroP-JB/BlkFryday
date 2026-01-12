@@ -1,15 +1,15 @@
 [build]
   publish = "."
-  command = "echo 'ORBOS Deploy'"
+  command = "echo 'ORBOS LIVE'"
 
 [[redirects]]
   from = "/api/*"
-  to = "/0r8-starter/api/:splat"
+  to = "/ORBOS/orb-core/api/:splat"
   status = 200
 
 [[redirects]]
-  from = "/terminal"
-  to = "/0r8-starter/public/index.html"
+  from = "/status"
+  to = "/ORBOS_VERSION.json"
   status = 200
 
 [[redirects]]
@@ -20,9 +20,5 @@
 [[headers]]
   for = "/*"
   [headers.values]
-    X-ORBOS-Version = "1.0.0"
-    X-Powered-By = "ORBOS/eKo"
-
-[context.production.environment]
-  ORBOS_MODE = "production"
-  NODE_ENV = "production"
+    X-ORBOS-Version = "1.0.0-live"
+    X-Powered-By = "Amoeba Hydra"

@@ -1,36 +1,24 @@
 {
   "version": 2,
-  "name": "orbos-eko",
-  "alias": ["eko.vision", "www.eko.vision", "0r8.ai", "www.0r8.ai"],
+  "name": "orbos-live",
+  "alias": ["eko.vision", "0r8.ai", "apps.eko.vision", "oracle.agency"],
+  "builds": [
+    { "src": "index.html", "use": "@vercel/static" },
+    { "src": "ORBOS/**", "use": "@vercel/static" }
+  ],
   "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/0r8-starter/api/$1"
-    },
-    {
-      "src": "/terminal",
-      "dest": "/0r8-starter/public/index.html"
-    },
-    {
-      "src": "/docs",
-      "dest": "/ORBOS/README.md"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
+    { "src": "/api/(.*)", "dest": "/ORBOS/orb-core/api/$1" },
+    { "src": "/glyph/(.*)", "dest": "/ORBOS/glyph-lang/$1" },
+    { "src": "/status", "dest": "/ORBOS_VERSION.json" },
+    { "src": "/(.*)", "dest": "/index.html" }
   ],
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-ORBOS-Version", "value": "1.0.0" },
-        { "key": "X-Powered-By", "value": "ORBOS/eKo" }
+        { "key": "X-ORBOS-Version", "value": "1.0.0-live" },
+        { "key": "X-Powered-By", "value": "Amoeba Hydra" }
       ]
     }
-  ],
-  "env": {
-    "ORBOS_MODE": "production",
-    "NODE_ENV": "production"
-  }
+  ]
 }
