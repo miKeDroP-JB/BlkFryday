@@ -99,7 +99,7 @@ try:
 
     compiler = GlyphCompiler()
 
-    bench("Glyph Parse", 500, lambda: compiler.parse("∞BUILD"))
+    bench("Glyph Parse", 500, lambda: compiler.compile("BUILD"))
     bench("Voice Match", 300, lambda: compiler.voice_to_glyph("build the system"))
     bench("Macro Expand", 300, lambda: compiler.expand_macro("FULLBUILD"))
 

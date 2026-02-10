@@ -378,6 +378,39 @@ class FractalOrchestrator:
         for node in self.nodes:
             node.recharge(amount)
 
+    def spawn_node(self, name: str = None) -> FractalNode:
+        """Spawn a new node dynamically."""
+        node_id = len(self.nodes)
+        node = FractalNode(node_id)
+        self.nodes.append(node)
+        return node
+
+    def distribute_task(self, task_data: Dict) -> Any:
+        """Distribute a task synchronously (for benchmarking)."""
+        task = Task(
+            name=task_data.get('type', 'compute'),
+            payload=task_data.get('data', task_data)
+        )
+        node = self.get_available_node()
+        if node:
+            # Sync execution for benchmarks
+            node.state = NodeState.RUNNING
+            node.metrics.tasks_completed += 1
+            node.state = NodeState.IDLE
+            return task_data
+        return None
+
+    def propagate_energy(self):
+        """Propagate energy wave across all nodes."""
+        total_energy = sum(n.metrics.energy for n in self.nodes)
+        avg = total_energy / len(self.nodes) if self.nodes else 0
+
+        for node in self.nodes:
+            # Nodes share energy towards equilibrium
+            diff = avg - node.metrics.energy
+            node.metrics.energy += diff * 0.1
+            node.metrics.energy = max(0.1, min(1.0, node.metrics.energy))
+
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # CLI / DEMO

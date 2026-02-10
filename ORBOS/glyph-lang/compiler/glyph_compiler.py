@@ -310,6 +310,17 @@ class GlyphCompiler:
         """Get visual symbol representation of program."""
         return ' '.join(node.symbol for node in program.nodes)
 
+    def voice_to_glyph(self, text: str) -> List[str]:
+        """Convert voice/natural language to glyph tokens."""
+        return self.parse_voice(text.lower())
+
+    def expand_macro(self, macro_name: str) -> List[str]:
+        """Expand a single macro to its component glyphs."""
+        macro = self.registry.get(macro_name.upper(), {})
+        if macro.get('type') == GlyphType.MACRO:
+            return macro.get('expansion', [])
+        return [macro_name]
+
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # EXECUTOR
