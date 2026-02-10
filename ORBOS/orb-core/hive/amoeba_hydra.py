@@ -541,14 +541,14 @@ class AmoebaHydra:
 
     def _activate_swarm(self):
         """Activate swarm mode - aggressive expansion."""
-        for node in self.lattice.values():
+        for node in list(self.lattice.values()):
             node.active = True
             if node.weight > 3.0:
                 node.spawn_subnode(self.lattice)
 
     def _deactivate_swarm(self):
         """Deactivate to ghost mode - observation only."""
-        for node in self.lattice.values():
+        for node in list(self.lattice.values()):
             if node.node_type not in [NodeType.HUMAN, NodeType.COORDINATOR]:
                 node.weight *= 0.9
 
@@ -614,7 +614,7 @@ class AmoebaHydra:
 
     def propagate_feedback(self):
         """Feedback & reverse optimization (96/104 principle)."""
-        for node in self.lattice.values():
+        for node in list(self.lattice.values()):
             if node.sub_nodes:
                 for sub in node.sub_nodes:
                     sub.weight = max(0.1, sub.weight + 0.05 * node.weight)
