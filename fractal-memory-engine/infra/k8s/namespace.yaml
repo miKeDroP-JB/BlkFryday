@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: fractal-memory
+  labels:
+    app.kubernetes.io/name: fractal-memory-engine
+    app.kubernetes.io/component: memory-system

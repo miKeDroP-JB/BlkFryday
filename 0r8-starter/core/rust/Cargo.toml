@@ -1,0 +1,93 @@
+[package]
+name = "orbos-core"
+version = "0.1.0"
+edition = "2021"
+authors = ["JB <architect@orbos.ai>"]
+description = "ORBOS Core - Rust-powered AI OS kernel"
+license = "MIT"
+
+[lib]
+name = "orbos_core"
+crate-type = ["cdylib", "rlib"]
+
+[[bin]]
+name = "orbos"
+path = "src/main.rs"
+
+[[bin]]
+name = "orb-guard"
+path = "src/bin/guard.rs"
+
+[[bin]]
+name = "orb-boot"
+path = "src/bin/boot.rs"
+
+[dependencies]
+# Async runtime
+tokio = { version = "1.35", features = ["full"] }
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+serde_yaml = "0.9"
+
+# CLI
+clap = { version = "4.4", features = ["derive"] }
+
+# Compression (beast mode)
+zstd = "0.13"
+lz4 = "1.24"
+snap = "1.1"
+
+# Hashing & Crypto
+sha2 = "0.10"
+blake3 = "1.5"
+ring = "0.17"
+
+# System
+nix = { version = "0.27", features = ["fs", "process", "signal"] }
+libc = "0.2"
+sysinfo = "0.30"
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["json"] }
+
+# Time
+chrono = { version = "0.4", features = ["serde"] }
+
+# UUID
+uuid = { version = "1.6", features = ["v4", "serde"] }
+
+# IPC & Networking
+crossbeam-channel = "0.5"
+unix_socket = "0.5"
+
+# Memory mapping
+memmap2 = "0.9"
+
+# SIMD for compute
+packed_simd_2 = "0.3"
+
+[dev-dependencies]
+criterion = "0.5"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
+
+[profile.release-fast]
+inherits = "release"
+opt-level = 3
+debug = false
+
+[features]
+default = ["full"]
+full = ["voice", "agents", "brain"]
+voice = []
+agents = []
+brain = []
+minimal = []

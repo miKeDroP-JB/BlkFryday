@@ -1,0 +1,75 @@
+{
+  "id": "gig_api_development",
+  "name": "REST API Development",
+  "category": "backend",
+  "description": "Full-featured REST API with authentication, database integration, and documentation",
+  "pricing": {
+    "base": 800,
+    "hourlyRate": 75,
+    "estimatedHours": 15,
+    "packages": {
+      "basic": {
+        "price": 500,
+        "deliveryDays": 7,
+        "features": [
+          "Up to 5 endpoints",
+          "Basic authentication",
+          "SQLite database",
+          "Basic documentation"
+        ]
+      },
+      "standard": {
+        "price": 800,
+        "deliveryDays": 10,
+        "features": [
+          "Up to 15 endpoints",
+          "JWT authentication",
+          "PostgreSQL/MongoDB",
+          "Swagger documentation",
+          "Unit tests"
+        ]
+      },
+      "premium": {
+        "price": 1500,
+        "deliveryDays": 14,
+        "features": [
+          "Unlimited endpoints",
+          "OAuth2/JWT/API keys",
+          "Database of choice",
+          "Full documentation",
+          "Comprehensive tests",
+          "Docker deployment",
+          "CI/CD pipeline"
+        ]
+      }
+    }
+  },
+  "requirements": {
+    "input": [
+      "API specification or requirements document",
+      "Database schema (if existing)",
+      "Authentication requirements",
+      "Expected scale/traffic"
+    ],
+    "skills": ["nodejs", "python", "api", "database"]
+  },
+  "deliverables": [
+    "Source code (GitHub/GitLab)",
+    "API documentation",
+    "Environment setup guide",
+    "Postman collection",
+    "Test suite"
+  ],
+  "platforms": ["upwork", "toptal", "freelancer"],
+  "tags": ["api", "backend", "rest", "node", "python", "database"],
+  "faqs": [
+    {
+      "q": "What technologies do you use?",
+      "a": "Node.js (Express/Fastify) or Python (FastAPI/Django), with PostgreSQL, MongoDB, or your preferred database."
+    },
+    {
+      "q": "Do you include deployment?",
+      "a": "Premium package includes Docker setup and CI/CD. Deployment to specific cloud providers available as add-on."
+    }
+  ]
+}

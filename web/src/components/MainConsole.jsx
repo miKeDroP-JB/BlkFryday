@@ -3,7 +3,7 @@
  * The primary interface to the simulation
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSystem } from '@/context/SystemContext';
 import { useAgents, ARCHETYPES } from '@/context/AgentContext';
 import { useCopa, VERTICALS } from '@/context/CopaContext';
@@ -42,19 +42,49 @@ const NAV_ITEMS = [
 
 export default function MainConsole() {
   const [activeNav, setActiveNav] = useState('games');
-  const { state: systemState } = useSystem();
+  const { state: systemState, actions: systemActions } = useSystem();
   const { state: agentState, actions: agentActions } = useAgents();
   const { state: copaState, actions: copaActions } = useCopa();
   const { state: cryptoState, actions: cryptoActions } = useCrypto();
 
+  const handlePlayGame = (game) => {
+    console.log(`[ORB] Launching ${game.name}...`);
+    systemActions.setActiveGame(game.id);
+    systemActions.addNotification({
+      type: 'info',
+      title: `Launching ${game.name}`,
+      message: game.desc
+    });
+  };
+
+  const handleSummonAgent = (agentId) => {
+    console.log(`[ORB] Summoning agent: ${agentId}`);
+    agentActions.spawnAgent(agentId);
+    systemActions.addNotification({
+      type: 'success',
+      title: 'Agent Summoned',
+      message: `${agentId} is now active`
+    });
+  };
+
+  const handleActivateCopa = (verticalId) => {
+    console.log(`[ORB] Activating Copa: ${verticalId}`);
+    copaActions.initCopa(verticalId);
+    systemActions.addNotification({
+      type: 'success',
+      title: 'Copa Activated',
+      message: `${verticalId} sidekick is ready`
+    });
+  };
+
   const renderContent = () => {
     switch (activeNav) {
       case 'games':
-        return <GamesPanel />;
+        return <GamesPanel onPlay={handlePlayGame} />;
       case 'agents':
-        return <AgentsPanel agents={agentState} actions={agentActions} />;
+        return <AgentsPanel agents={agentState} actions={{ ...agentActions, summon: handleSummonAgent }} />;
       case 'copa':
-        return <CopaPanel copa={copaState} actions={copaActions} />;
+        return <CopaPanel copa={copaState} actions={{ ...copaActions, activate: handleActivateCopa }} />;
       case 'crypto':
         return <CryptoPanel crypto={cryptoState} actions={cryptoActions} />;
       case 'community':
@@ -62,12 +92,35 @@ export default function MainConsole() {
       case 'settings':
         return <SettingsPanel />;
       default:
-        return <GamesPanel />;
+        return <GamesPanel onPlay={handlePlayGame} />;
     }
   };
 
+  // Auto-dismiss notifications
+  useEffect(() => {
+    if (systemState.notifications.length > 0) {
+      const timer = setTimeout(() => {
+        const oldest = systemState.notifications[0];
+        if (oldest) {
+          systemActions.removeNotification(oldest.id);
+        }
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [systemState.notifications]);
+
   return (
     <div className="console">
+      {/* Notifications */}
+      <div className="notifications">
+        {systemState.notifications.map(notif => (
+          <div key={notif.id} className={`notification ${notif.type}`}>
+            <strong>{notif.title}</strong>
+            <p>{notif.message}</p>
+          </div>
+        ))}
+      </div>
+
       {/* Header */}
       <header className="console-header">
         <div className="console-logo">
@@ -271,6 +324,65 @@ export default function MainConsole() {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.5; }
         }
+
+        .notifications {
+          position: fixed;
+          top: 80px;
+          right: 20px;
+          z-index: 1000;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          max-width: 350px;
+        }
+
+        .notification {
+          background: #1a1a2e;
+          border: 1px solid #333;
+          border-radius: 12px;
+          padding: 16px 20px;
+          animation: slideIn 0.3s ease;
+          box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .notification.info {
+          border-color: #00ffff;
+          box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+        }
+
+        .notification.success {
+          border-color: #2ecc71;
+          box-shadow: 0 0 20px rgba(46, 204, 113, 0.2);
+        }
+
+        .notification.error {
+          border-color: #e74c3c;
+          box-shadow: 0 0 20px rgba(231, 76, 60, 0.2);
+        }
+
+        .notification strong {
+          display: block;
+          font-family: 'Orbitron', sans-serif;
+          font-size: 0.9rem;
+          margin-bottom: 4px;
+        }
+
+        .notification p {
+          color: #888;
+          font-size: 0.85rem;
+          margin: 0;
+        }
+
+        @keyframes slideIn {
+          from {
+            transform: translateX(100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
       `}</style>
     </div>
   );
@@ -280,7 +392,7 @@ export default function MainConsole() {
 // PANELS
 // ═══════════════════════════════════════════════════════════════
 
-function GamesPanel() {
+function GamesPanel({ onPlay }) {
   return (
     <div className="panel">
       <h2 className="panel-title">GAME LIBRARY</h2>
@@ -293,7 +405,7 @@ function GamesPanel() {
             <h3 className="game-name">{game.name}</h3>
             <p className="game-tagline">{game.tagline}</p>
             <p className="game-desc">{game.desc}</p>
-            <button className="game-play-btn">PLAY</button>
+            <button className="game-play-btn" onClick={() => onPlay(game)}>PLAY</button>
           </div>
         ))}
       </div>
@@ -412,7 +524,7 @@ function AgentsPanel({ agents, actions }) {
             <p className="agent-domain">{agent.domain}</p>
             <button
               className="agent-summon-btn"
-              onClick={() => actions.spawnAgent(agent.id)}
+              onClick={() => actions.summon(agent.id)}
             >
               SUMMON
             </button>
@@ -524,7 +636,7 @@ function CopaPanel({ copa, actions }) {
             </div>
             <button
               className="copa-activate-btn"
-              onClick={() => actions.initCopa(vertical.id)}
+              onClick={() => actions.activate(vertical.id)}
             >
               ACTIVATE
             </button>

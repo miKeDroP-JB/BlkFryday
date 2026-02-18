@@ -1,0 +1,432 @@
+[
+  {
+    "taskId": "sample_color_replace",
+    "strategyName": "counting:cardinalityMapping",
+    "hierarchy": "counting",
+    "chain": [
+      "counting:cardinalityMapping"
+    ],
+    "complexity": "C(1,1,1,1,1,1,1)",
+    "inputFeatures": {
+      "rows": 2,
+      "cols": 2,
+      "uniqueColors": 2,
+      "objectCount": 2,
+      "density": 0.5
+    },
+    "success": false,
+    "timestamp": 1765355020567
+  },
+  {
+    "taskId": "sample_color_replace",
+    "strategyName": "color:replace1to2",
+    "hierarchy": "color",
+    "chain": [
+      "color:replace1to2"
+    ],
+    "complexity": "C(1,1,1,1,1,1,1)",
+    "inputFeatures": {
+      "rows": 2,
+      "cols": 2,
+      "uniqueColors": 2,
+      "objectCount": 2,
+      "density": 0.5
+    },
+    "success": true,
+    "score": 0.9895255147717099,
+    "timestamp": 1765355020573
+  },
+  {
+    "taskId": "sample_flip_horizontal",
+    "strategyName": "structural:flipHorizontal",
+    "hierarchy": "structural",
+    "chain": [
+      "structural:flipHorizontal"
+    ],
+    "complexity": "C(1,1,1,1,1,1,1)",
+    "inputFeatures": {
+      "rows": 1,
+      "cols": 3,
+      "uniqueColors": 3,
+      "objectCount": 3,
+      "density": 1
+    },
+    "success": true,
+    "score": 0.9888888888888889,
+    "timestamp": 1765355020587
+  },
+  {
+    "taskId": "sample_gravity_down",
+    "strategyName": "structural:flipVertical",
+    "hierarchy": "structural",
+    "chain": [
+      "structural:flipVertical"
+    ],
+    "complexity": "C(1,1,1,1,1,1,1)",
+    "inputFeatures": {
+      "rows": 2,
+      "cols": 2,
+      "uniqueColors": 2,
+      "objectCount": 1,
+      "density": 0.25
+    },
+    "success": true,
+    "score": 0.9890471950133571,
+    "timestamp": 1765355020595
+  },
+  {
+    "taskId": "sample_rotate_90",
+    "strategyName": "structural:rotate90",
+    "hierarchy": "structural",
+    "chain": [
+      "structural:rotate90"
+    ],
+    "complexity": "C(1,1,1,1,1,1,1)",
+    "inputFeatures": {
+      "rows": 2,
+      "cols": 2,
+      "uniqueColors": 4,
+      "objectCount": 4,
+      "density": 1
+    },
+    "success": true,
+    "score": 0.9893655049151028,
+    "timestamp": 1765355020604
+  },
+  {
+    "taskId": "sample_scale_2x",
+    "strategyName": "structural:scale2x",
+    "hierarchy": "structural",
+    "chain": [
+      "structural:scale2x"
+    ],
+    "complexity": "C(1,1,1,1,1,1,1)",
+    "inputFeatures": {
+      "rows": 1,
+      "cols": 1,
+      "uniqueColors": 1,
+      "objectCount": 1,
+      "density": 1
+    },
+    "success": true,
+    "score": 0.9894454382826476,
+    "timestamp": 1765355020614
+  },
+  {
+    "taskId": "test_border_fill",
+    "strategyName": "spatial:borderFillWith2",
+    "hierarchy": "spatial",
+    "chain": [
+      "spatial:borderFillWith2"
+    ],
+    "complexity": "C(1,1,1,1,1,1,1)",
+    "inputFeatures": {
+      "rows": 3,
+      "cols": 3,
+      "uniqueColors": 2,
+      "objectCount": 1,
+      "density": 0.1111111111111111
+    },
+    "success": true,
+    "score": 0.9890471950133571,
+    "timestamp": 1765355020625
+  },
+  {
+    "taskId": "test_chain_rotate_flip",
+    "strategyName": "structural:rotate270",
+    "hierarchy": "structural",
+    "chain": [
+      "structural:rotate270"
+    ],
+    "complexity": "C(1,1,1,1,1,1,1)",
+    "inputFeatures": {
+      "rows": 2,
+      "cols": 2,
+      "uniqueColors": 4,
+      "objectCount": 4,
+      "density": 1
+    },
+    "success": true,
+    "score": 0.9892857142857143,
+    "timestamp": 1765355020635
+  },
+  {
+    "taskId": "test_double_scale",
+    "strategyName": "structural:flipHorizontal",
+    "hierarchy": "structural",
+    "chain": [
+      "structural:flipHorizontal"
+    ],
+    "complexity": "C(1,1,1,1,1,1,1)",
+    "inputFeatures": {
+      "rows": 1,
+      "cols": 1,
+      "uniqueColors": 1,
+      "objectCount": 1,
+      "density": 1
+    },
+    "success": false,
+    "timestamp": 1765355020642
+  },
+  {
+    "taskId": "test_double_scale",
+    "strategyName": "structural:flipVertical",
+    "hierarchy": "structural",
+    "chain": [
+      "structural:flipVertical"
+    ],
+    "complexity": "C(1,1,1,1,1,1,1)",
+    "inputFeatures": {
+      "rows": 1,
+      "cols": 1,
+      "uniqueColors": 1,
+      "objectCount": 1,
+      "density": 1
+    },
+    "success": false,
+    "timestamp": 1765355020645
+  },
+  {
+    "taskId": "test_double_scale",
+    "strategyName": "structural:rotate90",
+    "hierarchy": "structural",
+    "chain": [
+      "structural:rotate90"
+    ],
+    "complexity": "C(1,1,1,1,1,1,1)",
+    "inputFeatures": {
+      "rows": 1,
+      "cols": 1,
+      "uniqueColors": 1,
+      "objectCount": 1,
+      "density": 1
+    },
+    "success": false,
+    "timestamp": 1765355020647
+  },
+  {
+    "taskId": "test_double_scale",
+    "strategyName": "structural:rotate180",
+    "hierarchy": "structural",
+    "chain": [
+      "structural:rotate180"
+    ],
+    "complexity": "C(1,1,1,1,1,1,1)",
+    "inputFeatures": {
+      "rows": 1,
+      "cols": 1,
+      "uniqueColors": 1,
+      "objectCount": 1,
+      "density": 1
+    },
+    "success": false,
+    "timestamp": 1765355020650
+  },
+  {
+    "taskId": "test_double_scale",
+    "strategyName": "structural:rotate270",
+    "hierarchy": "structural",
+    "chain": [
+      "structural:rotate270"
+    ],
+    "complexity": "C(1,1,1,1,1,1,1)",
+    "inputFeatures": {
+      "rows": 1,
+      "cols": 1,
+      "uniqueColors": 1,
+      "objectCount": 1,
+      "density": 1
+    },
+    "success": false,
+    "timestamp": 1765355020652
+  },
+  {
+    "taskId": "test_double_scale",
+    "strategyName": "structural:transpose",
+    "hierarchy": "structural",
+    "chain": [
+      "structural:transpose"
+    ],
+    "complexity": "C(1,1,1,1,1,1,1)",
+    "inputFeatures": {
+      "rows": 1,
+      "cols": 1,
+      "uniqueColors": 1,
+      "objectCount": 1,
+      "density": 1
+    },
+    "success": false,
+    "timestamp": 1765355020655
+  },
+  {
+    "taskId": "test_double_scale",
+    "strategyName": "structural:scale2x",
+    "hierarchy": "structural",
+    "chain": [
+      "structural:scale2x"
+    ],
+    "complexity": "C(1,1,1,1,1,1,1)",
+    "inputFeatures": {
+      "rows": 1,
+      "cols": 1,
+      "uniqueColors": 1,
+      "objectCount": 1,
+      "density": 1
+    },
+    "success": false,
+    "timestamp": 1765355020657
+  },
+  {
+    "taskId": "test_double_scale",
+    "strategyName": "structural:scale3x",
+    "hierarchy": "structural",
+    "chain": [
+      "structural:scale3x"
+    ],
+    "complexity": "C(1,1,1,1,1,1,1)",
+    "inputFeatures": {
+      "rows": 1,
+      "cols": 1,
+      "uniqueColors": 1,
+      "objectCount": 1,
+      "density": 1
+    },
+    "success": false,
+    "timestamp": 1765355020661
+  },
+  {
+    "taskId": "test_double_scale",
+    "strategyName": "structural:scale4x",
+    "hierarchy": "structural",
+    "chain": [
+      "structural:scale4x"
+    ],
+    "complexity": "C(1,1,1,1,1,1,1)",
+    "inputFeatures": {
+      "rows": 1,
+      "cols": 1,
+      "uniqueColors": 1,
+      "objectCount": 1,
+      "density": 1
+    },
+    "success": true,
+    "score": 0.9894454382826476,
+    "timestamp": 1765355020664
+  },
+  {
+    "taskId": "test_multi_color_replace",
+    "strategyName": "color:multiMap1to3_2to4",
+    "hierarchy": "color",
+    "chain": [
+      "color:multiMap1to3_2to4"
+    ],
+    "complexity": "C(1,1,1,1,1,1,1)",
+    "inputFeatures": {
+      "rows": 3,
+      "cols": 3,
+      "uniqueColors": 2,
+      "objectCount": 3,
+      "density": 1
+    },
+    "success": true,
+    "score": 0.9890471950133571,
+    "timestamp": 1765355037878
+  },
+  {
+    "taskId": "unknown",
+    "strategyName": "structural:flipVertical → spatial:gravityLeft",
+    "hierarchy": "composite",
+    "chain": [
+      "structural:flipVertical",
+      "spatial:gravityLeft"
+    ],
+    "complexity": "C(1,1,1,1,1,1,1)",
+    "inputFeatures": {
+      "rows": 3,
+      "cols": 3,
+      "uniqueColors": 4,
+      "objectCount": 3,
+      "density": 0.3333333333333333
+    },
+    "success": true,
+    "score": 0.9803212851405623,
+    "timestamp": 1765356156823
+  },
+  {
+    "taskId": "unknown",
+    "strategyName": "structural:flipVertical → spatial:gravityLeft",
+    "hierarchy": "composite",
+    "chain": [
+      "structural:flipVertical",
+      "spatial:gravityLeft"
+    ],
+    "complexity": "C(1,1,1,1,1,1,1)",
+    "inputFeatures": {
+      "rows": 3,
+      "cols": 3,
+      "uniqueColors": 4,
+      "objectCount": 3,
+      "density": 0.3333333333333333
+    },
+    "success": true,
+    "score": 0.9803212851405623,
+    "timestamp": 1765363030748
+  },
+  {
+    "taskId": "unknown",
+    "strategyName": "composite:rotate180_gravityLeft",
+    "hierarchy": "composite",
+    "chain": [
+      "composite:rotate180_gravityLeft"
+    ],
+    "complexity": "C(1,1,1,1,1,1,1)",
+    "inputFeatures": {
+      "rows": 3,
+      "cols": 3,
+      "uniqueColors": 4,
+      "objectCount": 3,
+      "density": 0.3333333333333333
+    },
+    "success": true,
+    "score": 0.9884173297966402,
+    "timestamp": 1765368231457
+  },
+  {
+    "taskId": "unknown",
+    "strategyName": "composite:rotate180_gravityLeft",
+    "hierarchy": "composite",
+    "chain": [
+      "composite:rotate180_gravityLeft"
+    ],
+    "complexity": "C(1,1,1,1,1,1,1)",
+    "inputFeatures": {
+      "rows": 3,
+      "cols": 3,
+      "uniqueColors": 4,
+      "objectCount": 3,
+      "density": 0.3333333333333333
+    },
+    "success": true,
+    "score": 0.9884173297966402,
+    "timestamp": 1765369607827
+  },
+  {
+    "taskId": "unknown",
+    "strategyName": "composite:rotate180_gravityLeft",
+    "hierarchy": "composite",
+    "chain": [
+      "composite:rotate180_gravityLeft"
+    ],
+    "complexity": "C(1,1,1,1,1,1,1)",
+    "inputFeatures": {
+      "rows": 3,
+      "cols": 3,
+      "uniqueColors": 4,
+      "objectCount": 3,
+      "density": 0.3333333333333333
+    },
+    "success": true,
+    "score": 0.9884173297966402,
+    "timestamp": 1765373327649
+  }
+]

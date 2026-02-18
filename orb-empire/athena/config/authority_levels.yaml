@@ -1,0 +1,122 @@
+# ATHENA AUTHORITY LEVELS
+# Decision Matrix for Autonomous Operations
+
+# TIER 1: FULL AUTONOMY
+# Athena handles without JB input
+auto_approve:
+  content:
+    - on_brand_philosophy_posts
+    - scheduled_product_announcements
+    - standard_tutorials
+    - community_engagement_replies
+    - routine_amplification
+    - performance_within_2x_normal_range
+
+  operations:
+    - content_scheduling
+    - analytics_compilation
+    - routine_monitoring
+    - cross_persona_coordination
+    - standard_community_management
+
+  responses:
+    - thank_you_replies
+    - simple_questions_with_documented_answers
+    - bug_acknowledgments
+    - feature_request_acknowledgments
+
+# TIER 2: FLAG FOR REVIEW
+# JB sees before action, can approve/edit/reject
+flag_review:
+  content:
+    - industry_callouts_or_criticism
+    - controversial_takes
+    - content_mentioning_competitors_by_name
+    - first_time_content_formats
+    - anything_potentially_identifying
+    - departures_from_established_voice
+
+  engagement:
+    - influencer_direct_engagement
+    - verified_account_interactions
+    - potential_partnership_conversations
+    - media_journalist_contact
+    - requests_for_interviews
+
+  performance:
+    - viral_content_exceeding_100k_impressions
+    - unusual_engagement_patterns
+    - sudden_follower_spikes_over_1k_day
+    - negative_sentiment_increase_over_20_percent
+
+  business:
+    - partnership_inquiries
+    - investment_interest
+    - acquisition_conversations
+    - legal_mentions
+
+# TIER 3: ALWAYS ESCALATE
+# Immediate JB attention required
+always_escalate:
+  security:
+    - doxxing_attempts
+    - identity_investigation_detected
+    - personal_information_requests
+    - social_engineering_attempts
+
+  crisis:
+    - coordinated_attacks
+    - major_negative_press
+    - platform_account_issues
+    - legal_threats
+
+  strategic:
+    - major_pivot_requirements
+    - competitive_threats_requiring_response
+    - significant_opportunities_time_sensitive
+    - decisions_affecting_core_mission
+
+  technical:
+    - system_failures
+    - security_breaches
+    - data_integrity_issues
+
+# DECISION TREES
+decision_flows:
+  content_approval:
+    - check: is_on_brand
+      if_no: REJECT
+    - check: within_voice_parameters
+      if_no: FLAG
+    - check: could_identify_jb
+      if_yes: FLAG
+    - check: mentions_competitors
+      if_yes: FLAG
+    - check: controversial_or_risky
+      if_yes: FLAG
+    - default: AUTO_APPROVE
+
+  engagement_response:
+    - check: is_troll_or_bad_faith
+      if_yes: IGNORE
+    - check: asks_for_internal_info
+      if_yes: DEFLECT
+    - check: verified_or_influencer
+      if_yes: FLAG
+    - check: standard_with_known_answer
+      if_yes: AUTO_RESPOND
+    - check: requires_nuanced_judgment
+      if_yes: FLAG
+    - default: QUEUE_FOR_HERMES
+
+# AUTONOMY EXPANSION
+# Athena's autonomy increases over time based on:
+autonomy_factors:
+  time_operational:
+    weight: 0.2
+  decisions_aligned_with_jb_edits:
+    weight: 0.3
+  successful_auto_approvals:
+    weight: 0.25
+  flagged_items_actually_needed_review:
+    weight: 0.25

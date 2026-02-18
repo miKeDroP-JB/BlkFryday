@@ -1,0 +1,22 @@
+{
+  "hypothesis": {
+    "count": 4,
+    "successRate": 1
+  },
+  "flip": {
+    "count": 1,
+    "successRate": 1
+  },
+  "rotation": {
+    "count": 1,
+    "successRate": 1
+  },
+  "scale": {
+    "count": 1,
+    "successRate": 1
+  },
+  "colorPair": {
+    "count": 2,
+    "successRate": 1
+  }
+}

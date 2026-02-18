@@ -1,0 +1,100 @@
+{
+  "seed_tasks": [
+    {
+      "agent": "sentinel",
+      "type": "bug_scan",
+      "data": { "target": "example.com" },
+      "priority": "normal",
+      "description": "Initial security scan"
+    },
+    {
+      "agent": "apollo",
+      "type": "gig_research",
+      "data": { "query": "web development freelance", "platforms": ["upwork", "fiverr"] },
+      "priority": "normal",
+      "description": "Find freelance opportunities"
+    },
+    {
+      "agent": "mercury",
+      "type": "daily_outreach",
+      "data": { "template": "intro", "count": 10 },
+      "priority": "high",
+      "description": "Morning outreach batch"
+    },
+    {
+      "agent": "athena",
+      "type": "generate_content",
+      "data": { "prompt": "Write a blog post about AI productivity tools", "format": "blog" },
+      "priority": "normal",
+      "description": "Content generation task"
+    },
+    {
+      "agent": "athena",
+      "type": "social_content",
+      "data": { "prompt": "Engaging tweet about automation", "platform": "twitter" },
+      "priority": "low",
+      "description": "Social media content"
+    },
+    {
+      "agent": "ares",
+      "type": "compile_report",
+      "data": { "findings": [], "severity": "medium" },
+      "priority": "normal",
+      "description": "Bug bounty report compilation"
+    },
+    {
+      "agent": "hermes",
+      "type": "client_message",
+      "data": { "client": "acme_corp", "message": "Weekly progress update" },
+      "priority": "high",
+      "description": "Client communication"
+    },
+    {
+      "agent": "hephaestus",
+      "type": "build",
+      "data": { "spec": "landing page template", "stack": "react" },
+      "priority": "normal",
+      "description": "Build automation task"
+    },
+    {
+      "agent": "artemis",
+      "type": "validate",
+      "data": { "target": "submission_001", "checks": ["format", "compliance"] },
+      "priority": "normal",
+      "description": "Compliance validation"
+    }
+  ],
+  "demo_scenarios": {
+    "morning_rush": [
+      { "agent": "apollo", "type": "gig_research", "data": { "query": "urgent projects" }, "priority": "high" },
+      { "agent": "mercury", "type": "daily_outreach", "data": {}, "priority": "high" },
+      { "agent": "sentinel", "type": "bug_scan", "data": { "target": "watchlist" }, "priority": "normal" }
+    ],
+    "bug_bounty_flow": [
+      { "agent": "sentinel", "type": "bug_scan", "data": { "target": "target.com" }, "priority": "high" },
+      { "agent": "ares", "type": "compile_report", "data": { "severity": "high" }, "priority": "high" },
+      { "agent": "artemis", "type": "validate", "data": { "target": "report" }, "priority": "normal" }
+    ],
+    "content_blitz": [
+      { "agent": "athena", "type": "generate_content", "data": { "prompt": "blog post" }, "priority": "high" },
+      { "agent": "athena", "type": "social_content", "data": { "prompt": "twitter thread" }, "priority": "normal" },
+      { "agent": "athena", "type": "social_content", "data": { "prompt": "linkedin post" }, "priority": "normal" }
+    ],
+    "client_management": [
+      { "agent": "hermes", "type": "follow_up", "data": { "client": "all" }, "priority": "high" },
+      { "agent": "hermes", "type": "client_message", "data": { "type": "invoice_reminder" }, "priority": "normal" }
+    ]
+  },
+  "voice_command_examples": [
+    "scan site example.com",
+    "find gigs web development",
+    "daily outreach",
+    "write a blog post about productivity",
+    "tweet about our new feature",
+    "submit bug report",
+    "message client acme with update",
+    "build landing page",
+    "validate today's submissions",
+    "status"
+  ]
+}

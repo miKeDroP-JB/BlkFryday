@@ -1,0 +1,128 @@
+{
+  "programs": [
+    {
+      "id": "prog_001",
+      "name": "Example Corp",
+      "platform": "hackerone",
+      "programUrl": "https://hackerone.com/example",
+      "status": "active",
+      "scope": {
+        "inScope": [
+          "*.example.com",
+          "api.example.com",
+          "app.example.com"
+        ],
+        "outOfScope": [
+          "blog.example.com",
+          "status.example.com",
+          "Third-party services"
+        ]
+      },
+      "bountyRange": {
+        "critical": { "min": 5000, "max": 15000 },
+        "high": { "min": 1000, "max": 5000 },
+        "medium": { "min": 250, "max": 1000 },
+        "low": { "min": 50, "max": 250 }
+      },
+      "responseTime": {
+        "firstResponse": "1 day",
+        "triage": "3 days",
+        "bounty": "7 days"
+      },
+      "rules": [
+        "No automated scanning without permission",
+        "No denial of service testing",
+        "No social engineering",
+        "Report one vulnerability per report",
+        "Do not access user data"
+      ],
+      "focusAreas": ["web", "api", "mobile"],
+      "technologies": ["react", "nodejs", "postgresql"],
+      "lastChecked": null,
+      "notes": ""
+    },
+    {
+      "id": "prog_002",
+      "name": "TechStart Inc",
+      "platform": "bugcrowd",
+      "programUrl": "https://bugcrowd.com/techstart",
+      "status": "active",
+      "scope": {
+        "inScope": [
+          "www.techstart.io",
+          "api.techstart.io",
+          "dashboard.techstart.io"
+        ],
+        "outOfScope": [
+          "*.staging.techstart.io",
+          "Support portal"
+        ]
+      },
+      "bountyRange": {
+        "critical": { "min": 3000, "max": 10000 },
+        "high": { "min": 500, "max": 3000 },
+        "medium": { "min": 100, "max": 500 },
+        "low": { "min": 25, "max": 100 }
+      },
+      "responseTime": {
+        "firstResponse": "2 days",
+        "triage": "5 days",
+        "bounty": "14 days"
+      },
+      "rules": [
+        "Safe harbor provided",
+        "No physical attacks",
+        "No phishing employees"
+      ],
+      "focusAreas": ["web", "api"],
+      "technologies": ["python", "django", "aws"],
+      "lastChecked": null,
+      "notes": ""
+    },
+    {
+      "id": "prog_003",
+      "name": "SecureBank",
+      "platform": "intigriti",
+      "programUrl": "https://intigriti.com/securebank",
+      "status": "active",
+      "scope": {
+        "inScope": [
+          "online.securebank.com",
+          "api.securebank.com",
+          "mobile app (iOS/Android)"
+        ],
+        "outOfScope": [
+          "Corporate website",
+          "Marketing pages",
+          "ATM systems"
+        ]
+      },
+      "bountyRange": {
+        "critical": { "min": 10000, "max": 50000 },
+        "high": { "min": 2500, "max": 10000 },
+        "medium": { "min": 500, "max": 2500 },
+        "low": { "min": 100, "max": 500 }
+      },
+      "responseTime": {
+        "firstResponse": "1 day",
+        "triage": "2 days",
+        "bounty": "10 days"
+      },
+      "rules": [
+        "Do not access real customer data",
+        "Use test accounts only",
+        "No rate limiting attacks",
+        "Report immediately if real data found"
+      ],
+      "focusAreas": ["web", "api", "mobile"],
+      "technologies": ["java", "spring", "oracle"],
+      "lastChecked": null,
+      "notes": "High payouts, strict rules"
+    }
+  ],
+  "metadata": {
+    "lastUpdated": null,
+    "totalPrograms": 3,
+    "activePrograms": 3
+  }
+}

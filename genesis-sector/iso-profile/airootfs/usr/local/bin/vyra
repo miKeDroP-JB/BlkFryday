@@ -1,0 +1,604 @@
+#!/usr/bin/env bash
+# ╔══════════════════════════════════════════════════════════════════════╗
+# ║  VYRA: GENESIS SECTOR - COMMAND LINE INTERFACE                      ║
+# ║  The Intent Interface for Sovereign Development                      ║
+# ╚══════════════════════════════════════════════════════════════════════╝
+
+set -euo pipefail
+
+VERSION="1.0.0"
+VYRA_HOME="${VYRA_HOME:-$HOME/.vyra}"
+VYRA_CONFIG="${VYRA_CONFIG:-/etc/vyra/vyra.conf}"
+VYRA_MACROS="${VYRA_MACROS:-/etc/vyra/macros.yaml}"
+
+# Colors
+C_RESET="\033[0m"
+C_CYAN="\033[38;5;51m"
+C_PURPLE="\033[38;5;135m"
+C_PINK="\033[38;5;207m"
+C_GREEN="\033[38;5;82m"
+C_YELLOW="\033[38;5;226m"
+C_RED="\033[38;5;196m"
+C_GRAY="\033[38;5;245m"
+
+# Sigil
+SIGIL="${C_PURPLE}⟡${C_RESET}"
+
+# === UTILITY FUNCTIONS ===
+
+log_info() {
+    echo -e "${SIGIL} ${C_CYAN}$1${C_RESET}"
+}
+
+log_success() {
+    echo -e "${SIGIL} ${C_GREEN}$1${C_RESET}"
+}
+
+log_warn() {
+    echo -e "${SIGIL} ${C_YELLOW}$1${C_RESET}"
+}
+
+log_error() {
+    echo -e "${SIGIL} ${C_RED}$1${C_RESET}" >&2
+}
+
+show_banner() {
+    echo -e "${C_PURPLE}"
+    cat << 'EOF'
+╔═══════════════════════════════════════════════════════════════════╗
+║                                                                    ║
+║   ██╗   ██╗██╗   ██╗██████╗  █████╗                                ║
+║   ██║   ██║╚██╗ ██╔╝██╔══██╗██╔══██╗                               ║
+║   ██║   ██║ ╚████╔╝ ██████╔╝███████║                               ║
+║   ╚██╗ ██╔╝  ╚██╔╝  ██╔══██╗██╔══██║                               ║
+║    ╚████╔╝    ██║   ██║  ██║██║  ██║                               ║
+║     ╚═══╝     ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝                               ║
+║                                                                    ║
+║   ══════════════════════════════════════════════════════════════   ║
+║            G E N E S I S   S E C T O R   v1.0.0                    ║
+║         Portable AI Development Universe                           ║
+║   ══════════════════════════════════════════════════════════════   ║
+║                                                                    ║
+╚═══════════════════════════════════════════════════════════════════╝
+EOF
+    echo -e "${C_RESET}"
+}
+
+# === SWARM COMMANDS ===
+
+cmd_swarm() {
+    local subcmd="${1:-status}"
+    shift || true
+
+    case "$subcmd" in
+        status)
+            swarm_status
+            ;;
+        deploy)
+            swarm_deploy "$@"
+            ;;
+        terminate|kill)
+            swarm_terminate "$@"
+            ;;
+        scale)
+            swarm_scale "$@"
+            ;;
+        logs)
+            swarm_logs "$@"
+            ;;
+        *)
+            log_error "Unknown swarm command: $subcmd"
+            echo "Usage: vyra swarm [status|deploy|terminate|scale|logs]"
+            exit 1
+            ;;
+    esac
+}
+
+swarm_status() {
+    log_info "Swarm Status"
+    echo ""
+
+    if systemctl is-active --quiet vyra-orchestrator; then
+        echo -e "  ${C_GREEN}●${C_RESET} Orchestrator: ${C_GREEN}ACTIVE${C_RESET}"
+    else
+        echo -e "  ${C_RED}●${C_RESET} Orchestrator: ${C_RED}INACTIVE${C_RESET}"
+    fi
+
+    local agent_count
+    agent_count=$(curl -s "http://localhost:9999/agents" 2>/dev/null | jq -r '.count // 0' || echo "0")
+    echo -e "  ${C_CYAN}●${C_RESET} Active Agents: ${C_CYAN}${agent_count}${C_RESET}"
+
+    echo ""
+
+    if [[ "$agent_count" -gt 0 ]]; then
+        echo -e "  ${C_GRAY}Agent List:${C_RESET}"
+        curl -s "http://localhost:9999/agents" 2>/dev/null | jq -r '.agents[] | "    ├─ \(.id): \(.type) (\(.status))"' || true
+    fi
+}
+
+swarm_deploy() {
+    local count="${1:-3}"
+    log_info "Deploying swarm with $count agents..."
+
+    # Start orchestrator if not running
+    if ! systemctl is-active --quiet vyra-orchestrator; then
+        log_info "Starting orchestrator..."
+        sudo systemctl start vyra-orchestrator
+        sleep 2
+    fi
+
+    # Deploy agents
+    for i in $(seq 1 "$count"); do
+        log_info "Spawning agent $i..."
+        curl -s -X POST "http://localhost:9999/agents" \
+            -H "Content-Type: application/json" \
+            -d '{"type": "general", "model": "llama3.1:8b"}' >/dev/null || true
+    done
+
+    log_success "Swarm deployed with $count agents"
+}
+
+swarm_terminate() {
+    log_warn "Terminating all agents..."
+    curl -s -X DELETE "http://localhost:9999/agents/all" >/dev/null || true
+    log_success "All agents terminated"
+}
+
+swarm_scale() {
+    local count="${1:-}"
+    if [[ -z "$count" ]]; then
+        log_error "Usage: vyra swarm scale <count>"
+        exit 1
+    fi
+    log_info "Scaling swarm to $count agents..."
+    curl -s -X POST "http://localhost:9999/scale" \
+        -H "Content-Type: application/json" \
+        -d "{\"count\": $count}" >/dev/null || true
+    log_success "Swarm scaled to $count agents"
+}
+
+swarm_logs() {
+    local follow="${1:-}"
+    if [[ "$follow" == "--follow" ]] || [[ "$follow" == "-f" ]]; then
+        journalctl -u vyra-orchestrator -f
+    else
+        journalctl -u vyra-orchestrator -n 50
+    fi
+}
+
+# === AGENT COMMANDS ===
+
+cmd_agent() {
+    local subcmd="${1:-list}"
+    shift || true
+
+    case "$subcmd" in
+        list)
+            agent_list
+            ;;
+        spawn|summon)
+            agent_spawn "$@"
+            ;;
+        kill|terminate)
+            agent_kill "$@"
+            ;;
+        inject)
+            agent_inject "$@"
+            ;;
+        *)
+            log_error "Unknown agent command: $subcmd"
+            echo "Usage: vyra agent [list|spawn|kill|inject]"
+            exit 1
+            ;;
+    esac
+}
+
+agent_list() {
+    log_info "Active Agents"
+    echo ""
+    curl -s "http://localhost:9999/agents" 2>/dev/null | jq -r '
+        .agents[] |
+        "  \(.id)\n    Type: \(.type)\n    Model: \(.model)\n    Status: \(.status)\n    Uptime: \(.uptime)\n"
+    ' || echo "  No agents active or orchestrator not running"
+}
+
+agent_spawn() {
+    local agent_type="${1:-general}"
+    local model="${2:-llama3.1:8b}"
+
+    log_info "Summoning agent (type: $agent_type, model: $model)..."
+
+    local response
+    response=$(curl -s -X POST "http://localhost:9999/agents" \
+        -H "Content-Type: application/json" \
+        -d "{\"type\": \"$agent_type\", \"model\": \"$model\"}")
+
+    local agent_id
+    agent_id=$(echo "$response" | jq -r '.id // "unknown"')
+
+    log_success "Agent $agent_id summoned"
+}
+
+agent_kill() {
+    local agent_id="${1:-}"
+    if [[ -z "$agent_id" ]]; then
+        log_error "Usage: vyra agent kill <agent_id>"
+        exit 1
+    fi
+
+    log_warn "Terminating agent $agent_id..."
+    curl -s -X DELETE "http://localhost:9999/agents/$agent_id" >/dev/null || true
+    log_success "Agent $agent_id terminated"
+}
+
+agent_inject() {
+    local agent_id="${1:-}"
+    local instruction="${2:-}"
+
+    if [[ -z "$agent_id" ]] || [[ -z "$instruction" ]]; then
+        log_error "Usage: vyra agent inject <agent_id> <instruction>"
+        exit 1
+    fi
+
+    log_info "Injecting instruction into $agent_id..."
+    curl -s -X POST "http://localhost:9999/agents/$agent_id/inject" \
+        -H "Content-Type: application/json" \
+        -d "{\"instruction\": \"$instruction\"}" >/dev/null || true
+    log_success "Instruction injected"
+}
+
+# === CHANNEL 0 ===
+
+cmd_channel() {
+    local channel="${1:-0}"
+
+    if [[ "$channel" == "0" ]]; then
+        channel_zero
+    else
+        log_error "Unknown channel: $channel"
+        exit 1
+    fi
+}
+
+channel_zero() {
+    show_banner
+    echo -e "${C_PURPLE}╔═══════════════════════════════════════════════════════════════════╗${C_RESET}"
+    echo -e "${C_PURPLE}║${C_RESET}  ${C_PINK}CHANNEL 0${C_RESET} - Intent Interface Active                            ${C_PURPLE}║${C_RESET}"
+    echo -e "${C_PURPLE}╚═══════════════════════════════════════════════════════════════════╝${C_RESET}"
+    echo ""
+    echo -e "  ${C_GRAY}Commands: build, deploy, swarm, agent, focus, timeline, exit${C_RESET}"
+    echo ""
+
+    while true; do
+        echo -ne "${SIGIL} ${C_CYAN}VYRA${C_RESET} > "
+        read -r input
+
+        [[ -z "$input" ]] && continue
+        [[ "$input" == "exit" ]] || [[ "$input" == "quit" ]] && break
+
+        # Parse and execute command
+        execute_channel_command "$input"
+    done
+
+    echo ""
+    log_info "Channel 0 closed"
+}
+
+execute_channel_command() {
+    local input="$1"
+    local cmd="${input%% *}"
+    local args="${input#* }"
+    [[ "$cmd" == "$args" ]] && args=""
+
+    case "$cmd" in
+        build)
+            log_info "Building: $args"
+            vyra build "$args"
+            ;;
+        deploy)
+            log_info "Deploying: $args"
+            vyra deploy "$args"
+            ;;
+        swarm)
+            cmd_swarm $args
+            ;;
+        agent)
+            cmd_agent $args
+            ;;
+        focus)
+            cmd_focus $args
+            ;;
+        timeline)
+            cmd_timeline $args
+            ;;
+        ask)
+            channel_ask "$args"
+            ;;
+        help)
+            channel_help
+            ;;
+        *)
+            # Try to execute as macro
+            execute_macro "$cmd" "$args" || log_error "Unknown command: $cmd"
+            ;;
+    esac
+}
+
+channel_ask() {
+    local question="$1"
+    log_info "Querying AI..."
+
+    local response
+    response=$(curl -s "http://localhost:11434/api/generate" \
+        -d "{\"model\": \"llama3.1:8b\", \"prompt\": \"$question\", \"stream\": false}" \
+        | jq -r '.response // "No response"')
+
+    echo ""
+    echo -e "${C_CYAN}$response${C_RESET}"
+    echo ""
+}
+
+channel_help() {
+    echo ""
+    echo -e "${C_PURPLE}Available Commands:${C_RESET}"
+    echo -e "  ${C_GREEN}build${C_RESET} <type>      - Build a new project"
+    echo -e "  ${C_GREEN}deploy${C_RESET} <target>  - Deploy to target"
+    echo -e "  ${C_GREEN}swarm${C_RESET} <cmd>      - Swarm operations"
+    echo -e "  ${C_GREEN}agent${C_RESET} <cmd>      - Agent operations"
+    echo -e "  ${C_GREEN}focus${C_RESET} <mode>     - Change focus mode"
+    echo -e "  ${C_GREEN}timeline${C_RESET} <cmd>   - Timeline operations"
+    echo -e "  ${C_GREEN}ask${C_RESET} <question>   - Query the AI"
+    echo -e "  ${C_GREEN}help${C_RESET}             - Show this help"
+    echo -e "  ${C_GREEN}exit${C_RESET}             - Exit Channel 0"
+    echo ""
+}
+
+# === FOCUS MODES ===
+
+cmd_focus() {
+    local mode="${1:-}"
+
+    case "$mode" in
+        trance)
+            log_info "Activating focus trance mode..."
+            # Would trigger theme change and audio
+            echo "Focus trance mode activated"
+            ;;
+        clarity)
+            log_info "Activating clarity pulse mode..."
+            echo "Clarity pulse mode activated"
+            ;;
+        normal|off)
+            log_info "Returning to normal mode..."
+            echo "Normal mode restored"
+            ;;
+        *)
+            echo "Usage: vyra focus [trance|clarity|normal]"
+            ;;
+    esac
+}
+
+# === TIMELINE ===
+
+cmd_timeline() {
+    local subcmd="${1:-open}"
+
+    case "$subcmd" in
+        open)
+            log_info "Opening timeline viewer..."
+            swarm-panel --mode timeline &
+            ;;
+        *)
+            echo "Usage: vyra timeline [open]"
+            ;;
+    esac
+}
+
+# === NODE COMMANDS ===
+
+cmd_node() {
+    local subcmd="${1:-}"
+    shift || true
+
+    case "$subcmd" in
+        create)
+            log_info "Creating new node..."
+            docker run -d --name "vyra-node-$(date +%s)" vyra/node:latest
+            log_success "Node created"
+            ;;
+        list)
+            docker ps --filter "name=vyra-node" --format "table {{.Names}}\t{{.Status}}"
+            ;;
+        *)
+            echo "Usage: vyra node [create|list]"
+            ;;
+    esac
+}
+
+# === BUILD COMMANDS ===
+
+cmd_build() {
+    local build_type="${1:-}"
+    shift || true
+
+    case "$build_type" in
+        server)
+            log_info "Building server project..."
+            ;;
+        api)
+            log_info "Building API project..."
+            ;;
+        frontend)
+            log_info "Building frontend project..."
+            ;;
+        *)
+            echo "Usage: vyra build [server|api|frontend]"
+            ;;
+    esac
+}
+
+# === ENVIRONMENT COMMANDS ===
+
+cmd_env() {
+    local subcmd="${1:-}"
+
+    case "$subcmd" in
+        clean)
+            log_info "Cleaning environment..."
+            docker system prune -f
+            rm -rf /tmp/vyra-*
+            log_success "Environment cleaned"
+            ;;
+        status)
+            echo -e "${C_PURPLE}Environment Status${C_RESET}"
+            echo ""
+            echo -e "  VYRA_HOME: $VYRA_HOME"
+            echo -e "  Docker: $(docker --version 2>/dev/null || echo 'Not available')"
+            echo -e "  Ollama: $(ollama --version 2>/dev/null || echo 'Not available')"
+            ;;
+        *)
+            echo "Usage: vyra env [clean|status]"
+            ;;
+    esac
+}
+
+# === GRID COMMANDS ===
+
+cmd_grid() {
+    local mode="${1:-summon}"
+
+    log_info "Opening grid (mode: $mode)..."
+    swarm-panel --mode "$mode" &
+}
+
+# === AI COMMANDS ===
+
+cmd_ask() {
+    local question="$*"
+    channel_ask "$question"
+}
+
+cmd_tts() {
+    local text="$*"
+    log_info "Speaking: $text"
+    echo "$text" | piper --model en_US-lessac-medium --output_file /tmp/vyra-tts.wav && aplay /tmp/vyra-tts.wav
+}
+
+cmd_whisper() {
+    local audio_file="${1:-}"
+    if [[ -z "$audio_file" ]]; then
+        log_info "Recording... (Press Ctrl+C to stop)"
+        arecord -f S16_LE -r 16000 -d 10 /tmp/vyra-record.wav
+        audio_file="/tmp/vyra-record.wav"
+    fi
+    whisper "$audio_file" --model base --output_format txt
+}
+
+cmd_embed() {
+    local text="$*"
+    curl -s "http://localhost:11434/api/embeddings" \
+        -d "{\"model\": \"nomic-embed-text\", \"prompt\": \"$text\"}" | jq '.embedding'
+}
+
+# === EXECUTE MACRO ===
+
+execute_macro() {
+    local macro_name="$1"
+    local macro_args="$2"
+
+    # Check if macro exists in macros.yaml
+    if [[ -f "$VYRA_MACROS" ]]; then
+        # Simple macro execution (would need yq for proper YAML parsing)
+        log_warn "Macro execution: $macro_name $macro_args"
+        return 0
+    fi
+
+    return 1
+}
+
+# === MAIN ===
+
+main() {
+    local cmd="${1:-}"
+    shift || true
+
+    case "$cmd" in
+        swarm)
+            cmd_swarm "$@"
+            ;;
+        agent)
+            cmd_agent "$@"
+            ;;
+        channel)
+            cmd_channel "$@"
+            ;;
+        node)
+            cmd_node "$@"
+            ;;
+        build)
+            cmd_build "$@"
+            ;;
+        env)
+            cmd_env "$@"
+            ;;
+        focus)
+            cmd_focus "$@"
+            ;;
+        timeline)
+            cmd_timeline "$@"
+            ;;
+        grid)
+            cmd_grid "$@"
+            ;;
+        ask)
+            cmd_ask "$@"
+            ;;
+        tts)
+            cmd_tts "$@"
+            ;;
+        whisper)
+            cmd_whisper "$@"
+            ;;
+        embed)
+            cmd_embed "$@"
+            ;;
+        execute|do)
+            execute_channel_command "$*"
+            ;;
+        version|-v|--version)
+            echo "VYRA Genesis Sector v$VERSION"
+            ;;
+        help|-h|--help)
+            show_banner
+            echo "Usage: vyra <command> [options]"
+            echo ""
+            echo "Commands:"
+            echo "  swarm       Manage the agent swarm"
+            echo "  agent       Manage individual agents"
+            echo "  channel     Open VYRA channel (0 = intent interface)"
+            echo "  node        Manage processing nodes"
+            echo "  build       Build projects from templates"
+            echo "  env         Environment operations"
+            echo "  focus       Change focus mode"
+            echo "  timeline    Timeline operations"
+            echo "  grid        Open summoning grid"
+            echo "  ask         Query the AI"
+            echo "  tts         Text to speech"
+            echo "  whisper     Speech to text"
+            echo "  embed       Generate embeddings"
+            echo ""
+            echo "Run 'vyra <command> help' for more information on a command."
+            ;;
+        "")
+            show_banner
+            cmd_channel 0
+            ;;
+        *)
+            log_error "Unknown command: $cmd"
+            echo "Run 'vyra help' for usage"
+            exit 1
+            ;;
+    esac
+}
+
+main "$@"

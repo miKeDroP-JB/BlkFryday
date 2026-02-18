@@ -1,0 +1,103 @@
+# ╔═══════════════════════════════════════════════════════════════════════════╗
+# ║   ORBOS Docker Compose                                                     ║
+# ║   Local-first with optional GPU support                                    ║
+# ╚═══════════════════════════════════════════════════════════════════════════╝
+#
+# Usage:
+#   docker-compose up -d              # Start ORB Brain
+#   docker-compose up -d --scale orb-brain=3  # Scale for load
+#   docker-compose logs -f            # Watch logs
+#   docker-compose down               # Stop all
+
+version: '3.8'
+
+services:
+  # ═══════════════════════════════════════════════════════════════════════════
+  # ORB Brain - The Core Consciousness Engine
+  # ═══════════════════════════════════════════════════════════════════════════
+  orb-brain:
+    build: .
+    container_name: orb-brain
+    environment:
+      - NODE_ENV=production
+      - ORB_MODE=local-first
+      - PORT=3000
+      - WS_PORT=8081
+      - OLLAMA_HOST=http://host.docker.internal:11434
+    volumes:
+      # Persistent data moat
+      - ./data:/app/data
+      # Optional: mount external glyph store
+      # - /mnt/orb-ssd/glyphs:/app/data/glyphs
+    ports:
+      - "3000:3000"   # HTTP API
+      - "8081:8081"   # WebSocket
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # Dashboard - Web UI for monitoring
+  # ═══════════════════════════════════════════════════════════════════════════
+  dashboard:
+    image: nginx:alpine
+    container_name: orb-dashboard
+    volumes:
+      - ./ui/public:/usr/share/nginx/html:ro
+    ports:
+      - "8080:80"
+    depends_on:
+      - orb-brain
+    restart: unless-stopped
+
+# ═══════════════════════════════════════════════════════════════════════════
+# GPU-Enabled Profile (use with: docker-compose --profile gpu up)
+# ═══════════════════════════════════════════════════════════════════════════
+  orb-brain-gpu:
+    build: .
+    container_name: orb-brain-gpu
+    profiles:
+      - gpu
+    runtime: nvidia
+    environment:
+      - NODE_ENV=production
+      - ORB_MODE=local-first
+      - PORT=3000
+      - WS_PORT=8081
+      - NVIDIA_VISIBLE_DEVICES=all
+      - OLLAMA_HOST=http://host.docker.internal:11434
+    volumes:
+      - ./data:/app/data
+    ports:
+      - "3000:3000"
+      - "8081:8081"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: unless-stopped
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Volumes for persistence
+# ═══════════════════════════════════════════════════════════════════════════
+volumes:
+  orb-data:
+    driver: local
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Networks
+# ═══════════════════════════════════════════════════════════════════════════
+networks:
+  default:
+    name: orb-network

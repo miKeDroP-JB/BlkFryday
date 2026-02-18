@@ -1,0 +1,49 @@
+{
+  "name": "@fractal-memory/sdk",
+  "version": "1.0.0",
+  "description": "Fractal Memory Engine SDK - Frontend integration for AI memory systems",
+  "main": "js/fractal.js",
+  "module": "js/fractal.js",
+  "types": "types/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./js/fractal.js",
+      "require": "./js/fractal.js"
+    },
+    "./react": {
+      "import": "./react/hooks.js",
+      "require": "./react/hooks.js"
+    }
+  },
+  "files": [
+    "js/",
+    "react/",
+    "types/"
+  ],
+  "scripts": {
+    "build": "echo 'No build step required'",
+    "test": "echo 'Tests not yet implemented'"
+  },
+  "peerDependencies": {
+    "react": ">=17.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
+  "keywords": [
+    "fractal",
+    "memory",
+    "ai",
+    "avatar",
+    "chat",
+    "sdk"
+  ],
+  "author": "0RB Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/fractal-memory-engine.git"
+  }
+}

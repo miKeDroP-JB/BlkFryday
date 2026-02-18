@@ -1,0 +1,24 @@
+[build]
+  publish = "."
+  command = "echo 'ORBOS LIVE'"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/ORBOS/orb-core/api/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/status"
+  to = "/ORBOS_VERSION.json"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-ORBOS-Version = "1.0.0-live"
+    X-Powered-By = "Amoeba Hydra"

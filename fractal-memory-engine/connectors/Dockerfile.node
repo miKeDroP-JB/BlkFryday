@@ -1,0 +1,46 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# NODE.JS CONNECTOR SERVICE - Multi-stage build
+# ═══════════════════════════════════════════════════════════════════════════
+
+FROM node:20-alpine AS base
+
+WORKDIR /app
+
+# Install dependencies
+COPY connectors/package.json ./connectors/
+COPY package.json ./
+
+RUN npm install --production
+
+# ═══════════════════════════════════════════════════════════════════════════
+# BUILD STAGE
+# ═══════════════════════════════════════════════════════════════════════════
+
+FROM base AS builder
+
+# Copy all source
+COPY . .
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PRODUCTION STAGE
+# ═══════════════════════════════════════════════════════════════════════════
+
+FROM node:20-alpine AS production
+
+ARG SERVICE
+ENV SERVICE=${SERVICE}
+
+WORKDIR /app
+
+# Copy dependencies
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/connectors/${SERVICE} ./connectors/${SERVICE}
+COPY --from=builder /app/system ./system
+COPY --from=builder /app/core ./core
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:${PORT:-8030}/health || exit 1
+
+# Run the service
+CMD ["sh", "-c", "node connectors/${SERVICE}/index.js"]

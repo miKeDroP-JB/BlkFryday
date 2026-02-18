@@ -1,0 +1,221 @@
+{
+  "version": "1.0",
+  "name": "VYRA Alchemical Glyphs",
+  "description": "Sacred geometry and sigil definitions for the Genesis Sector",
+
+  "glyphs": {
+    "sigil": {
+      "symbol": "⟡",
+      "unicode": "U+27E1",
+      "name": "VYRA Sigil",
+      "meaning": "Core resonance and identity",
+      "color": "#bb9af7",
+      "animation": "pulse",
+      "usage": ["branding", "focus indicator", "channel marker"]
+    },
+
+    "channel": {
+      "symbol": "◈",
+      "unicode": "U+25C8",
+      "name": "Channel",
+      "meaning": "Communication pathway",
+      "color": "#7dcfff",
+      "animation": "flow",
+      "usage": ["message indicator", "data stream", "connection"]
+    },
+
+    "agent": {
+      "symbol": "◉",
+      "unicode": "U+25C9",
+      "name": "Agent Node",
+      "meaning": "Intelligence node",
+      "color": "#9ece6a",
+      "animation": "breathe",
+      "usage": ["agent status", "node indicator", "process marker"]
+    },
+
+    "swarm": {
+      "symbol": "⬡",
+      "unicode": "U+2B21",
+      "name": "Swarm",
+      "meaning": "Collective intelligence",
+      "color": "#e0af68",
+      "animation": "rotate",
+      "usage": ["swarm status", "collective indicator", "network"]
+    },
+
+    "manifest": {
+      "symbol": "◎",
+      "unicode": "U+25CE",
+      "name": "Manifest",
+      "meaning": "Creation and output",
+      "color": "#f7768e",
+      "animation": "expand",
+      "usage": ["creation indicator", "output marker", "generation"]
+    },
+
+    "flow": {
+      "symbol": "≋",
+      "unicode": "U+224B",
+      "name": "Flow",
+      "meaning": "Data stream",
+      "color": "#7aa2f7",
+      "animation": "wave",
+      "usage": ["streaming", "data transfer", "progress"]
+    },
+
+    "anchor": {
+      "symbol": "⊛",
+      "unicode": "U+229B",
+      "name": "Anchor",
+      "meaning": "Stability and persistence",
+      "color": "#c0caf5",
+      "animation": "static",
+      "usage": ["save point", "checkpoint", "stable state"]
+    },
+
+    "transform": {
+      "symbol": "⌬",
+      "unicode": "U+232C",
+      "name": "Transform",
+      "meaning": "Mutation and change",
+      "color": "#bb9af7",
+      "animation": "morph",
+      "usage": ["conversion", "transformation", "mutation"]
+    },
+
+    "infinite": {
+      "symbol": "∞",
+      "unicode": "U+221E",
+      "name": "Infinite",
+      "meaning": "Boundless potential",
+      "color": "#7dcfff",
+      "animation": "loop",
+      "usage": ["unlimited", "continuous", "eternal"]
+    },
+
+    "genesis": {
+      "symbol": "⊕",
+      "unicode": "U+2295",
+      "name": "Genesis",
+      "meaning": "Origin and creation",
+      "color": "#f7768e",
+      "animation": "radiate",
+      "usage": ["initialization", "creation", "birth"]
+    },
+
+    "void": {
+      "symbol": "⊘",
+      "unicode": "U+2298",
+      "name": "Void",
+      "meaning": "Empty state",
+      "color": "#565f89",
+      "animation": "fade",
+      "usage": ["null", "empty", "absence"]
+    },
+
+    "focus": {
+      "symbol": "⊙",
+      "unicode": "U+2299",
+      "name": "Focus",
+      "meaning": "Concentration point",
+      "color": "#bb9af7",
+      "animation": "concentrate",
+      "usage": ["attention", "target", "center"]
+    },
+
+    "branch": {
+      "symbol": "⑂",
+      "unicode": "U+2442",
+      "name": "Branch",
+      "meaning": "Decision point",
+      "color": "#9ece6a",
+      "animation": "split",
+      "usage": ["branching", "choice", "fork"]
+    },
+
+    "merge": {
+      "symbol": "⊕",
+      "unicode": "U+2295",
+      "name": "Merge",
+      "meaning": "Combination",
+      "color": "#e0af68",
+      "animation": "converge",
+      "usage": ["merging", "combining", "unification"]
+    },
+
+    "cycle": {
+      "symbol": "⟳",
+      "unicode": "U+27F3",
+      "name": "Cycle",
+      "meaning": "Repetition",
+      "color": "#7aa2f7",
+      "animation": "spin",
+      "usage": ["loop", "iteration", "repeat"]
+    }
+  },
+
+  "animations": {
+    "pulse": {
+      "type": "opacity",
+      "duration": "2s",
+      "keyframes": {
+        "0%": { "opacity": 1 },
+        "50%": { "opacity": 0.6 },
+        "100%": { "opacity": 1 }
+      }
+    },
+    "flow": {
+      "type": "translate",
+      "duration": "1.5s",
+      "keyframes": {
+        "0%": { "transform": "translateX(-5px)" },
+        "100%": { "transform": "translateX(5px)" }
+      }
+    },
+    "breathe": {
+      "type": "scale",
+      "duration": "3s",
+      "keyframes": {
+        "0%": { "transform": "scale(1)" },
+        "50%": { "transform": "scale(1.1)" },
+        "100%": { "transform": "scale(1)" }
+      }
+    },
+    "rotate": {
+      "type": "rotate",
+      "duration": "10s",
+      "keyframes": {
+        "0%": { "transform": "rotate(0deg)" },
+        "100%": { "transform": "rotate(360deg)" }
+      }
+    },
+    "expand": {
+      "type": "scale",
+      "duration": "0.5s",
+      "keyframes": {
+        "0%": { "transform": "scale(0.8)", "opacity": 0 },
+        "100%": { "transform": "scale(1)", "opacity": 1 }
+      }
+    },
+    "wave": {
+      "type": "translate",
+      "duration": "2s",
+      "keyframes": {
+        "0%": { "transform": "translateY(0)" },
+        "25%": { "transform": "translateY(-2px)" },
+        "75%": { "transform": "translateY(2px)" },
+        "100%": { "transform": "translateY(0)" }
+      }
+    }
+  },
+
+  "compositions": {
+    "status_ready": ["agent", "anchor"],
+    "status_busy": ["agent", "cycle"],
+    "status_error": ["agent", "void"],
+    "swarm_active": ["swarm", "flow"],
+    "creation_mode": ["genesis", "manifest"],
+    "focus_trance": ["focus", "infinite"]
+  }
+}

@@ -1,0 +1,68 @@
+[
+  {
+    "chain": "color:replace1to2",
+    "hierarchy": "color",
+    "count": 1,
+    "lastUsed": 1765355020573
+  },
+  {
+    "chain": "structural:flipHorizontal",
+    "hierarchy": "structural",
+    "count": 1,
+    "lastUsed": 1765355020587
+  },
+  {
+    "chain": "structural:flipVertical",
+    "hierarchy": "structural",
+    "count": 1,
+    "lastUsed": 1765355020595
+  },
+  {
+    "chain": "structural:rotate90",
+    "hierarchy": "structural",
+    "count": 1,
+    "lastUsed": 1765355020604
+  },
+  {
+    "chain": "structural:scale2x",
+    "hierarchy": "structural",
+    "count": 1,
+    "lastUsed": 1765355020614
+  },
+  {
+    "chain": "spatial:borderFillWith2",
+    "hierarchy": "spatial",
+    "count": 1,
+    "lastUsed": 1765355020625
+  },
+  {
+    "chain": "structural:rotate270",
+    "hierarchy": "structural",
+    "count": 1,
+    "lastUsed": 1765355020635
+  },
+  {
+    "chain": "structural:scale4x",
+    "hierarchy": "structural",
+    "count": 1,
+    "lastUsed": 1765355020664
+  },
+  {
+    "chain": "color:multiMap1to3_2to4",
+    "hierarchy": "color",
+    "count": 1,
+    "lastUsed": 1765355037878
+  },
+  {
+    "chain": "structural:flipVertical->spatial:gravityLeft",
+    "hierarchy": "composite",
+    "count": 2,
+    "lastUsed": 1765363030748
+  },
+  {
+    "chain": "composite:rotate180_gravityLeft",
+    "hierarchy": "composite",
+    "count": 3,
+    "lastUsed": 1765373327649
+  }
+]

@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: blk-config
+  namespace: blk-system
+data:
+  REDIS_URL: "redis://redis:6379"
+  DATABASE_URL: "postgresql://blkf:blkfpass@postgres:5432/blkf"
+  API_PORT: "4000"
+  WORKER_CONCURRENCY: "5"

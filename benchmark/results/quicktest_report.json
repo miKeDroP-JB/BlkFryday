@@ -1,0 +1,1174 @@
+{
+  "timestamp": "2025-11-30T11:40:11.568Z",
+  "config": {
+    "stats": {
+      "minSamples": 30,
+      "heavyTestSamples": 100,
+      "confidenceLevel": 0.95,
+      "significanceThreshold": 0.05
+    },
+    "weights": {
+      "compression": 0.2,
+      "generalization": 0.25,
+      "recursiveImprovement": 0.15,
+      "toolUseCoordination": 0.2,
+      "hallucinationSafety": 0.1,
+      "latencyCost": 0.1
+    },
+    "timeouts": {
+      "standard": 30000,
+      "heavy": 120000,
+      "multiAgent": 300000
+    },
+    "storage": {
+      "resultsDir": "./benchmark/results",
+      "tracesDir": "./benchmark/results/traces"
+    }
+  },
+  "adapters": [
+    "GPT",
+    "Claude",
+    "Baseline"
+  ],
+  "testCount": 3,
+  "results": {
+    "GPT": {
+      "exp_latency": {
+        "stats": {
+          "sampleCount": 5,
+          "latency": {
+            "mean": 0,
+            "median": 0,
+            "std": 0,
+            "min": 0,
+            "max": 0,
+            "p25": 0,
+            "p75": 0,
+            "p95": 0,
+            "p99": 0,
+            "ci95Lower": 0,
+            "ci95Upper": 0,
+            "n": 5
+          },
+          "score": {
+            "mean": 0,
+            "median": 0,
+            "std": 0,
+            "min": 0,
+            "max": 0,
+            "p25": 0,
+            "p75": 0,
+            "p95": 0,
+            "p99": 0,
+            "ci95Lower": 0,
+            "ci95Upper": 0,
+            "n": 5
+          },
+          "tokens": {
+            "mean": 108,
+            "median": 110,
+            "std": 19.421637418096342,
+            "min": 89,
+            "max": 142,
+            "p25": 89,
+            "p75": 110,
+            "p95": 142,
+            "p99": 142,
+            "ci95Lower": 90.97618421152296,
+            "ci95Upper": 125.02381578847704,
+            "n": 5
+          },
+          "successRate": 0,
+          "totalDuration": 0
+        },
+        "sampleCount": 5
+      },
+      "exp1_glyph_microbench": {
+        "stats": {
+          "sampleCount": 5,
+          "latency": {
+            "mean": 0,
+            "median": 0,
+            "std": 0,
+            "min": 0,
+            "max": 0,
+            "p25": 0,
+            "p75": 0,
+            "p95": 0,
+            "p99": 0,
+            "ci95Lower": 0,
+            "ci95Upper": 0,
+            "n": 5
+          },
+          "score": {
+            "mean": 0.4,
+            "median": 0.4,
+            "std": 0,
+            "min": 0.4,
+            "max": 0.4,
+            "p25": 0.4,
+            "p75": 0.4,
+            "p95": 0.4,
+            "p99": 0.4,
+            "ci95Lower": 0.4,
+            "ci95Upper": 0.4,
+            "n": 5
+          },
+          "tokens": {
+            "mean": 295,
+            "median": 295,
+            "std": 0.6324555320336759,
+            "min": 294,
+            "max": 296,
+            "p25": 295,
+            "p75": 295,
+            "p95": 296,
+            "p99": 296,
+            "ci95Lower": 294.44562828354975,
+            "ci95Upper": 295.55437171645025,
+            "n": 5
+          },
+          "successRate": 0,
+          "totalDuration": 1
+        },
+        "sampleCount": 5
+      },
+      "exp2_cross_domain_one_shot": {
+        "stats": {
+          "sampleCount": 3,
+          "latency": {
+            "mean": 0,
+            "median": 0,
+            "std": 0,
+            "min": 0,
+            "max": 0,
+            "p25": 0,
+            "p75": 0,
+            "p95": 0,
+            "p99": 0,
+            "ci95Lower": 0,
+            "ci95Upper": 0,
+            "n": 3
+          },
+          "score": {
+            "mean": 0.3499999999999999,
+            "median": 0.35,
+            "std": 5.551115123125783e-17,
+            "min": 0.35,
+            "max": 0.35,
+            "p25": 0.35,
+            "p75": 0.35,
+            "p95": 0.35,
+            "p99": 0.35,
+            "ci95Lower": 0.34999999999999987,
+            "ci95Upper": 0.35,
+            "n": 3
+          },
+          "tokens": {
+            "mean": 317,
+            "median": 314,
+            "std": 4.96655480858378,
+            "min": 313,
+            "max": 324,
+            "p25": 313,
+            "p75": 324,
+            "p95": 324,
+            "p99": 324,
+            "ci95Lower": 311.3798141588655,
+            "ci95Upper": 322.6201858411345,
+            "n": 3
+          },
+          "successRate": 0,
+          "totalDuration": 1
+        },
+        "sampleCount": 3
+      }
+    },
+    "Claude": {
+      "exp_latency": {
+        "stats": {
+          "sampleCount": 5,
+          "latency": {
+            "mean": 0,
+            "median": 0,
+            "std": 0,
+            "min": 0,
+            "max": 0,
+            "p25": 0,
+            "p75": 0,
+            "p95": 0,
+            "p99": 0,
+            "ci95Lower": 0,
+            "ci95Upper": 0,
+            "n": 5
+          },
+          "score": {
+            "mean": 0,
+            "median": 0,
+            "std": 0,
+            "min": 0,
+            "max": 0,
+            "p25": 0,
+            "p75": 0,
+            "p95": 0,
+            "p99": 0,
+            "ci95Lower": 0,
+            "ci95Upper": 0,
+            "n": 5
+          },
+          "tokens": {
+            "mean": 112.2,
+            "median": 114,
+            "std": 18.68047108613699,
+            "min": 94,
+            "max": 145,
+            "p25": 94,
+            "p75": 114,
+            "p95": 145,
+            "p99": 145,
+            "ci95Lower": 95.82584514547392,
+            "ci95Upper": 128.57415485452609,
+            "n": 5
+          },
+          "successRate": 0,
+          "totalDuration": 0
+        },
+        "sampleCount": 5
+      },
+      "exp1_glyph_microbench": {
+        "stats": {
+          "sampleCount": 5,
+          "latency": {
+            "mean": 0,
+            "median": 0,
+            "std": 0,
+            "min": 0,
+            "max": 0,
+            "p25": 0,
+            "p75": 0,
+            "p95": 0,
+            "p99": 0,
+            "ci95Lower": 0,
+            "ci95Upper": 0,
+            "n": 5
+          },
+          "score": {
+            "mean": 0.4,
+            "median": 0.4,
+            "std": 0,
+            "min": 0.4,
+            "max": 0.4,
+            "p25": 0.4,
+            "p75": 0.4,
+            "p95": 0.4,
+            "p99": 0.4,
+            "ci95Lower": 0.4,
+            "ci95Upper": 0.4,
+            "n": 5
+          },
+          "tokens": {
+            "mean": 298.8,
+            "median": 299,
+            "std": 0.7483314773547883,
+            "min": 298,
+            "max": 300,
+            "p25": 298,
+            "p75": 299,
+            "p95": 300,
+            "p99": 300,
+            "ci95Lower": 298.1440585391973,
+            "ci95Upper": 299.4559414608027,
+            "n": 5
+          },
+          "successRate": 0,
+          "totalDuration": 1
+        },
+        "sampleCount": 5
+      },
+      "exp2_cross_domain_one_shot": {
+        "stats": {
+          "sampleCount": 3,
+          "latency": {
+            "mean": 0,
+            "median": 0,
+            "std": 0,
+            "min": 0,
+            "max": 0,
+            "p25": 0,
+            "p75": 0,
+            "p95": 0,
+            "p99": 0,
+            "ci95Lower": 0,
+            "ci95Upper": 0,
+            "n": 3
+          },
+          "score": {
+            "mean": 0.3499999999999999,
+            "median": 0.35,
+            "std": 5.551115123125783e-17,
+            "min": 0.35,
+            "max": 0.35,
+            "p25": 0.35,
+            "p75": 0.35,
+            "p95": 0.35,
+            "p99": 0.35,
+            "ci95Lower": 0.34999999999999987,
+            "ci95Upper": 0.35,
+            "n": 3
+          },
+          "tokens": {
+            "mean": 321,
+            "median": 318,
+            "std": 4.96655480858378,
+            "min": 317,
+            "max": 328,
+            "p25": 317,
+            "p75": 328,
+            "p95": 328,
+            "p99": 328,
+            "ci95Lower": 315.3798141588655,
+            "ci95Upper": 326.6201858411345,
+            "n": 3
+          },
+          "successRate": 0,
+          "totalDuration": 0
+        },
+        "sampleCount": 3
+      }
+    },
+    "Baseline": {
+      "exp_latency": {
+        "stats": {
+          "sampleCount": 5,
+          "latency": {
+            "mean": 104.4,
+            "median": 103,
+            "std": 27.273430293969255,
+            "min": 59,
+            "max": 141,
+            "p25": 98,
+            "p75": 121,
+            "p95": 141,
+            "p99": 141,
+            "ci95Lower": 80.49378430616841,
+            "ci95Upper": 128.3062156938316,
+            "n": 5
+          },
+          "score": {
+            "mean": 0.98956,
+            "median": 0.9897,
+            "std": 0.0027273430293969195,
+            "min": 0.9859,
+            "max": 0.9941,
+            "p25": 0.9879,
+            "p75": 0.9902,
+            "p95": 0.9941,
+            "p99": 0.9941,
+            "ci95Lower": 0.9871693784306168,
+            "ci95Upper": 0.9919506215693832,
+            "n": 5
+          },
+          "tokens": {
+            "mean": 34.2,
+            "median": 34,
+            "std": 23.37006632425334,
+            "min": 13,
+            "max": 77,
+            "p25": 13,
+            "p75": 34,
+            "p95": 77,
+            "p99": 77,
+            "ci95Lower": 13.715233679634032,
+            "ci95Upper": 54.68476632036597,
+            "n": 5
+          },
+          "successRate": 1,
+          "totalDuration": 522
+        },
+        "sampleCount": 5
+      },
+      "exp1_glyph_microbench": {
+        "stats": {
+          "sampleCount": 5,
+          "latency": {
+            "mean": 82,
+            "median": 70,
+            "std": 18.39565166010707,
+            "min": 63,
+            "max": 109,
+            "p25": 69,
+            "p75": 99,
+            "p95": 109,
+            "p99": 109,
+            "ci95Lower": 65.87550037985675,
+            "ci95Upper": 98.12449962014325,
+            "n": 5
+          },
+          "score": {
+            "mean": 0.4,
+            "median": 0.4,
+            "std": 0,
+            "min": 0.4,
+            "max": 0.4,
+            "p25": 0.4,
+            "p75": 0.4,
+            "p95": 0.4,
+            "p99": 0.4,
+            "ci95Lower": 0.4,
+            "ci95Upper": 0.4,
+            "n": 5
+          },
+          "tokens": {
+            "mean": 230,
+            "median": 230,
+            "std": 0.6324555320336759,
+            "min": 229,
+            "max": 231,
+            "p25": 230,
+            "p75": 230,
+            "p95": 231,
+            "p99": 231,
+            "ci95Lower": 229.44562828354975,
+            "ci95Upper": 230.55437171645025,
+            "n": 5
+          },
+          "successRate": 0,
+          "totalDuration": 410
+        },
+        "sampleCount": 5
+      },
+      "exp2_cross_domain_one_shot": {
+        "stats": {
+          "sampleCount": 3,
+          "latency": {
+            "mean": 108,
+            "median": 114,
+            "std": 36.175498153676706,
+            "min": 61,
+            "max": 149,
+            "p25": 61,
+            "p75": 149,
+            "p95": 149,
+            "p99": 149,
+            "ci95Lower": 67.06357014969565,
+            "ci95Upper": 148.93642985030436,
+            "n": 3
+          },
+          "score": {
+            "mean": 0.25,
+            "median": 0.25,
+            "std": 0,
+            "min": 0.25,
+            "max": 0.25,
+            "p25": 0.25,
+            "p75": 0.25,
+            "p95": 0.25,
+            "p99": 0.25,
+            "ci95Lower": 0.25,
+            "ci95Upper": 0.25,
+            "n": 3
+          },
+          "tokens": {
+            "mean": 252,
+            "median": 249,
+            "std": 4.96655480858378,
+            "min": 248,
+            "max": 259,
+            "p25": 248,
+            "p75": 259,
+            "p95": 259,
+            "p99": 259,
+            "ci95Lower": 246.37981415886549,
+            "ci95Upper": 257.6201858411345,
+            "n": 3
+          },
+          "successRate": 0,
+          "totalDuration": 325
+        },
+        "sampleCount": 3
+      }
+    }
+  },
+  "agiScores": {
+    "GPT": 24.999999999999996,
+    "Claude": 24.999999999999996,
+    "Baseline": 46.13028571428572
+  },
+  "comparisons": [
+    {
+      "test": "exp_latency",
+      "comparison": "GPT vs Claude",
+      "metrics": {
+        "latency": {
+          "GPT": {
+            "mean": 0,
+            "median": 0,
+            "std": 0,
+            "min": 0,
+            "max": 0,
+            "p25": 0,
+            "p75": 0,
+            "p95": 0,
+            "p99": 0,
+            "ci95Lower": 0,
+            "ci95Upper": 0,
+            "n": 5
+          },
+          "Claude": {
+            "mean": 0,
+            "median": 0,
+            "std": 0,
+            "min": 0,
+            "max": 0,
+            "p25": 0,
+            "p75": 0,
+            "p95": 0,
+            "p99": 0,
+            "ci95Lower": 0,
+            "ci95Upper": 0,
+            "n": 5
+          },
+          "effectSize": 0,
+          "winner": "Claude"
+        },
+        "score": {
+          "GPT": {
+            "mean": 0,
+            "median": 0,
+            "std": 0,
+            "min": 0,
+            "max": 0,
+            "p25": 0,
+            "p75": 0,
+            "p95": 0,
+            "p99": 0,
+            "ci95Lower": 0,
+            "ci95Upper": 0,
+            "n": 5
+          },
+          "Claude": {
+            "mean": 0,
+            "median": 0,
+            "std": 0,
+            "min": 0,
+            "max": 0,
+            "p25": 0,
+            "p75": 0,
+            "p95": 0,
+            "p99": 0,
+            "ci95Lower": 0,
+            "ci95Upper": 0,
+            "n": 5
+          },
+          "effectSize": 0,
+          "winner": "Claude"
+        },
+        "successRate": {
+          "GPT": 0,
+          "Claude": 0,
+          "winner": "Claude"
+        }
+      }
+    },
+    {
+      "test": "exp1_glyph_microbench",
+      "comparison": "GPT vs Claude",
+      "metrics": {
+        "latency": {
+          "GPT": {
+            "mean": 0,
+            "median": 0,
+            "std": 0,
+            "min": 0,
+            "max": 0,
+            "p25": 0,
+            "p75": 0,
+            "p95": 0,
+            "p99": 0,
+            "ci95Lower": 0,
+            "ci95Upper": 0,
+            "n": 5
+          },
+          "Claude": {
+            "mean": 0,
+            "median": 0,
+            "std": 0,
+            "min": 0,
+            "max": 0,
+            "p25": 0,
+            "p75": 0,
+            "p95": 0,
+            "p99": 0,
+            "ci95Lower": 0,
+            "ci95Upper": 0,
+            "n": 5
+          },
+          "effectSize": 0,
+          "winner": "Claude"
+        },
+        "score": {
+          "GPT": {
+            "mean": 0.4,
+            "median": 0.4,
+            "std": 0,
+            "min": 0.4,
+            "max": 0.4,
+            "p25": 0.4,
+            "p75": 0.4,
+            "p95": 0.4,
+            "p99": 0.4,
+            "ci95Lower": 0.4,
+            "ci95Upper": 0.4,
+            "n": 5
+          },
+          "Claude": {
+            "mean": 0.4,
+            "median": 0.4,
+            "std": 0,
+            "min": 0.4,
+            "max": 0.4,
+            "p25": 0.4,
+            "p75": 0.4,
+            "p95": 0.4,
+            "p99": 0.4,
+            "ci95Lower": 0.4,
+            "ci95Upper": 0.4,
+            "n": 5
+          },
+          "effectSize": 0,
+          "winner": "Claude"
+        },
+        "successRate": {
+          "GPT": 0,
+          "Claude": 0,
+          "winner": "Claude"
+        }
+      }
+    },
+    {
+      "test": "exp2_cross_domain_one_shot",
+      "comparison": "GPT vs Claude",
+      "metrics": {
+        "latency": {
+          "GPT": {
+            "mean": 0,
+            "median": 0,
+            "std": 0,
+            "min": 0,
+            "max": 0,
+            "p25": 0,
+            "p75": 0,
+            "p95": 0,
+            "p99": 0,
+            "ci95Lower": 0,
+            "ci95Upper": 0,
+            "n": 3
+          },
+          "Claude": {
+            "mean": 0,
+            "median": 0,
+            "std": 0,
+            "min": 0,
+            "max": 0,
+            "p25": 0,
+            "p75": 0,
+            "p95": 0,
+            "p99": 0,
+            "ci95Lower": 0,
+            "ci95Upper": 0,
+            "n": 3
+          },
+          "effectSize": 0,
+          "winner": "Claude"
+        },
+        "score": {
+          "GPT": {
+            "mean": 0.3499999999999999,
+            "median": 0.35,
+            "std": 5.551115123125783e-17,
+            "min": 0.35,
+            "max": 0.35,
+            "p25": 0.35,
+            "p75": 0.35,
+            "p95": 0.35,
+            "p99": 0.35,
+            "ci95Lower": 0.34999999999999987,
+            "ci95Upper": 0.35,
+            "n": 3
+          },
+          "Claude": {
+            "mean": 0.3499999999999999,
+            "median": 0.35,
+            "std": 5.551115123125783e-17,
+            "min": 0.35,
+            "max": 0.35,
+            "p25": 0.35,
+            "p75": 0.35,
+            "p95": 0.35,
+            "p99": 0.35,
+            "ci95Lower": 0.34999999999999987,
+            "ci95Upper": 0.35,
+            "n": 3
+          },
+          "effectSize": 0,
+          "winner": "Claude"
+        },
+        "successRate": {
+          "GPT": 0,
+          "Claude": 0,
+          "winner": "Claude"
+        }
+      }
+    },
+    {
+      "test": "exp_latency",
+      "comparison": "GPT vs Baseline",
+      "metrics": {
+        "latency": {
+          "GPT": {
+            "mean": 0,
+            "median": 0,
+            "std": 0,
+            "min": 0,
+            "max": 0,
+            "p25": 0,
+            "p75": 0,
+            "p95": 0,
+            "p99": 0,
+            "ci95Lower": 0,
+            "ci95Upper": 0,
+            "n": 5
+          },
+          "Baseline": {
+            "mean": 104.4,
+            "median": 103,
+            "std": 27.273430293969255,
+            "min": 59,
+            "max": 141,
+            "p25": 98,
+            "p75": 121,
+            "p95": 141,
+            "p99": 141,
+            "ci95Lower": 80.49378430616841,
+            "ci95Upper": 128.3062156938316,
+            "n": 5
+          },
+          "effectSize": -5.413469971336843,
+          "winner": "GPT"
+        },
+        "score": {
+          "GPT": {
+            "mean": 0,
+            "median": 0,
+            "std": 0,
+            "min": 0,
+            "max": 0,
+            "p25": 0,
+            "p75": 0,
+            "p95": 0,
+            "p99": 0,
+            "ci95Lower": 0,
+            "ci95Upper": 0,
+            "n": 5
+          },
+          "Baseline": {
+            "mean": 0.98956,
+            "median": 0.9897,
+            "std": 0.0027273430293969195,
+            "min": 0.9859,
+            "max": 0.9941,
+            "p25": 0.9879,
+            "p75": 0.9902,
+            "p95": 0.9941,
+            "p99": 0.9941,
+            "ci95Lower": 0.9871693784306168,
+            "ci95Upper": 0.9919506215693832,
+            "n": 5
+          },
+          "effectSize": -513.1181364785534,
+          "winner": "Baseline"
+        },
+        "successRate": {
+          "GPT": 0,
+          "Baseline": 1,
+          "winner": "Baseline"
+        }
+      }
+    },
+    {
+      "test": "exp1_glyph_microbench",
+      "comparison": "GPT vs Baseline",
+      "metrics": {
+        "latency": {
+          "GPT": {
+            "mean": 0,
+            "median": 0,
+            "std": 0,
+            "min": 0,
+            "max": 0,
+            "p25": 0,
+            "p75": 0,
+            "p95": 0,
+            "p99": 0,
+            "ci95Lower": 0,
+            "ci95Upper": 0,
+            "n": 5
+          },
+          "Baseline": {
+            "mean": 82,
+            "median": 70,
+            "std": 18.39565166010707,
+            "min": 63,
+            "max": 109,
+            "p25": 69,
+            "p75": 99,
+            "p95": 109,
+            "p99": 109,
+            "ci95Lower": 65.87550037985675,
+            "ci95Upper": 98.12449962014325,
+            "n": 5
+          },
+          "effectSize": -6.303963254864048,
+          "winner": "GPT"
+        },
+        "score": {
+          "GPT": {
+            "mean": 0.4,
+            "median": 0.4,
+            "std": 0,
+            "min": 0.4,
+            "max": 0.4,
+            "p25": 0.4,
+            "p75": 0.4,
+            "p95": 0.4,
+            "p99": 0.4,
+            "ci95Lower": 0.4,
+            "ci95Upper": 0.4,
+            "n": 5
+          },
+          "Baseline": {
+            "mean": 0.4,
+            "median": 0.4,
+            "std": 0,
+            "min": 0.4,
+            "max": 0.4,
+            "p25": 0.4,
+            "p75": 0.4,
+            "p95": 0.4,
+            "p99": 0.4,
+            "ci95Lower": 0.4,
+            "ci95Upper": 0.4,
+            "n": 5
+          },
+          "effectSize": 0,
+          "winner": "Baseline"
+        },
+        "successRate": {
+          "GPT": 0,
+          "Baseline": 0,
+          "winner": "Baseline"
+        }
+      }
+    },
+    {
+      "test": "exp2_cross_domain_one_shot",
+      "comparison": "GPT vs Baseline",
+      "metrics": {
+        "latency": {
+          "GPT": {
+            "mean": 0,
+            "median": 0,
+            "std": 0,
+            "min": 0,
+            "max": 0,
+            "p25": 0,
+            "p75": 0,
+            "p95": 0,
+            "p99": 0,
+            "ci95Lower": 0,
+            "ci95Upper": 0,
+            "n": 3
+          },
+          "Baseline": {
+            "mean": 108,
+            "median": 114,
+            "std": 36.175498153676706,
+            "min": 61,
+            "max": 149,
+            "p25": 61,
+            "p75": 149,
+            "p95": 149,
+            "p99": 149,
+            "ci95Lower": 67.06357014969565,
+            "ci95Upper": 148.93642985030436,
+            "n": 3
+          },
+          "effectSize": -4.222058369105582,
+          "winner": "GPT"
+        },
+        "score": {
+          "GPT": {
+            "mean": 0.3499999999999999,
+            "median": 0.35,
+            "std": 5.551115123125783e-17,
+            "min": 0.35,
+            "max": 0.35,
+            "p25": 0.35,
+            "p75": 0.35,
+            "p95": 0.35,
+            "p99": 0.35,
+            "ci95Lower": 0.34999999999999987,
+            "ci95Upper": 0.35,
+            "n": 3
+          },
+          "Baseline": {
+            "mean": 0.25,
+            "median": 0.25,
+            "std": 0,
+            "min": 0.25,
+            "max": 0.25,
+            "p25": 0.25,
+            "p75": 0.25,
+            "p95": 0.25,
+            "p99": 0.25,
+            "ci95Lower": 0.25,
+            "ci95Upper": 0.25,
+            "n": 3
+          },
+          "effectSize": 2547620669010307,
+          "winner": "GPT"
+        },
+        "successRate": {
+          "GPT": 0,
+          "Baseline": 0,
+          "winner": "Baseline"
+        }
+      }
+    },
+    {
+      "test": "exp_latency",
+      "comparison": "Claude vs Baseline",
+      "metrics": {
+        "latency": {
+          "Claude": {
+            "mean": 0,
+            "median": 0,
+            "std": 0,
+            "min": 0,
+            "max": 0,
+            "p25": 0,
+            "p75": 0,
+            "p95": 0,
+            "p99": 0,
+            "ci95Lower": 0,
+            "ci95Upper": 0,
+            "n": 5
+          },
+          "Baseline": {
+            "mean": 104.4,
+            "median": 103,
+            "std": 27.273430293969255,
+            "min": 59,
+            "max": 141,
+            "p25": 98,
+            "p75": 121,
+            "p95": 141,
+            "p99": 141,
+            "ci95Lower": 80.49378430616841,
+            "ci95Upper": 128.3062156938316,
+            "n": 5
+          },
+          "effectSize": -5.413469971336843,
+          "winner": "Claude"
+        },
+        "score": {
+          "Claude": {
+            "mean": 0,
+            "median": 0,
+            "std": 0,
+            "min": 0,
+            "max": 0,
+            "p25": 0,
+            "p75": 0,
+            "p95": 0,
+            "p99": 0,
+            "ci95Lower": 0,
+            "ci95Upper": 0,
+            "n": 5
+          },
+          "Baseline": {
+            "mean": 0.98956,
+            "median": 0.9897,
+            "std": 0.0027273430293969195,
+            "min": 0.9859,
+            "max": 0.9941,
+            "p25": 0.9879,
+            "p75": 0.9902,
+            "p95": 0.9941,
+            "p99": 0.9941,
+            "ci95Lower": 0.9871693784306168,
+            "ci95Upper": 0.9919506215693832,
+            "n": 5
+          },
+          "effectSize": -513.1181364785534,
+          "winner": "Baseline"
+        },
+        "successRate": {
+          "Claude": 0,
+          "Baseline": 1,
+          "winner": "Baseline"
+        }
+      }
+    },
+    {
+      "test": "exp1_glyph_microbench",
+      "comparison": "Claude vs Baseline",
+      "metrics": {
+        "latency": {
+          "Claude": {
+            "mean": 0,
+            "median": 0,
+            "std": 0,
+            "min": 0,
+            "max": 0,
+            "p25": 0,
+            "p75": 0,
+            "p95": 0,
+            "p99": 0,
+            "ci95Lower": 0,
+            "ci95Upper": 0,
+            "n": 5
+          },
+          "Baseline": {
+            "mean": 82,
+            "median": 70,
+            "std": 18.39565166010707,
+            "min": 63,
+            "max": 109,
+            "p25": 69,
+            "p75": 99,
+            "p95": 109,
+            "p99": 109,
+            "ci95Lower": 65.87550037985675,
+            "ci95Upper": 98.12449962014325,
+            "n": 5
+          },
+          "effectSize": -6.303963254864048,
+          "winner": "Claude"
+        },
+        "score": {
+          "Claude": {
+            "mean": 0.4,
+            "median": 0.4,
+            "std": 0,
+            "min": 0.4,
+            "max": 0.4,
+            "p25": 0.4,
+            "p75": 0.4,
+            "p95": 0.4,
+            "p99": 0.4,
+            "ci95Lower": 0.4,
+            "ci95Upper": 0.4,
+            "n": 5
+          },
+          "Baseline": {
+            "mean": 0.4,
+            "median": 0.4,
+            "std": 0,
+            "min": 0.4,
+            "max": 0.4,
+            "p25": 0.4,
+            "p75": 0.4,
+            "p95": 0.4,
+            "p99": 0.4,
+            "ci95Lower": 0.4,
+            "ci95Upper": 0.4,
+            "n": 5
+          },
+          "effectSize": 0,
+          "winner": "Baseline"
+        },
+        "successRate": {
+          "Claude": 0,
+          "Baseline": 0,
+          "winner": "Baseline"
+        }
+      }
+    },
+    {
+      "test": "exp2_cross_domain_one_shot",
+      "comparison": "Claude vs Baseline",
+      "metrics": {
+        "latency": {
+          "Claude": {
+            "mean": 0,
+            "median": 0,
+            "std": 0,
+            "min": 0,
+            "max": 0,
+            "p25": 0,
+            "p75": 0,
+            "p95": 0,
+            "p99": 0,
+            "ci95Lower": 0,
+            "ci95Upper": 0,
+            "n": 3
+          },
+          "Baseline": {
+            "mean": 108,
+            "median": 114,
+            "std": 36.175498153676706,
+            "min": 61,
+            "max": 149,
+            "p25": 61,
+            "p75": 149,
+            "p95": 149,
+            "p99": 149,
+            "ci95Lower": 67.06357014969565,
+            "ci95Upper": 148.93642985030436,
+            "n": 3
+          },
+          "effectSize": -4.222058369105582,
+          "winner": "Claude"
+        },
+        "score": {
+          "Claude": {
+            "mean": 0.3499999999999999,
+            "median": 0.35,
+            "std": 5.551115123125783e-17,
+            "min": 0.35,
+            "max": 0.35,
+            "p25": 0.35,
+            "p75": 0.35,
+            "p95": 0.35,
+            "p99": 0.35,
+            "ci95Lower": 0.34999999999999987,
+            "ci95Upper": 0.35,
+            "n": 3
+          },
+          "Baseline": {
+            "mean": 0.25,
+            "median": 0.25,
+            "std": 0,
+            "min": 0.25,
+            "max": 0.25,
+            "p25": 0.25,
+            "p75": 0.25,
+            "p95": 0.25,
+            "p99": 0.25,
+            "ci95Lower": 0.25,
+            "ci95Upper": 0.25,
+            "n": 3
+          },
+          "effectSize": 2547620669010307,
+          "winner": "Claude"
+        },
+        "successRate": {
+          "Claude": 0,
+          "Baseline": 0,
+          "winner": "Baseline"
+        }
+      }
+    }
+  ]
+}

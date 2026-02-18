@@ -1,0 +1,21 @@
+[package]
+name = "glyph_engine"
+version = "11.5.0"
+edition = "2021"
+description = "Brain Network V11.5 - Zero-Copy WASM Glyph Engine"
+authors = ["0RB System"]
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+wasm-bindgen = "0.2"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = ["-O4", "--enable-simd"]

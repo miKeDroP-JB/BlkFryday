@@ -1,0 +1,18 @@
+{
+  "color": {
+    "count": 2,
+    "successRate": 1
+  },
+  "structural": {
+    "count": 6,
+    "successRate": 1
+  },
+  "spatial": {
+    "count": 1,
+    "successRate": 1
+  },
+  "composite": {
+    "count": 5,
+    "successRate": 1
+  }
+}

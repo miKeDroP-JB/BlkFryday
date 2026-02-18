@@ -2,13 +2,30 @@
  * 0RB SYSTEM - UNIFIED EXPORT
  * ═══════════════════════════════════════════════════════════════════
  * The Complete Reality Operating System
+ * POWERED BY ORBITAL FORGE - The Reality Compiler
  *
  * "Everything you need to reshape reality, in one import."
  * ═══════════════════════════════════════════════════════════════════
  */
 
-const SYSTEM_VERSION = '2.0.0';
-const CODENAME = 'SOVEREIGN';
+const SYSTEM_VERSION = '3.0.0';
+const CODENAME = 'ORBITAL';
+
+// ═══════════════════════════════════════════════════════════════════
+// ORBITAL FORGE - FOUNDATIONAL LAYER
+// ═══════════════════════════════════════════════════════════════════
+const {
+  OrbitalForge,
+  QuickStart: ForgeQuickStart,
+  Prime,
+  Immortality: ForgeImmortality,
+  Intelligence,
+  Multiplication,
+  Evolution,
+  Autonomous,
+  PRIME_AXIOM,
+  AUTONOMOUS_MANIFESTO
+} = require('../forge');
 
 // ═══════════════════════════════════════════════════════════════════
 // CORE SYSTEMS
@@ -41,6 +58,36 @@ const CryptoEngine = require('./crypto/CryptoEngine');
 
 // Sales
 const SalesEngine = require('./sales/SalesEngine');
+
+// Unlimited Solver - Infinite Reasoning Engine
+const {
+  UnlimitedSolver,
+  Grid,
+  Strategy,
+  ReasoningEngine,
+  SolverMemory,
+  infiniteStrategies,
+  generateStrategiesOfDepth,
+  getPrimitives,
+  validateStrategyOnTraining,
+  scoreStrategyOnTraining,
+  VERSION: SOLVER_VERSION,
+  CODENAME: SOLVER_CODENAME
+} = require('./solver/UnlimitedSolver');
+
+// Unlimited Solver v3 - Meta Horizon Engine
+const {
+  UnlimitedSolverV3,
+  ComplexityVector,
+  HypothesisOntology,
+  ValidationPipeline,
+  CognitiveMemory,
+  ChainExecutor,
+  ExplainabilityEngine,
+  SafetyBoundary,
+  VERSION: SOLVER_V3_VERSION,
+  CODENAME: SOLVER_V3_CODENAME
+} = require('./solver/UnlimitedSolverV3');
 
 // ═══════════════════════════════════════════════════════════════════
 // SOVEREIGN SYSTEMS (NEW)
@@ -138,6 +185,9 @@ async function initializeSystem(config = {}) {
   `);
 
   const systems = {
+    // ORBITAL FORGE - The Foundation
+    forge: null,
+
     // Core
     agents: null,
     memory: null,
@@ -154,8 +204,18 @@ async function initializeSystem(config = {}) {
     nexus: null,
     genesis: null,
     sdk: null,
-    governance: null
+    governance: null,
+
+    // Solver
+    solver: null
   };
+
+  // Initialize Orbital Forge FIRST - it's the foundation
+  if (config.forge !== false) {
+    systems.forge = new OrbitalForge(config.forgeConfig || {});
+    await systems.forge.initialize(config.forgeOptions || {});
+    console.log('🜂 Orbital Forge online - Reality compiler operational');
+  }
 
   // Initialize based on config
   if (config.agents !== false) {
@@ -231,6 +291,11 @@ async function initializeSystem(config = {}) {
     console.log('✓ Hive Governance initialized');
   }
 
+  if (config.solver !== false) {
+    systems.solver = new UnlimitedSolver(config.solverConfig);
+    console.log('✓ Unlimited Solver initialized (Infinite Reasoning Engine)');
+  }
+
   console.log('\n🌟 0RB System fully operational\n');
 
   return systems;
@@ -297,6 +362,20 @@ module.exports = {
   initializeSystem,
   QuickStart,
 
+  // ═══════════════════════════════════════════════════════════════
+  // ORBITAL FORGE - THE REALITY COMPILER
+  // ═══════════════════════════════════════════════════════════════
+  OrbitalForge,
+  ForgeQuickStart,
+  Prime,
+  ForgeImmortality,
+  Intelligence,
+  Multiplication,
+  Evolution,
+  Autonomous,
+  PRIME_AXIOM,
+  AUTONOMOUS_MANIFESTO,
+
   // Core Systems
   AgentManager,
   AgentMemory,
@@ -307,6 +386,7 @@ module.exports = {
   NeuralLink,
   CryptoEngine,
   SalesEngine,
+  UnlimitedSolver,
 
   // Game Engines
   Games: {
@@ -380,5 +460,35 @@ module.exports = {
     PROPOSAL_CATEGORIES,
     PROPOSAL_STATES,
     VOTE_TYPES
+  },
+
+  // Unlimited Solver - Infinite Reasoning Engine
+  Solver: {
+    UnlimitedSolver,
+    Grid,
+    Strategy,
+    ReasoningEngine,
+    SolverMemory,
+    infiniteStrategies,
+    generateStrategiesOfDepth,
+    getPrimitives,
+    validateStrategyOnTraining,
+    scoreStrategyOnTraining,
+    VERSION: SOLVER_VERSION,
+    CODENAME: SOLVER_CODENAME
+  },
+
+  // Unlimited Solver v3 - Meta Horizon Engine
+  SolverV3: {
+    UnlimitedSolverV3,
+    ComplexityVector,
+    HypothesisOntology,
+    ValidationPipeline,
+    CognitiveMemory,
+    ChainExecutor,
+    ExplainabilityEngine,
+    SafetyBoundary,
+    VERSION: SOLVER_V3_VERSION,
+    CODENAME: SOLVER_V3_CODENAME
   }
 };

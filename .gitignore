@@ -41,3 +41,16 @@ coverage/
 # Misc
 *.pem
 .vercel
+*.zip
+
+# Runtime data
+.orb-data/
+backups/
+logs/
+__pycache__/
+data/
+
+# Benchmark
+benchmark_results*.json
+benchmark/benchmark/
+cloudflared

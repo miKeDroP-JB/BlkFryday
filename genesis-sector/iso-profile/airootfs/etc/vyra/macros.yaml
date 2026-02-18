@@ -1,0 +1,264 @@
+# ╔══════════════════════════════════════════════════════════════════════╗
+# ║  VYRA: GENESIS SECTOR - COMMAND MACROS                              ║
+# ║  Intent Transformation Spells for Channel 0                          ║
+# ╚══════════════════════════════════════════════════════════════════════╝
+
+version: "1.0"
+name: "genesis-macros"
+
+# === BUILD MACROS ===
+build:
+  server:
+    description: "Initialize and build a new server project"
+    steps:
+      - action: "create_directory"
+        path: "{project_name}"
+      - action: "init_git"
+      - action: "create_template"
+        template: "server"
+      - action: "install_deps"
+      - action: "announce"
+        message: "Server project {project_name} manifested"
+
+  api:
+    description: "Build a FastAPI backend"
+    steps:
+      - action: "create_directory"
+        path: "{project_name}"
+      - action: "create_template"
+        template: "fastapi"
+      - action: "create_venv"
+      - action: "install_deps"
+        package_manager: "poetry"
+      - action: "announce"
+        message: "API project {project_name} ready for deployment"
+
+  frontend:
+    description: "Build a Next.js frontend"
+    steps:
+      - action: "run_command"
+        command: "bunx create-next-app {project_name} --typescript --tailwind --eslint"
+      - action: "announce"
+        message: "Frontend {project_name} initialized"
+
+# === SWARM MACROS ===
+swarm:
+  deploy:
+    description: "Deploy the agent swarm"
+    steps:
+      - action: "check_swarm_config"
+      - action: "start_orchestrator"
+      - action: "deploy_agents"
+        count: "{agent_count:3}"
+      - action: "verify_connections"
+      - action: "announce"
+        message: "Swarm deployed: {agent_count} agents active"
+
+  scale:
+    description: "Scale swarm up or down"
+    params:
+      - name: "count"
+        type: "int"
+        required: true
+    steps:
+      - action: "scale_agents"
+        count: "{count}"
+      - action: "rebalance"
+      - action: "announce"
+        message: "Swarm scaled to {count} agents"
+
+# === NODE MACROS ===
+node:
+  create:
+    description: "Spin up a new processing node"
+    steps:
+      - action: "allocate_resources"
+      - action: "create_container"
+        image: "vyra/node:latest"
+      - action: "connect_to_swarm"
+      - action: "announce"
+        message: "Node {node_id} spun up"
+
+  destroy:
+    description: "Terminate a node"
+    params:
+      - name: "node_id"
+        type: "string"
+        required: true
+    steps:
+      - action: "graceful_shutdown"
+        node: "{node_id}"
+      - action: "disconnect_from_swarm"
+      - action: "destroy_container"
+      - action: "announce"
+        message: "Node {node_id} terminated"
+
+# === AGENT MACROS ===
+agent:
+  spawn:
+    description: "Summon a new AI agent"
+    params:
+      - name: "type"
+        type: "string"
+        default: "general"
+      - name: "model"
+        type: "string"
+        default: "llama3.1:8b"
+    steps:
+      - action: "pull_model"
+        model: "{model}"
+      - action: "create_agent"
+        type: "{type}"
+        model: "{model}"
+      - action: "register_with_orchestrator"
+      - action: "announce"
+        message: "Agent {agent_id} summoned ({type}, {model})"
+
+  inject:
+    description: "Inject instructions into an agent"
+    params:
+      - name: "agent_id"
+        type: "string"
+        required: true
+      - name: "instruction"
+        type: "string"
+        required: true
+    steps:
+      - action: "send_instruction"
+        agent: "{agent_id}"
+        instruction: "{instruction}"
+      - action: "announce"
+        message: "Instruction injected into {agent_id}"
+
+# === ENVIRONMENT MACROS ===
+env:
+  clean:
+    description: "Clean the development environment"
+    steps:
+      - action: "stop_all_agents"
+      - action: "cleanup_containers"
+      - action: "clear_caches"
+      - action: "garbage_collect"
+      - action: "announce"
+        message: "Environment cleaned"
+
+  reset:
+    description: "Full environment reset"
+    confirm: true
+    steps:
+      - action: "stop_all_services"
+      - action: "clear_all_data"
+      - action: "reinitialize"
+      - action: "announce"
+        message: "Environment reset complete"
+
+# === TIMELINE MACROS ===
+timeline:
+  open:
+    description: "Open the execution timeline viewer"
+    steps:
+      - action: "launch_app"
+        app: "timeline-viewer"
+      - action: "load_recent_events"
+      - action: "announce"
+        message: "Timeline viewer opened"
+
+  jump:
+    description: "Jump to a specific point in timeline"
+    params:
+      - name: "timestamp"
+        type: "string"
+        required: true
+    steps:
+      - action: "load_state"
+        timestamp: "{timestamp}"
+      - action: "announce"
+        message: "Jumped to {timestamp}"
+
+# === FOCUS STATE MACROS ===
+focus:
+  trance:
+    description: "Enable focus trance mode"
+    steps:
+      - action: "set_theme"
+        theme: "trance"
+      - action: "enable_background_audio"
+        track: "deep-focus"
+      - action: "dim_ui_elements"
+      - action: "announce"
+        message: "Focus trance mode activated"
+
+  clarity:
+    description: "Enable clarity pulse mode for debugging"
+    steps:
+      - action: "set_theme"
+        theme: "clarity"
+      - action: "enable_background_audio"
+        track: "clarity-pulse"
+      - action: "highlight_diagnostics"
+      - action: "announce"
+        message: "Clarity pulse mode activated"
+
+  normal:
+    description: "Return to normal mode"
+    steps:
+      - action: "set_theme"
+        theme: "default"
+      - action: "disable_background_audio"
+      - action: "reset_ui"
+      - action: "announce"
+        message: "Normal mode restored"
+
+# === GRID MACROS ===
+grid:
+  summon:
+    description: "Open the summoning grid for new agents"
+    steps:
+      - action: "launch_app"
+        app: "swarm-panel"
+        mode: "summon"
+      - action: "announce"
+        message: "Summoning grid opened"
+
+# === DEPLOY MACROS ===
+deploy:
+  local:
+    description: "Deploy to local environment"
+    steps:
+      - action: "build_project"
+      - action: "run_tests"
+      - action: "start_services"
+      - action: "announce"
+        message: "Local deployment complete"
+
+  cloud:
+    description: "Deploy to cloud provider"
+    params:
+      - name: "provider"
+        type: "string"
+        default: "vercel"
+    steps:
+      - action: "build_project"
+      - action: "run_tests"
+      - action: "deploy_to"
+        provider: "{provider}"
+      - action: "announce"
+        message: "Deployed to {provider}"
+
+# === QUICK UTILITY MACROS ===
+quick:
+  test:
+    command: "npm test || pytest || cargo test"
+    description: "Run tests for current project"
+
+  lint:
+    command: "npm run lint || ruff check . || cargo clippy"
+    description: "Run linter for current project"
+
+  format:
+    command: "npm run format || ruff format . || cargo fmt"
+    description: "Format current project"
+
+  dev:
+    command: "npm run dev || uvicorn main:app --reload || cargo run"
+    description: "Start development server"

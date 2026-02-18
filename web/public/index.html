@@ -698,22 +698,247 @@
       `).join('');
     }
 
-    function launchGame(gameId) {
+    async function launchGame(gameId) {
       console.log('Launching game:', gameId);
-      alert(`Launching ${gameId}...\n\nThis would open the full ${gameId} experience.`);
+
+      // Show loading state
+      const card = document.querySelector(`[onclick="launchGame('${gameId}')"]`);
+      if (card) {
+        card.style.opacity = '0.7';
+        card.style.pointerEvents = 'none';
+      }
+
+      try {
+        // Check if we have IPC (Electron)
+        if (typeof require !== 'undefined') {
+          const { ipcRenderer } = require('electron');
+          const result = await ipcRenderer.invoke('game:launch', gameId);
+          console.log('Game launch result:', result);
+        } else {
+          // Web fallback - navigate to game page
+          showGameView(gameId);
+        }
+      } catch (error) {
+        console.error('Launch failed:', error);
+        showGameView(gameId);
+      } finally {
+        if (card) {
+          card.style.opacity = '1';
+          card.style.pointerEvents = 'auto';
+        }
+      }
+    }
+
+    function showGameView(gameId) {
+      const game = GAMES.find(g => g.id === gameId);
+      if (!game) return;
+
+      const mainArea = document.querySelector('.main-area');
+      mainArea.innerHTML = `
+        <div style="padding: 40px; height: 100%; display: flex; flex-direction: column;">
+          <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 30px;">
+            <button onclick="showGames()" style="background: var(--color-bg-tertiary); border: 1px solid var(--color-cyan); color: var(--color-cyan); padding: 10px 20px; border-radius: 8px; cursor: pointer; font-family: var(--font-body);">← Back</button>
+            <span style="font-size: 3rem;">${game.icon}</span>
+            <div>
+              <h1 style="font-family: var(--font-display); font-size: 2rem; letter-spacing: 0.1em;">${game.name}</h1>
+              <p style="color: var(--color-cyan);">${game.tagline}</p>
+            </div>
+          </div>
+          <div style="flex: 1; background: var(--color-bg-secondary); border-radius: 16px; padding: 30px; border: 1px solid var(--color-bg-tertiary);">
+            <p style="color: var(--color-text-dim); margin-bottom: 20px;">${game.desc}</p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+              <div style="background: var(--color-bg-tertiary); padding: 20px; border-radius: 12px; text-align: center; cursor: pointer;" onclick="alert('Coming soon!')">
+                <div style="font-size: 2rem; margin-bottom: 10px;">🚀</div>
+                <div style="color: var(--color-cyan);">Launch</div>
+              </div>
+              <div style="background: var(--color-bg-tertiary); padding: 20px; border-radius: 12px; text-align: center; cursor: pointer;" onclick="alert('Coming soon!')">
+                <div style="font-size: 2rem; margin-bottom: 10px;">⚙️</div>
+                <div style="color: var(--color-cyan);">Settings</div>
+              </div>
+              <div style="background: var(--color-bg-tertiary); padding: 20px; border-radius: 12px; text-align: center; cursor: pointer;" onclick="alert('Coming soon!')">
+                <div style="font-size: 2rem; margin-bottom: 10px;">📊</div>
+                <div style="color: var(--color-cyan);">Stats</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function showGames() {
+      const mainArea = document.querySelector('.main-area');
+      mainArea.innerHTML = '<div class="game-grid" id="game-grid"></div>';
+      renderGames();
+      setActiveNav(0);
+    }
+
+    // Sidebar navigation
+    const NAV_VIEWS = ['games', 'agents', 'copa', 'crypto', 'community', 'settings'];
+
+    function setActiveNav(index) {
+      document.querySelectorAll('.sidebar-btn').forEach((btn, i) => {
+        btn.classList.toggle('active', i === index);
+      });
+    }
+
+    function showView(viewName) {
+      const index = NAV_VIEWS.indexOf(viewName);
+      setActiveNav(index);
+
+      const mainArea = document.querySelector('.main-area');
+
+      switch(viewName) {
+        case 'games':
+          mainArea.innerHTML = '<div class="game-grid" id="game-grid"></div>';
+          renderGames();
+          break;
+        case 'agents':
+          showAgentsView(mainArea);
+          break;
+        case 'copa':
+          showCopaView(mainArea);
+          break;
+        case 'crypto':
+          showCryptoView(mainArea);
+          break;
+        case 'community':
+          showCommunityView(mainArea);
+          break;
+        case 'settings':
+          showSettingsView(mainArea);
+          break;
+      }
+    }
+
+    function showAgentsView(container) {
+      const agents = ['APOLLO', 'ATHENA', 'HERMES', 'ARES', 'HEPHAESTUS', 'ARTEMIS', 'MERCURY'];
+      container.innerHTML = `
+        <div style="padding: 40px;">
+          <h2 style="font-family: var(--font-display); font-size: 1.8rem; margin-bottom: 30px; color: var(--color-cyan);">⚡ AGENT PANTHEON</h2>
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;">
+            ${agents.map(agent => `
+              <div style="background: var(--color-bg-secondary); border: 1px solid var(--color-bg-tertiary); border-radius: 12px; padding: 24px; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.borderColor='var(--color-cyan)'" onmouseout="this.style.borderColor='var(--color-bg-tertiary)'">
+                <h3 style="font-family: var(--font-display); margin-bottom: 8px;">${agent}</h3>
+                <p style="color: var(--color-text-dim); font-size: 0.9rem;">Ready to assist</p>
+                <div style="margin-top: 16px; display: flex; gap: 10px;">
+                  <button style="flex: 1; background: var(--color-cyan); color: var(--color-bg); border: none; padding: 8px; border-radius: 6px; cursor: pointer;">Spawn</button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function showCopaView(container) {
+      const copas = ['LEGAL', 'MEDICAL', 'SALES', 'FINANCE', 'CREATIVE', 'CODE', 'SUPPORT', 'HR', 'OPS', 'EXECUTIVE'];
+      container.innerHTML = `
+        <div style="padding: 40px;">
+          <h2 style="font-family: var(--font-display); font-size: 1.8rem; margin-bottom: 10px; color: var(--color-cyan);">🤝 COPA SIDEKICK SYSTEM</h2>
+          <p style="color: var(--color-text-dim); margin-bottom: 30px;">AI-augmented professionals for every industry. EVERYBODY EATS.</p>
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px;">
+            ${copas.map(copa => `
+              <div style="background: var(--color-bg-secondary); border: 1px solid var(--color-bg-tertiary); border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.borderColor='var(--color-purple)'" onmouseout="this.style.borderColor='var(--color-bg-tertiary)'">
+                <h3 style="font-family: var(--font-display); font-size: 1rem; color: var(--color-purple);">Copa ${copa}</h3>
+                <p style="color: var(--color-text-dim); font-size: 0.8rem; margin-top: 8px;">Industry expert</p>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function showCryptoView(container) {
+      container.innerHTML = `
+        <div style="padding: 40px;">
+          <h2 style="font-family: var(--font-display); font-size: 1.8rem; margin-bottom: 30px; color: var(--color-gold);">💰 CRYPTO ECONOMY</h2>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
+            <div style="background: var(--color-bg-secondary); border: 1px solid var(--color-bg-tertiary); border-radius: 16px; padding: 30px;">
+              <h3 style="color: var(--color-gold); margin-bottom: 16px;">$0RB Token</h3>
+              <p style="font-size: 2rem; font-family: var(--font-display);">---.--</p>
+              <p style="color: var(--color-text-dim);">Connect wallet to view</p>
+              <button style="margin-top: 20px; background: var(--color-gold); color: var(--color-bg); border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-family: var(--font-body);">Connect Wallet</button>
+            </div>
+            <div style="background: var(--color-bg-secondary); border: 1px solid var(--color-bg-tertiary); border-radius: 16px; padding: 30px;">
+              <h3 style="color: var(--color-cyan); margin-bottom: 16px;">Agent Marketplace</h3>
+              <p style="color: var(--color-text-dim);">Rent or list AI agents</p>
+              <button style="margin-top: 20px; background: var(--color-cyan); color: var(--color-bg); border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-family: var(--font-body);">Browse Marketplace</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function showCommunityView(container) {
+      container.innerHTML = `
+        <div style="padding: 40px;">
+          <h2 style="font-family: var(--font-display); font-size: 1.8rem; margin-bottom: 30px; color: var(--color-cyan);">💬 COMMUNITY</h2>
+          <div style="background: var(--color-bg-secondary); border: 1px solid var(--color-bg-tertiary); border-radius: 16px; padding: 40px; text-align: center;">
+            <p style="font-size: 1.2rem; margin-bottom: 20px;">Join the 0RB community</p>
+            <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+              <a href="#" style="background: #5865F2; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none;">Discord</a>
+              <a href="#" style="background: #1DA1F2; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none;">Twitter</a>
+              <a href="#" style="background: #333; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none;">GitHub</a>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function showSettingsView(container) {
+      container.innerHTML = `
+        <div style="padding: 40px;">
+          <h2 style="font-family: var(--font-display); font-size: 1.8rem; margin-bottom: 30px; color: var(--color-cyan);">⚙️ SETTINGS</h2>
+          <div style="background: var(--color-bg-secondary); border: 1px solid var(--color-bg-tertiary); border-radius: 16px; padding: 30px; max-width: 600px;">
+            <div style="margin-bottom: 24px;">
+              <label style="display: block; margin-bottom: 8px; color: var(--color-text-dim);">API Provider</label>
+              <select style="width: 100%; background: var(--color-bg-tertiary); border: 1px solid var(--color-bg-tertiary); color: var(--color-text); padding: 12px; border-radius: 8px;">
+                <option>OpenAI</option>
+                <option>Anthropic</option>
+                <option>Ollama (Local)</option>
+              </select>
+            </div>
+            <div style="margin-bottom: 24px;">
+              <label style="display: block; margin-bottom: 8px; color: var(--color-text-dim);">Theme</label>
+              <select style="width: 100%; background: var(--color-bg-tertiary); border: 1px solid var(--color-bg-tertiary); color: var(--color-text); padding: 12px; border-radius: 8px;">
+                <option>Cyber Dark</option>
+                <option>Neon Purple</option>
+                <option>Matrix Green</option>
+              </select>
+            </div>
+            <button style="background: var(--color-cyan); color: var(--color-bg); border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer;">Save Settings</button>
+          </div>
+        </div>
+      `;
     }
 
     // Window controls (for Electron)
     function minimizeWindow() {
-      if (window.electronAPI) window.electronAPI.minimize();
+      if (typeof require !== 'undefined') {
+        const { ipcRenderer } = require('electron');
+        ipcRenderer.send('window:minimize');
+      }
     }
 
     function maximizeWindow() {
-      if (window.electronAPI) window.electronAPI.maximize();
+      if (typeof require !== 'undefined') {
+        const { ipcRenderer } = require('electron');
+        ipcRenderer.send('window:maximize');
+      }
     }
 
     function closeWindow() {
-      if (window.electronAPI) window.electronAPI.close();
+      if (typeof require !== 'undefined') {
+        const { ipcRenderer } = require('electron');
+        ipcRenderer.send('window:close');
+      }
+    }
+
+    // Initialize sidebar click handlers
+    function initSidebar() {
+      document.querySelectorAll('.sidebar-btn').forEach((btn, i) => {
+        btn.onclick = () => showView(NAV_VIEWS[i]);
+      });
     }
 
     // Create particles
@@ -731,6 +956,7 @@
 
     // Initialize
     createParticles();
+    initSidebar();
     setTimeout(updateProgress, 500);
   </script>
 </body>

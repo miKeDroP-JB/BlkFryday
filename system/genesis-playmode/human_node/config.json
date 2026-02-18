@@ -1,0 +1,79 @@
+{
+  "thresholds": {
+    "energy": {
+      "low": 30,
+      "medium": 60,
+      "high": 85
+    },
+    "focus": {
+      "scattered": 25,
+      "normal": 50,
+      "flow": 75,
+      "hyperfocus": 90
+    },
+    "mood": {
+      "negative": -0.3,
+      "neutral": 0.3,
+      "positive": 0.7
+    },
+    "rest": {
+      "exhausted": 20,
+      "tired": 40,
+      "rested": 70,
+      "refreshed": 90
+    }
+  },
+  "colors": {
+    "energy": {
+      "low": "#ff4444",
+      "medium": "#ffaa00",
+      "high": "#44ff44"
+    },
+    "focus": {
+      "scattered": "#ff6666",
+      "normal": "#aaaaff",
+      "flow": "#66ff66",
+      "hyperfocus": "#ff66ff"
+    },
+    "mood": {
+      "negative": "#8844aa",
+      "neutral": "#888888",
+      "positive": "#ffcc00"
+    },
+    "aura": {
+      "base": "#4488ff",
+      "glow": "#88ccff",
+      "pulse": "#ffffff"
+    }
+  },
+  "alerts": {
+    "lowEnergy": {
+      "threshold": 25,
+      "message": "Energy critical - consider a break",
+      "sound": "gentle_chime"
+    },
+    "longSession": {
+      "duration": 90,
+      "message": "Long session detected - stretch?",
+      "sound": "soft_bell"
+    },
+    "flowState": {
+      "threshold": 85,
+      "message": "Flow state detected - optimizing environment",
+      "sound": "success_tone"
+    }
+  },
+  "tuning": {
+    "updateInterval": 1000,
+    "smoothingFactor": 0.3,
+    "historyLength": 1000,
+    "predictionHorizon": 30,
+    "feedbackDelay": 100
+  },
+  "visualization": {
+    "auraRadius": 150,
+    "pulseSpeed": 0.02,
+    "trailLength": 50,
+    "particleCount": 100
+  }
+}

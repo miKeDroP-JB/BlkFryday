@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>∞Φ∞</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --void: #000000;
+    --pulse: #7c3aed;
+    --speak: #06b6d4;
+    --listen: #f59e0b;
+    --commit: #22c55e;
+    --warn: #ef4444;
+    --text: rgba(255,255,255,0.85);
+    --dim: rgba(255,255,255,0.2);
+  }
+
+  html, body {
+    width: 100%; height: 100%;
+    background: var(--void);
+    color: var(--text);
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    overflow: hidden;
+    cursor: none;
+  }
+
+  /* ── CURSOR ── */
+  #cursor {
+    position: fixed;
+    width: 8px; height: 8px;
+    background: var(--pulse);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    mix-blend-mode: screen;
+    transition: transform 0.1s;
+  }
+
+  /* ── PARTICLES / SWARM ── */
+  canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 1;
+  }
+
+  /* ── CENTER CONTAINER ── */
+  #center {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  /* ── MOUTH / ORB ── */
+  #orb-wrap {
+    position: relative;
+    width: 180px; height: 180px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  #orb {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 40%,
+      rgba(124,58,237,0.9) 0%,
+      rgba(6,182,212,0.4) 60%,
+      transparent 100%
+    );
+    box-shadow:
+      0 0 40px rgba(124,58,237,0.6),
+      0 0 80px rgba(124,58,237,0.2);
+    animation: breathe 4s ease-in-out infinite;
+    position: relative;
+    z-index: 2;
+  }
+
+  #orb.listening {
+    background: radial-gradient(circle at 40% 40%,
+      rgba(245,158,11,0.9) 0%,
+      rgba(245,158,11,0.4) 60%,
+      transparent 100%
+    );
+    box-shadow:
+      0 0 40px rgba(245,158,11,0.6),
+      0 0 80px rgba(245,158,11,0.2);
+  }
+
+  #orb.speaking {
+    animation: speak-pulse 0.15s ease-in-out infinite alternate;
+    background: radial-gradient(circle at 40% 40%,
+      rgba(6,182,212,0.9) 0%,
+      rgba(6,182,212,0.4) 60%,
+      transparent 100%
+    );
+    box-shadow:
+      0 0 40px rgba(6,182,212,0.8),
+      0 0 100px rgba(6,182,212,0.3);
+  }
+
+  #orb.processing {
+    animation: spin-glow 1s linear infinite;
+  }
+
+  /* Orbiting rings */
+  .ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid rgba(124,58,237,0.15);
+    animation: ring-spin 20s linear infinite;
+    top: 50%; left: 50%;
+    transform-origin: center;
+  }
+  .ring:nth-child(1) { width: 120px; height: 120px; margin: -60px 0 0 -60px; animation-duration: 15s; }
+  .ring:nth-child(2) { width: 160px; height: 160px; margin: -80px 0 0 -80px; animation-duration: 25s; animation-direction: reverse; }
+  .ring:nth-child(3) { width: 200px; height: 200px; margin: -100px 0 0 -100px; animation-duration: 35s; opacity: 0.5; }
+
+  .ring::before {
+    content: '✦';
+    position: absolute;
+    top: -6px; left: 50%;
+    transform: translateX(-50%);
+    font-size: 8px;
+    color: var(--pulse);
+    opacity: 0.8;
+  }
+
+  /* ── WAVEFORM (mouth) ── */
+  #waveform {
+    width: 200px;
+    height: 40px;
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+  }
+
+  .wave-bar {
+    width: 3px;
+    border-radius: 3px;
+    background: var(--pulse);
+    opacity: 0.6;
+    animation: wave-idle 2s ease-in-out infinite;
+  }
+
+  .wave-bar.active {
+    opacity: 1;
+    animation: wave-speak 0.3s ease-in-out infinite alternate;
+  }
+
+  /* ── TEXT FEED ── */
+  #text-area {
+    margin-top: 40px;
+    width: 520px;
+    text-align: center;
+    position: relative;
+    min-height: 80px;
+  }
+
+  #arc-text {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--speak);
+    letter-spacing: 0.5px;
+    opacity: 0;
+    transition: opacity 0.4s;
+    white-space: pre-wrap;
+  }
+
+  #arc-text.visible { opacity: 1; }
+
+  #human-text {
+    font-size: 12px;
+    color: var(--dim);
+    margin-top: 8px;
+    letter-spacing: 1px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  #human-text.visible { opacity: 1; }
+
+  /* ── SUGGESTIONS ── */
+  #suggestions {
+    margin-top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 520px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  #suggestions.visible { opacity: 1; }
+
+  .suggestion {
+    padding: 10px 18px;
+    border: 1px solid rgba(124,58,237,0.3);
+    border-radius: 4px;
+    font-size: 12px;
+    color: var(--dim);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .suggestion:hover {
+    border-color: var(--pulse);
+    color: var(--text);
+    background: rgba(124,58,237,0.08);
+  }
+  .suggestion .num {
+    color: var(--pulse);
+    font-size: 10px;
+    opacity: 0.7;
+  }
+
+  /* ── INPUT ── */
+  #input-area {
+    position: fixed;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 520px;
+  }
+
+  #input {
+    flex: 1;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(124,58,237,0.3);
+    border-radius: 4px;
+    color: var(--text);
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 13px;
+    padding: 12px 16px;
+    outline: none;
+    transition: border-color 0.2s;
+    letter-spacing: 0.5px;
+  }
+  #input:focus { border-color: var(--pulse); }
+  #input::placeholder { color: rgba(255,255,255,0.15); }
+
+  #mic-btn {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    border: 1px solid rgba(124,58,237,0.4);
+    background: transparent;
+    color: var(--pulse);
+    font-size: 16px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  #mic-btn:hover { background: rgba(124,58,237,0.1); }
+  #mic-btn.active {
+    background: rgba(245,158,11,0.15);
+    border-color: var(--listen);
+    color: var(--listen);
+    animation: mic-pulse 1s ease-in-out infinite;
+  }
+
+  /* ── STATUS BAR ── */
+  #status-bar {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-size: 10px;
+    color: rgba(255,255,255,0.2);
+    letter-spacing: 2px;
+  }
+
+  .status-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--commit);
+    animation: dot-blink 3s ease-in-out infinite;
+  }
+
+  #node-count { color: rgba(124,58,237,0.5); }
+
+  /* ── SIGIL ── */
+  #sigil {
+    position: fixed;
+    top: 20px; right: 24px;
+    font-size: 14px;
+    color: rgba(124,58,237,0.3);
+    z-index: 20;
+    letter-spacing: 2px;
+  }
+
+  /* ── GLYPH FLASH ── */
+  #glyph-flash {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 60px;
+    opacity: 0;
+    z-index: 30;
+    pointer-events: none;
+    transition: opacity 0.1s;
+  }
+  #glyph-flash.show {
+    opacity: 0.6;
+    animation: glyph-fade 1s forwards;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes breathe {
+    0%, 100% { transform: scale(1); opacity: 0.9; }
+    50% { transform: scale(1.08); opacity: 1; }
+  }
+  @keyframes speak-pulse {
+    from { transform: scale(1); }
+    to { transform: scale(1.15); }
+  }
+  @keyframes spin-glow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  @keyframes ring-spin {
+    from { transform: rotate(0deg) translate(-50%, -50%); transform-origin: center; }
+    to { transform: rotate(360deg) translate(-50%, -50%); }
+  }
+  @keyframes wave-idle {
+    0%, 100% { height: 4px; opacity: 0.3; }
+    50% { height: 8px; opacity: 0.5; }
+  }
+  @keyframes wave-speak {
+    from { height: 4px; opacity: 0.5; }
+    to { height: var(--h, 20px); opacity: 1; }
+  }
+  @keyframes dot-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+  @keyframes mic-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(245,158,11,0.4); }
+    50% { box-shadow: 0 0 0 8px rgba(245,158,11,0); }
+  }
+  @keyframes glyph-fade {
+    0% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -60%) scale(1.4); }
+  }
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+
+<!-- Swarm particle canvas -->
+<canvas id="swarm"></canvas>
+
+<!-- Glyph flash -->
+<div id="glyph-flash"></div>
+
+<!-- Status bar -->
+<div id="status-bar">
+  <div class="status-dot"></div>
+  <span id="system-status">ORBOS LIVE</span>
+  <span id="node-count">0 NODES</span>
+  <span id="mode-label">GHOST</span>
+</div>
+
+<!-- Sigil -->
+<div id="sigil">∞Φ∞</div>
+
+<!-- Center: Orb + Waveform + Text -->
+<div id="center">
+  <div id="orb-wrap">
+    <div class="ring"></div>
+    <div class="ring"></div>
+    <div class="ring"></div>
+    <div id="orb"></div>
+  </div>
+
+  <div id="waveform"></div>
+
+  <div id="text-area">
+    <div id="arc-text"></div>
+    <div id="human-text"></div>
+  </div>
+
+  <div id="suggestions"></div>
+</div>
+
+<!-- Input -->
+<div id="input-area">
+  <input id="input" type="text" placeholder="speak or type..." autocomplete="off" spellcheck="false" />
+  <button id="mic-btn" title="Voice input">🎤</button>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// SWARM PARTICLE SYSTEM
+// ═══════════════════════════════════════════════════════════════
+
+const canvas = document.getElementById('swarm');
+const ctx = canvas.getContext('2d');
+
+let W = window.innerWidth, H = window.innerHeight;
+canvas.width = W; canvas.height = H;
+
+window.addEventListener('resize', () => {
+  W = window.innerWidth; H = window.innerHeight;
+  canvas.width = W; canvas.height = H;
+});
+
+class Particle {
+  constructor() { this.reset(); }
+  reset() {
+    this.x = Math.random() * W;
+    this.y = Math.random() * H;
+    this.vx = (Math.random() - 0.5) * 0.3;
+    this.vy = (Math.random() - 0.5) * 0.3;
+    this.size = Math.random() * 1.5 + 0.5;
+    this.opacity = Math.random() * 0.3 + 0.05;
+    this.hue = Math.random() < 0.7 ? 265 : 190; // purple or cyan
+  }
+  update(swarmMode) {
+    const cx = W / 2, cy = H / 2;
+    const dx = cx - this.x, dy = cy - this.y;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+
+    if (swarmMode === 'swarm') {
+      // Pull towards center orbit
+      this.vx += dx * 0.00008;
+      this.vy += dy * 0.00008;
+    } else {
+      // Ghost: slow drift
+      if (dist > 300) {
+        this.vx += dx * 0.00002;
+        this.vy += dy * 0.00002;
+      }
+    }
+
+    this.vx *= 0.98;
+    this.vy *= 0.98;
+    this.x += this.vx;
+    this.y += this.vy;
+
+    if (this.x < 0 || this.x > W || this.y < 0 || this.y > H) this.reset();
+  }
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fillStyle = `hsla(${this.hue}, 70%, 65%, ${this.opacity})`;
+    ctx.fill();
+  }
+}
+
+// 47 fractal particles (one per node)
+const particles = Array.from({length: 147}, () => new Particle());
+
+let swarmMode = 'ghost';
+let frameCount = 0;
+
+function animate() {
+  requestAnimationFrame(animate);
+  frameCount++;
+
+  ctx.fillStyle = 'rgba(0,0,0,0.08)';
+  ctx.fillRect(0, 0, W, H);
+
+  // Draw connections between close particles
+  if (frameCount % 3 === 0) {
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i+1; j < Math.min(i+5, particles.length); j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const d = Math.sqrt(dx*dx + dy*dy);
+        if (d < 80) {
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = `rgba(124,58,237,${0.03 * (1 - d/80)})`;
+          ctx.stroke();
+        }
+      }
+    }
+  }
+
+  particles.forEach(p => { p.update(swarmMode); p.draw(); });
+}
+animate();
+
+// ═══════════════════════════════════════════════════════════════
+// WAVEFORM
+// ═══════════════════════════════════════════════════════════════
+
+const waveform = document.getElementById('waveform');
+const BAR_COUNT = 24;
+for (let i = 0; i < BAR_COUNT; i++) {
+  const bar = document.createElement('div');
+  bar.className = 'wave-bar';
+  bar.style.animationDelay = `${i * 0.08}s`;
+  bar.style.height = '4px';
+  waveform.appendChild(bar);
+}
+
+let speakInterval = null;
+function startWave(intensity = 1) {
+  const bars = waveform.querySelectorAll('.wave-bar');
+  bars.forEach(b => b.classList.add('active'));
+  speakInterval = setInterval(() => {
+    bars.forEach(b => {
+      const h = (Math.random() * 28 * intensity + 4) + 'px';
+      b.style.setProperty('--h', h);
+      b.style.height = h;
+    });
+  }, 80);
+}
+
+function stopWave() {
+  clearInterval(speakInterval);
+  const bars = waveform.querySelectorAll('.wave-bar');
+  bars.forEach(b => {
+    b.classList.remove('active');
+    b.style.height = '4px';
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CUSTOM CURSOR
+// ═══════════════════════════════════════════════════════════════
+
+const cursor = document.getElementById('cursor');
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX - 4 + 'px';
+  cursor.style.top = e.clientY - 4 + 'px';
+});
+
+// ═══════════════════════════════════════════════════════════════
+// WEBSOCKET
+// ═══════════════════════════════════════════════════════════════
+
+const orb = document.getElementById('orb');
+const arcText = document.getElementById('arc-text');
+const humanText = document.getElementById('human-text');
+const suggestionsEl = document.getElementById('suggestions');
+const nodeCount = document.getElementById('node-count');
+const modeLabel = document.getElementById('mode-label');
+const glyphFlash = document.getElementById('glyph-flash');
+
+let ws = null;
+let wsReady = false;
+let reconnectDelay = 500;
+
+function connect() {
+  ws = new WebSocket('ws://' + location.host);
+
+  ws.onopen = () => {
+    wsReady = true;
+    reconnectDelay = 500;
+    console.log('∞Φ∞ Connected');
+  };
+
+  ws.onmessage = (e) => {
+    try {
+      const msg = JSON.parse(e.data);
+      handleMessage(msg);
+    } catch(err) { console.error(err); }
+  };
+
+  ws.onclose = () => {
+    wsReady = false;
+    setTimeout(connect, reconnectDelay);
+    reconnectDelay = Math.min(reconnectDelay * 2, 8000);
+  };
+
+  ws.onerror = () => ws.close();
+}
+
+connect();
+
+// ═══════════════════════════════════════════════════════════════
+// MESSAGE HANDLER
+// ═══════════════════════════════════════════════════════════════
+
+let speechSynth = window.speechSynthesis;
+let speakQueue = [];
+let isSpeaking = false;
+
+function speak(text) {
+  if (!speechSynth || !text) return;
+  speakQueue.push(text);
+  if (!isSpeaking) processQueue();
+}
+
+function processQueue() {
+  if (!speakQueue.length) { isSpeaking = false; return; }
+  isSpeaking = true;
+  const text = speakQueue.shift();
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.rate = 0.95;
+  utt.pitch = 0.9;
+  utt.volume = 0.8;
+
+  // Pick a good voice
+  const voices = speechSynth.getVoices();
+  const preferred = voices.find(v => v.name.includes('Daniel') || v.name.includes('Alex') || v.lang === 'en-US');
+  if (preferred) utt.voice = preferred;
+
+  utt.onstart = () => { startWave(); orb.className = 'speaking'; };
+  utt.onend = () => { stopWave(); orb.className = ''; isSpeaking = false; processQueue(); };
+  speechSynth.speak(utt);
+}
+
+function handleMessage(msg) {
+  // Update swarm mode
+  if (msg.pulse) {
+    const p = msg.pulse;
+    swarmMode = p.mode || 'ghost';
+    nodeCount.textContent = (p.total_nodes || 0) + ' NODES';
+    modeLabel.textContent = swarmMode.toUpperCase();
+  }
+
+  if (msg.type === 'boot') {
+    showARC(msg.speak);
+    speak(msg.speak);
+    orb.className = '';
+    return;
+  }
+
+  if (msg.type === 'glyph') {
+    // Flash the symbols
+    glyphFlash.textContent = msg.symbols || '⚡';
+    glyphFlash.classList.remove('show');
+    void glyphFlash.offsetWidth; // reflow
+    glyphFlash.classList.add('show');
+
+    const text = (msg.results || []).join(' ');
+    showARC(text);
+    speak(text);
+    showSuggestions([]);
+    return;
+  }
+
+  if (msg.type === 'arc') {
+    showARC(msg.speak);
+    speak(msg.speak);
+    if (msg.suggestions && msg.suggestions.length > 0) {
+      showSuggestions(msg.suggestions);
+    }
+    return;
+  }
+
+  if (msg.type === 'committed') {
+    showARC(msg.speak);
+    speak(msg.speak);
+    showSuggestions([]);
+    return;
+  }
+
+  if (msg.speak) {
+    showARC(msg.speak);
+    speak(msg.speak);
+  }
+}
+
+function showARC(text) {
+  arcText.textContent = text;
+  arcText.classList.add('visible');
+  setTimeout(() => arcText.classList.remove('visible'), 8000);
+}
+
+function showHuman(text) {
+  humanText.textContent = '> ' + text;
+  humanText.classList.add('visible');
+  setTimeout(() => humanText.classList.remove('visible'), 4000);
+}
+
+function showSuggestions(suggestions) {
+  suggestionsEl.innerHTML = '';
+  if (!suggestions.length) {
+    suggestionsEl.classList.remove('visible');
+    return;
+  }
+  suggestions.forEach(s => {
+    const el = document.createElement('div');
+    el.className = 'suggestion';
+    el.innerHTML = `<span class="num">${s.i}.</span> ${s.text}`;
+    el.onclick = () => commit(s.text);
+    suggestionsEl.appendChild(el);
+  });
+  suggestionsEl.classList.add('visible');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SEND / COMMIT
+// ═══════════════════════════════════════════════════════════════
+
+function send(text) {
+  if (!text.trim()) return;
+  showHuman(text);
+  orb.className = 'processing';
+  suggestionsEl.classList.remove('visible');
+
+  if (wsReady && ws.readyState === 1) {
+    ws.send(JSON.stringify({ text }));
+  }
+  setTimeout(() => { if (orb.className === 'processing') orb.className = ''; }, 3000);
+}
+
+function commit(text) {
+  send('lock: ' + text);
+  showSuggestions([]);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// INPUT
+// ═══════════════════════════════════════════════════════════════
+
+const input = document.getElementById('input');
+input.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    send(input.value);
+    input.value = '';
+  }
+});
+
+// Focus input on keypress anywhere
+document.addEventListener('keydown', e => {
+  if (e.target !== input && !e.metaKey && !e.ctrlKey && e.key.length === 1) {
+    input.focus();
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════
+// VOICE INPUT
+// ═══════════════════════════════════════════════════════════════
+
+const micBtn = document.getElementById('mic-btn');
+let recognition = null;
+let isListening = false;
+
+if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recognition = new SR();
+  recognition.continuous = false;
+  recognition.interimResults = true;
+  recognition.lang = 'en-US';
+
+  recognition.onstart = () => {
+    isListening = true;
+    orb.className = 'listening';
+    micBtn.classList.add('active');
+    startWave(0.4);
+  };
+
+  recognition.onresult = (e) => {
+    const transcript = Array.from(e.results)
+      .map(r => r[0].transcript).join('');
+    input.value = transcript;
+
+    if (e.results[e.results.length-1].isFinal) {
+      stopWave();
+      send(transcript);
+      input.value = '';
+    }
+  };
+
+  recognition.onend = () => {
+    isListening = false;
+    micBtn.classList.remove('active');
+    orb.className = '';
+    stopWave();
+  };
+
+  recognition.onerror = () => {
+    isListening = false;
+    micBtn.classList.remove('active');
+    orb.className = '';
+    stopWave();
+  };
+}
+
+micBtn.onclick = () => {
+  if (!recognition) {
+    alert('Voice not supported in this browser. Use Chrome.');
+    return;
+  }
+  if (isListening) {
+    recognition.stop();
+  } else {
+    recognition.start();
+  }
+};
+
+// Space bar = mic toggle
+document.addEventListener('keydown', e => {
+  if (e.code === 'Space' && document.activeElement !== input) {
+    e.preventDefault();
+    micBtn.click();
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════
+// KEYBOARD SHORTCUTS
+// ═══════════════════════════════════════════════════════════════
+
+document.addEventListener('keydown', e => {
+  // ESC = clear / silence
+  if (e.code === 'Escape') {
+    suggestionsEl.classList.remove('visible');
+    arcText.classList.remove('visible');
+    humanText.classList.remove('visible');
+    speechSynth && speechSynth.cancel();
+    speakQueue = []; isSpeaking = false;
+    stopWave();
+    orb.className = '';
+  }
+  // Number keys = select suggestion
+  if (['1','2','3','4'].includes(e.key) && document.activeElement !== input) {
+    const items = suggestionsEl.querySelectorAll('.suggestion');
+    const idx = parseInt(e.key) - 1;
+    if (items[idx]) items[idx].click();
+  }
+});
+</script>
+</body>
+</html>
